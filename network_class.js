@@ -1,4 +1,4 @@
-const wsUri = "ws://www.kimhwan.kr:8080";
+const wsUri = "wss://www.kimhwan.kr:8080";
 class NetworkClass {
     constructor() {
         this.isConnected = false;
