@@ -123,9 +123,9 @@ class SoundClass {
         this.bgm = 'sound/200 Upbeat, Futuristic Area (Loop, 160kbps).mp3';
 
         this.impactSounds = [];
-        this.impactSounds.push('/sound/impact/Impact_Flesh_001.mp3');
-        this.impactSounds.push('/sound/impact/Impact_Flesh_002.mp3');
-        this.impactSounds.push('/sound/impact/Impact_Flesh_003.mp3');
+        this.impactSounds.push('./sound/impact/Impact_Flesh_001.mp3');
+        this.impactSounds.push('./sound/impact/Impact_Flesh_002.mp3');
+        this.impactSounds.push('./sound/impact/Impact_Flesh_003.mp3');
 
 
         this.loadedSounds = 0;
