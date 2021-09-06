@@ -213,7 +213,7 @@ class SystemClass {
                 player.x = (placeableRandomPosition.x);
                 player.y = (placeableRandomPosition.y);
                 self.networkClass.sendUserInit(player);
-                self.chatClass.writeToMessage('접속되었습니다.<br/>');
+                self.chatClass.writeToMessage('You are connected.<br/>');
             } else {
                 // ??
             }
@@ -233,11 +233,11 @@ class SystemClass {
                 player.setDeath(death);
             }
             if(id !== self.currentId && isNewConnection) {
-                self.chatClass.writeToMessage('[' + self.players[id].getPlayerDescription() + '] 님이 접속하셨습니다.<br/>');
+                self.chatClass.writeToMessage('[' + self.players[id].getPlayerDescription() + '] has connected.<br/>');
             }
         }
         this.networkClass.userdisconnected = function(id) {
-            self.chatClass.writeToMessage('[' + self.players[id].getPlayerDescription() + '] 님이 접속을 종료하셨습니다.<br/>');
+            self.chatClass.writeToMessage('[' + self.players[id].getPlayerDescription() + '] has disconnected.<br/>');
             self.removePlayer(id);
         }
         this.networkClass.usercountchanged = function(count) {
