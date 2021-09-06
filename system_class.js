@@ -156,7 +156,7 @@ class SystemClass {
                             debugClass.black = !debugClass.black;
                             break;
                         case KEYCODE_F8:
-                            var name = prompt('새 이름 입력', undefined);
+                            var name = prompt('Enter a new name', undefined);
                             if(name) {
                                 self.chatClass.setName(name);
                             }
@@ -183,14 +183,14 @@ class SystemClass {
         }
         //
         this.networkClass.disconnected = function() {
-            self.chatClass.writeToMessage('서버와 연결이 끊겼습니다.<br/>');
+            self.chatClass.writeToMessage('The connection with the server has been lost.<br/>');
             self.currentId = undefined;
             self.players = [];
             self.npcs = [];
             self.connectedUserCount = 0;
         }
         this.networkClass.tryreconnect = function(tryCount) {
-            self.chatClass.writeToMessage('서버와 연결을 시도합니다. (' + (tryCount) + ')<br/>');
+            self.chatClass.writeToMessage('Attempt to connect with the server. (' + (tryCount) + ')<br/>');
         }
         
 
@@ -202,7 +202,7 @@ class SystemClass {
 
                 var playerName = getCookie('user_name');
                 if(playerName === undefined) {
-                    playerName = prompt('새 이름 입력', undefined);
+                    playerName = prompt('Enter a new name', undefined);
                     if (playerName) {
                         setCookie('user_name', name);
                     }

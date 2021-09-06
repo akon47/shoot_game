@@ -13,8 +13,8 @@ class MapClass {
 
         this.spriteClass = new SpriteClass(this.tileMapSrc, this.tileWidth, this.tileHeight);
         this.objects = [];
-        this.hitBoxes = this.findHitBoxes(); // 성능에 크리티컬한 부분 아님. 오래걸려도 됨.
-        this.segments = this.createSegments(this.hitBoxes); // 성능에 크리티컬한 부분 아님. 오래걸려도 됨.
+        this.hitBoxes = this.findHitBoxes(); // 성능에 크리티컬한 부분 아님. 오래 걸려도 됨.
+        this.segments = this.createSegments(this.hitBoxes); // 성능에 크리티컬한 부분 아님. 오래 걸려도 됨.
 
         console.log("[MapClass] HitBoxes -> " + this.hitBoxes.length);
         console.log("[MapClass] Segments -> " + this.segments.length);
