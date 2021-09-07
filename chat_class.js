@@ -51,7 +51,6 @@ class ChatClass {
 
         rootElement.appendChild(this.chatRootElement);
 
-
         var self = this;
         this.chatElement.addEventListener('blur', e => {
             self.chatElement.value = "";

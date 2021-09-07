@@ -150,12 +150,13 @@ class SystemClass {
                             debugClass.debugLowQualityMap = !debugClass.debugLowQualityMap;
                             break;
                         case KEYCODE_F7:
-                            debugClass.black = !debugClass.black;
+                            //debugClass.black = !debugClass.black;
                             break;
                         case KEYCODE_F8:
-                            var name = prompt('Enter a new name', undefined);
+                            var name = prompt('Enter a new name', self.getCurrentPlayerClass().getName()??"");
                             if (name) {
-                                self.chatClass.setName(name);
+                                self.chatClass.name(name);
+                                setCookie('user_name', name);
                             }
                             break;
                         case KEYCODE_F9:
@@ -193,15 +194,14 @@ class SystemClass {
 
         this.networkClass.assignedid = function (id) {
             self.currentId = id;
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player) {
                 const placeableRandomPosition = self.graphicsClass.mapClass.getPlaceableRandomPosition();
-
-                var playerName = getCookie('user_name');
-                if (playerName === undefined) {
+                let playerName = getCookie('user_name');
+                if (playerName === null || playerName === "") {
                     playerName = prompt('Enter a new name', undefined);
                     if (playerName) {
-                        setCookie('user_name', name);
+                        setCookie('user_name', playerName);
                     }
                 }
 
@@ -211,8 +211,6 @@ class SystemClass {
                 player.y = (placeableRandomPosition.y);
                 self.networkClass.sendUserInit(player);
                 self.chatClass.writeToMessage('You are connected.<br/>');
-            } else {
-                // ??
             }
         }
         this.networkClass.userconnected = function (id, name, x, y, speedX, speedY, direction, character, weapon, hp, kill, death) {

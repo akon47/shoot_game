@@ -93,13 +93,13 @@ class UserHUD {
         //     self.images['flashlight'].isLoaded = true;
         // };
 
-        // this.images['knife'] = [];
-        // this.images['knife'].image = new Image();
-        // this.images['knife'].image.src = 'images/weapons/knife.png';
-        // this.images['knife'].isLoaded = false;
-        // this.images['knife'].image.onload = function() {
-        //     self.images['knife'].isLoaded = true;
-        // };
+        this.images['knife'] = [];
+        this.images['knife'].image = new Image();
+        this.images['knife'].image.src = 'images/weapons/knife.png';
+        this.images['knife'].isLoaded = false;
+        this.images['knife'].image.onload = function() {
+            self.images['knife'].isLoaded = true;
+        };
 
         this.images['handgun'] = [];
         this.images['handgun'].image = new Image();
@@ -146,14 +146,19 @@ class UserHUD {
                 drawingContext.textBaseline = 'bottom';
                 drawingContext.textAlign = 'right';
                 drawingContext.fillStyle = "white";
-                const ammoInfo = player.getCurrentAmmoInfo();
-                if (ammoInfo) {
-                    drawingContext.fillText(ammoInfo.currentAmmo + ' / ' + ammoInfo.maxAmmo, this.screenWidth - 10, this.screenHeight - image.image.height);
+
+                if(player.getWeapon() === "knife") {
+                    drawingContext.fillText("∞", this.screenWidth - 10, this.screenHeight - image.image.height);
+                } else {
+                    const ammoInfo = player.getCurrentAmmoInfo();
+                    if (ammoInfo) {
+                        drawingContext.fillText(ammoInfo.currentAmmo + ' / ' + ammoInfo.maxAmmo, this.screenWidth - 10, this.screenHeight - image.image.height);
+                    }
                 }
 
                 drawingContext.fillText(player.getHp() + ' +', this.screenWidth - 10, this.screenHeight - imageHeight - 30 - 5);
 
-                drawingContext.fillText(player.getPlayerDescription(), this.screenWidth - 10, this.screenHeight - imageHeight - 30 - 30 - 5);
+                drawingContext.fillText(player.getPlayerDescription(), this.screenWidth - 10, this.screenHeight - imageHeight - 30 - 30 - 5 - 5);
                 break;
             }
         }

@@ -29,7 +29,6 @@ if (heads && heads.length > 0) {
         var script = document.createElement('script');
         script.setAttribute('type', 'text/javascript');
         script.setAttribute('src', requireScripts[i]);
-        //script.setAttribute('src', requireScripts[i] + ('?' + (Math.floor(Math.random() * 999999))));
         heads[0].appendChild(script);
     }
 }
