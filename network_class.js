@@ -21,7 +21,7 @@ class NetworkClass {
     }
 
     checkLatency(self) {
-        if(self.isConnected) {
+        if (self.isConnected) {
             self.webSocket.send(JSON.stringify({ type: 'echo', data: { tick: performance.now() } }));
         }
     }
@@ -32,7 +32,7 @@ class NetworkClass {
 
     onOpen(e) {
         this.isConnected = true;
-        if(this.connected){
+        if (this.connected) {
             this.connected();
         }
 
@@ -40,21 +40,21 @@ class NetworkClass {
     }
 
     onClose(e) {
-        if(this.isConnected) {
+        if (this.isConnected) {
             this.isConnected = false;
-            if(this.disconnected){
+            if (this.disconnected) {
                 this.disconnected();
             }
         }
 
         this.reconnectCount++;
 
-        if(this.tryreconnect){
+        if (this.tryreconnect) {
             this.tryreconnect(this.reconnectCount);
         }
 
         var self = this;
-        setTimeout(function() {
+        setTimeout(function () {
             self.initializeWebSocket();
         }, 1000);
     }
@@ -62,61 +62,61 @@ class NetworkClass {
     onMessage(e) {
         var msg = JSON.parse(e.data);
         //console.log(e.data);
-        switch(msg.type) {
+        switch (msg.type) {
             case 'echo':
-                if(msg.data.tick) {
+                if (msg.data.tick) {
                     const now = performance.now();
                     this.latency = Math.floor(now - msg.data.tick);
                     setTimeout(this.checkLatency, 1000, this);
                 }
                 break;
             case 'id':
-                if(this.assignedid) {
+                if (this.assignedid) {
                     this.assignedid(msg.data);
                 }
                 break;
             case 'user_connected':
-                if(this.userconnected){
+                if (this.userconnected) {
                     this.userconnected(msg.data.id, msg.data.name, msg.data.x, msg.data.y, msg.data.speedX, msg.data.speedY, msg.data.direction, msg.data.character, msg.data.weapon, msg.data.hp, msg.data.kill, msg.data.death);
                 }
                 break;
             case 'user_disconnected':
-                if(this.userdisconnected) {
+                if (this.userdisconnected) {
                     this.userdisconnected(msg.data.id);
                 }
                 break;
             case 'user_count':
-                if(this.usercountchanged) {
+                if (this.usercountchanged) {
                     this.usercountchanged(msg.data);
                 }
                 break;
             case 'user_name':
-                if(this.usernamechanged) {
+                if (this.usernamechanged) {
                     this.usernamechanged(msg.data.id, msg.data.name);
                 }
                 break;
             case 'user_chat':
-                if(this.userchat) {
+                if (this.userchat) {
                     this.userchat(msg.data.id, msg.data.chat);
                 }
                 break;
             case 'user_speed':
-                if(this.userspeedchanged){
+                if (this.userspeedchanged) {
                     this.userspeedchanged(msg.data.id, msg.data.speedX, msg.data.speedY);
                 }
                 break;
             case 'user_position':
-                if(this.userpositionchanged){
+                if (this.userpositionchanged) {
                     this.userpositionchanged(msg.data.id, msg.data.x, msg.data.y);
                 }
                 break;
             case 'user_direction':
-                if(this.userdirectionchanged){
+                if (this.userdirectionchanged) {
                     this.userdirectionchanged(msg.data.id, msg.data.direction);
                 }
                 break;
             case 'user_character':
-                if(this.usercharacterchanged){
+                if (this.usercharacterchanged) {
                     this.usercharacterchanged(msg.data.id, msg.data.character);
                 }
                 break;
@@ -126,48 +126,48 @@ class NetworkClass {
                 }
                 break;
             case 'user_shoot':
-                if(this.usershoot) {
+                if (this.usershoot) {
                     this.usershoot(msg.data.id, msg.data.weapon, msg.data.muzzlePoint, msg.data.targetPoint, msg.data.angle);
                 }
                 break;
             case 'user_hp':
-                if(this.userhpchanged) {
+                if (this.userhpchanged) {
                     this.userhpchanged(msg.data.id, msg.data.hp);
                 }
                 break;
             case 'user_die':
-                if(this.userdie) {
+                if (this.userdie) {
                     this.userdie(msg.data.id, msg.data.reason);
                 }
                 break;
             case 'user_kill':
-                if(this.userkillchanged) {
+                if (this.userkillchanged) {
                     this.userkillchanged(msg.data.id, msg.data.kill);
                 }
                 break;
             case 'user_death':
-                if(this.userdeathchanged) {
+                if (this.userdeathchanged) {
                     this.userdeathchanged(msg.data.id, msg.data.death);
                 }
                 break;
 
             case 'npc_created':
-                if(this.npccreated) {
+                if (this.npccreated) {
                     this.npccreated(msg.data.id, msg.data.x, msg.data.y, msg.data.destinationX, msg.data.destinationY, msg.data.speed, msg.data.type, msg.data.hp);
                 }
                 break;
             case 'npc_deleted':
-                if(this.npcdeleted) {
+                if (this.npcdeleted) {
                     this.npcdeleted(msg.data.id);
                 }
                 break;
             case 'npc_destination':
-                if(this.npcdestinationchanged) {
+                if (this.npcdestinationchanged) {
                     this.npcdestinationchanged(msg.data.id, msg.data.x, msg.data.y, msg.data.destinationX, msg.data.destinationY);
                 }
                 break;
             case 'npc_hp':
-                if(this.npchpchanged) {
+                if (this.npchpchanged) {
                     this.npchpchanged(msg.data.id, msg.data.hp);
                 }
                 break;
@@ -180,11 +180,11 @@ class NetworkClass {
     }
 
     sendChat(chat) {
-        this.webSocket.send(JSON.stringify({type: 'user_chat', data: { chat: chat }}));
+        this.webSocket.send(JSON.stringify({ type: 'user_chat', data: { chat: chat } }));
     }
 
     sendNameChanged(name) {
-        this.webSocket.send(JSON.stringify({type: 'user_name', data: { name: name }}));
+        this.webSocket.send(JSON.stringify({ type: 'user_name', data: { name: name } }));
     }
 
     sendSpeedChanged(speedX, speedY) {

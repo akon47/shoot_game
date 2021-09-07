@@ -33,16 +33,16 @@ class GraphicsClass {
 
     frame(players, npcs) {
         this.beginScene(this.drawingContext, 0, 0, 0, 1);
-        if(debugClass.black) {
+        if (debugClass.black) {
             return;
         }
-        if(systemClass.pointerLockMode) {
+        if (systemClass.pointerLockMode) {
             this.cameraClass.setRotate(-(systemClass.getCurrentPlayerClass().getDirection() + 90) * (Math.PI / 180));
         } else {
             this.cameraClass.setRotate(0.0);
         }
 
-        if(!this.mapClass.isLoaded() || !this.survivorCharacterClass.isLoaded() || !this.uiClass.isLoaded() || !systemClass.soundClass.isLoaded()) {
+        if (!this.mapClass.isLoaded() || !this.survivorCharacterClass.isLoaded() || !this.uiClass.isLoaded() || !systemClass.soundClass.isLoaded()) {
 
             this.drawingContext.font = "bold 60px Arial";
             this.drawingContext.textBaseline = 'middle';
@@ -58,34 +58,34 @@ class GraphicsClass {
             systemClass.chatClass.setVisible(true);
         }
 
-        
+
         this.drawingContext.save();
-        if(this.cameraClass.getRotate() !== 0) {
+        if (this.cameraClass.getRotate() !== 0) {
             this.drawingContext.translate(this.screenWidth / 2, this.screenHeight / 2);
             this.drawingContext.rotate(this.cameraClass.getRotate());
             this.drawingContext.translate(-this.screenWidth / 2, -this.screenHeight / 2);
         }
 
-        if(this.remainShakeFrames && this.remainShakeFrames > 0) {
+        if (this.remainShakeFrames && this.remainShakeFrames > 0) {
             this.remainShakeFrames--;
             this.drawingContext.translate(this.shakeThreshold - (Math.random() * (this.shakeThreshold * 2)), this.shakeThreshold - (Math.random() * (this.shakeThreshold * 2)));
         }
 
-        if(this.mapClass) {
+        if (this.mapClass) {
             this.mapClass.drawMap(this.drawingContext, this.cameraClass, this.screenWidth, this.screenHeight);
         }
 
-        if(this.objectClass) {
+        if (this.objectClass) {
             this.objectClass.drawObjects(this.drawingContext, this.cameraClass, this.screenWidth, this.screenHeight);
         }
 
-        if(this.sightEffectClass) {
+        if (this.sightEffectClass) {
             this.sightEffectClass.updateSight(players, this.cameraClass, this.objectClass, this.mapClass);
 
-            if(players) {
-                for(var i = 0; i < players.length; i++) {
+            if (players) {
+                for (var i = 0; i < players.length; i++) {
                     const player = players[players[i]];
-                    if(player && !player.isOtherPlayer()){
+                    if (player && !player.isOtherPlayer()) {
                         this.survivorCharacterClass.drawCharacter(this.drawingContext, player, this.cameraClass, this.screenWidth, this.screenHeight);
                         break;
                     }
@@ -94,47 +94,47 @@ class GraphicsClass {
 
             this.drawingContext.save();
 
-            if(!debugClass.debugGraphicsVisible) {
+            if (!debugClass.debugGraphicsVisible) {
                 this.sightEffectClass.clipSight(this.drawingContext);
             }
         }
 
-        if(players) {
-            for(var i = 0; i < players.length; i++) {
+        if (players) {
+            for (var i = 0; i < players.length; i++) {
                 const player = players[players[i]];
-                if(player && player.isOtherPlayer() && this.cameraClass.containsPlayer(player)) {
+                if (player && player.isOtherPlayer() && this.cameraClass.containsPlayer(player)) {
                     this.survivorCharacterClass.drawCharacter(this.drawingContext, player, this.cameraClass, this.screenWidth, this.screenHeight);
                 }
             }
         }
 
-        if(npcs) {
-            for(var i = 0; i < npcs.length; i++) {
+        if (npcs) {
+            for (var i = 0; i < npcs.length; i++) {
                 const npc = npcs[npcs[i]];
-                if(npc && this.cameraClass.containsNpc(npc)) {
+                if (npc && this.cameraClass.containsNpc(npc)) {
                     this.npcCharacterClass.drawCharacter(this.drawingContext, npc, this.cameraClass);
                 }
             }
         }
 
-        if(this.weatherClass) {
+        if (this.weatherClass) {
             //this.weatherClass.drawWeather(this.drawingContext);
         }
 
-        if(this.sightEffectClass) {
+        if (this.sightEffectClass) {
             this.drawingContext.restore();
             this.sightEffectClass.drawSightLighting(this.drawingContext);
         }
 
         this.drawBullet(players);
 
-        if(this.particleClass) {
+        if (this.particleClass) {
             this.particleClass.drawParticles(this.drawingContext, this.cameraClass);
         }
 
         this.drawingContext.restore();
 
-        if(this.uiClass) {
+        if (this.uiClass) {
             this.uiClass.update(this.mapClass, players, npcs)
         }
 
@@ -164,7 +164,7 @@ class GraphicsClass {
     }
 
     drawPlayerName(playerClass, cameraClass) {
-        if(playerClass) {
+        if (playerClass) {
 
             const text = playerClass.getPlayerDescription();
             const fontHeightPixel = 14;
@@ -189,7 +189,7 @@ class GraphicsClass {
     }
 
     beginScene(drawingContext, r, g, b, a) {
-        if(a > 0) {
+        if (a > 0) {
             drawingContext.beginPath();
             drawingContext.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
             drawingContext.rect(0, 0, this.screenWidth, this.screenHeight);
@@ -200,18 +200,6 @@ class GraphicsClass {
     }
 
     endScene() {
-        // if(systemClass.pointerLockMode) {
-            
-        //     this.drawingContext.drawImage(this.offscreenCanvas, 0, 0, this.screenWidth, this.screenHeight);
-        //     /*
-        //     this.drawingContext.save();
-        //     this.drawingContext.translate(this.screenWidth / 2,  this.screenHeight / 2);
-        //     this.drawingContext.rotate(-(systemClass.getCurrentPlayerClass().getDirection() + 90) * (Math.PI / 180));
-        //     this.drawingContext.drawImage(this.offscreenCanvas, -this.screenWidth / 2, -this.screenHeight / 2, this.screenWidth, this.screenHeight);
-        //     this.drawingContext.restore();
-        //     */
-        // } else {
-        //     this.drawingContext.drawImage(this.offscreenCanvas, 0, 0, this.screenWidth, this.screenHeight);
-        // }
+
     }
 }

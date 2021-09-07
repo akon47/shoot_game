@@ -20,7 +20,7 @@ class NpcClass {
         function getDistance(x1, y1, x2, y2) {
             const dX = (x2 - x1);
             const dY = (y2 - y1);
-            return Math.sqrt(Math.abs(dX*dX) + Math.abs(dY*dY));
+            return Math.sqrt(Math.abs(dX * dX) + Math.abs(dY * dY));
         }
 
         var now = performance.now();
@@ -30,9 +30,9 @@ class NpcClass {
 
         const speed = (this.speed * timeRatio);
 
-        if(this.x !== this.destinationX || this.y !== this.destinationY) {
+        if (this.x !== this.destinationX || this.y !== this.destinationY) {
             const distance = getDistance(this.x, this.y, this.destinationX, this.destinationY);
-            if(speed >= distance) {
+            if (speed >= distance) {
                 this.setPosition(this.destinationX, this.destinationY);
             } else {
                 const ratio = speed / distance;
@@ -41,14 +41,14 @@ class NpcClass {
         }
     }
 
-    getId(){
+    getId() {
         return this.id;
     }
 
     setHp(hp) {
-        if(this.hp !== hp) {
+        if (this.hp !== hp) {
             this.hp = hp;
-            if(this.onhpchanged) {
+            if (this.onhpchanged) {
                 this.onhpchanged(this, hp);
             }
         }
@@ -59,19 +59,19 @@ class NpcClass {
     }
 
     setDestination(x, y) {
-        if(x < 0) {
+        if (x < 0) {
             x = 0;
         }
-        if(y < 0) {
+        if (y < 0) {
             y = 0;
         }
-        if(this.destinationX !== x || this.destinationY !== y) {
+        if (this.destinationX !== x || this.destinationY !== y) {
             this.destinationX = x;
             this.destinationY = y;
 
             this.direction = Math.atan2(this.destinationY - this.y, this.destinationX - this.x) / Math.PI * 180;
 
-            if(this.destinationchanged) {
+            if (this.destinationchanged) {
                 this.destinationchanged(this, this.destinationX, this.destinationY);
             }
         }
@@ -80,7 +80,7 @@ class NpcClass {
     isMoving() {
         return (this.destinationX !== this.x || this.destinationY !== this.y);
     }
-    
+
     getCurrentStatusFrame() {
         return undefined;
     }
@@ -102,30 +102,30 @@ class NpcClass {
     }
 
     setType(type) {
-        if(this.type !== type) {
+        if (this.type !== type) {
             this.type = type;
         }
     }
 
     setSpeed(speed) {
-        if(this.speed !== speed) {
+        if (this.speed !== speed) {
             this.speed = speed;
         }
     }
 
     setPosition(x, y) {
-        if(x < 0) {
+        if (x < 0) {
             x = 0;
         }
-        if(y < 0) {
+        if (y < 0) {
             y = 0;
         }
-        if(this.x !== x || this.y !== y) {
+        if (this.x !== x || this.y !== y) {
             this.x = x;
             this.y = y;
             this.right = this.x + this.width;
             this.bottom = this.y + this.height;
-            if(this.positionchanged) {
+            if (this.positionchanged) {
                 this.positionchanged(this, this.x, this.y);
             }
         }

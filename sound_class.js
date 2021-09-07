@@ -6,24 +6,17 @@ class SoundEffect {
         this.loadedAudios = 0;
 
         var self = this;
-        for(var i = 0; i < (bufferCount ? bufferCount : 20); i++) {
+        for (var i = 0; i < (bufferCount ? bufferCount : 20); i++) {
             var audio = new Audio();
             this.sounds.push(audio);
 
             audio.addEventListener("canplaythrough", function () {
                 self.loadedAudios++;
-            }, false); 
-            /*
-            audio.addEventListener("ended", function () {
-                if (window.chrome) audio.load();
-                audio.pause();
             }, false);
-            */
             audio.src = src;
             audio.loop = this.loop;
             audio.volume = this.volume;
             audio.load();
-            //document.body.appendChild(audio);
         }
     }
 
@@ -32,8 +25,8 @@ class SoundEffect {
     }
 
     play() {
-        for(var i = 0; i < this.sounds.length; i++) {
-            if(this.sounds[i].paused || this.sounds[i].ended) {
+        for (var i = 0; i < this.sounds.length; i++) {
+            if (this.sounds[i].paused || this.sounds[i].ended) {
                 this.sounds[i].play();
                 console.log(this.sounds[i].src + ' -> play');
                 break;
@@ -43,28 +36,28 @@ class SoundEffect {
 
     setVolume(volume) {
         this.volume = volume;
-        for(var i = 0; i < this.sounds.length; i++) {
+        for (var i = 0; i < this.sounds.length; i++) {
             this.sounds[i].volume = volume;
         }
     }
 
     setLoop(loop) {
         this.loop = loop
-        for(var i = 0; i < this.sounds.length; i++) {
+        for (var i = 0; i < this.sounds.length; i++) {
             this.sounds[i].loop = loop;
         }
     }
 
     setMuted(muted) {
         this.muted = muted
-        for(var i = 0; i < this.sounds.length; i++) {
+        for (var i = 0; i < this.sounds.length; i++) {
             this.sounds[i].muted = muted;
         }
     }
 }
 
 class SoundClass {
-    constructor() {        
+    constructor() {
         var self = this;
 
         /*
@@ -129,34 +122,34 @@ class SoundClass {
 
 
         this.loadedSounds = 0;
-        createjs.Sound.addEventListener("fileload", function(e) {
+        createjs.Sound.addEventListener("fileload", function (e) {
             console.log('fileload -> ' + e.src);
-            if(e.src === self.bgm) {
-                createjs.Sound.play(self.bgm, new createjs.PlayPropsConfig().set({interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.05}));
+            if (e.src === self.bgm) {
+                createjs.Sound.play(self.bgm, new createjs.PlayPropsConfig().set({ interrupt: createjs.Sound.INTERRUPT_ANY, loop: -1, volume: 0.05 }));
             }
             self.loadedSounds++;
         });
-        createjs.Sound.addEventListener("fileerror", function(e) {
+        createjs.Sound.addEventListener("fileerror", function (e) {
             console.log('fileerror -> ' + e.src);
             self.loadedSounds++;
         });
 
         createjs.Sound.registerSound(this.bgm, this.bgm);
-        for(var i = 0; i < this.stepSounds.length; i++) {
+        for (var i = 0; i < this.stepSounds.length; i++) {
             createjs.Sound.registerSound(this.stepSounds[i], this.stepSounds[i]);
         }
-        for(var i = 0; i < this.weaponSounds.length; i++) {
+        for (var i = 0; i < this.weaponSounds.length; i++) {
             var weaponSoundInfo = this.weaponSounds[this.weaponSounds[i]];
-            if(weaponSoundInfo) {
-                if(weaponSoundInfo.shoot) {
+            if (weaponSoundInfo) {
+                if (weaponSoundInfo.shoot) {
                     createjs.Sound.registerSound(weaponSoundInfo.shoot, weaponSoundInfo.shoot);
                 }
-                if(weaponSoundInfo.reload) {
+                if (weaponSoundInfo.reload) {
                     createjs.Sound.registerSound(weaponSoundInfo.reload, weaponSoundInfo.reload);
                 }
             }
         }
-        for(var i = 0; i < this.impactSounds.length; i++) {
+        for (var i = 0; i < this.impactSounds.length; i++) {
             createjs.Sound.registerSound(this.impactSounds[i], this.impactSounds[i]);
         }
     }
@@ -170,7 +163,7 @@ class SoundClass {
         return this.muted;
     }
 
-    toggleMuted(){
+    toggleMuted() {
         this.muted = !this.muted;
         createjs.Sound.muted = this.muted;
     }
@@ -212,35 +205,35 @@ class SoundClass {
     }
 
     playImpactSound(volume, pan) {
-        if(this.muted) {
+        if (this.muted) {
             return;
         }
 
         volume = volume ? volume : 1.0;
         pan = pan ? pan : 0;
 
-        createjs.Sound.play(this.impactSounds[Math.floor(Math.random() * this.impactSounds.length)], new createjs.PlayPropsConfig().set({volume: volume, pan: pan}));
+        createjs.Sound.play(this.impactSounds[Math.floor(Math.random() * this.impactSounds.length)], new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }));
     }
 
     playWeaponSound(playerClass, volume, pan) {
-        if(this.muted) {
+        if (this.muted) {
             return;
         }
 
         volume = volume ? volume : 0.5;
         pan = pan ? pan : 0;
 
-        switch(playerClass.getStatus()) {
+        switch (playerClass.getStatus()) {
             case 'shoot':
-                if(playerClass.getCurrentStatusFrame() == 0) {
+                if (playerClass.getCurrentStatusFrame() == 0) {
                     //this.weaponSounds[playerClass.getWeapon()].shoot.play();
-                    createjs.Sound.play(this.weaponSounds[playerClass.getWeapon()].shoot, new createjs.PlayPropsConfig().set({volume: volume, pan: pan}));
+                    createjs.Sound.play(this.weaponSounds[playerClass.getWeapon()].shoot, new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }));
                 }
                 break;
             case 'reload':
-                if(playerClass.getCurrentStatusFrame() == 0) {
+                if (playerClass.getCurrentStatusFrame() == 0) {
                     //this.weaponSounds[playerClass.getWeapon()].reload.play();
-                    createjs.Sound.play(this.weaponSounds[playerClass.getWeapon()].reload, new createjs.PlayPropsConfig().set({volume: volume, pan: pan}));
+                    createjs.Sound.play(this.weaponSounds[playerClass.getWeapon()].reload, new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }));
                 }
                 break;
         }
@@ -252,16 +245,16 @@ class SoundClass {
         //     this.bgm.play();
         // }
 
-        if(players) {
-            for(var i = 0; i < players.length; i++) {
+        if (players) {
+            for (var i = 0; i < players.length; i++) {
                 const player = players[players[i]];
-                if(player) {
-                    if(!player.isOtherPlayer()) {
-                        if(player.getSpeedX() !== 0 || player.getSpeedY() !== 0) {
+                if (player) {
+                    if (!player.isOtherPlayer()) {
+                        if (player.getSpeedX() !== 0 || player.getSpeedY() !== 0) {
                             var now = performance.now();
-                            if(now - this.lastStepPlayedTime > 300) {
+                            if (now - this.lastStepPlayedTime > 300) {
                                 this.lastStepPlayedTime = now;
-                                if(!this.muted) {
+                                if (!this.muted) {
                                     //this.stepSounds[(this.playedStepIndex++) % 2].play();
                                     createjs.Sound.play(this.stepSounds[(this.playedStepIndex++) % 2]);
                                 }

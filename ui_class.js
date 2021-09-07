@@ -16,16 +16,16 @@ class UserInterfaceClass {
 
     update(mapClass, players, npcs) {
         this.drawingContext.clearRect(0, 0, this.screenWidth, this.screenHeight);
-        if(debugClass.debugGraphicsVisible) {
+        if (debugClass.debugGraphicsVisible) {
             this.minimapInterfaceClass.drawUserInterface(this.drawingContext, mapClass, players, npcs);
         }
         this.userHUD.drawHUD(this.drawingContext, players);
 
-        if(this.infoHUDVisible) {
+        if (this.infoHUDVisible) {
             this.infoHUD.drawHUD(this.drawingContext, players);
         }
 
-        if(debugClass) {
+        if (debugClass) {
             debugClass.drawDebugInfo(this.drawingContext);
         }
     }
@@ -50,7 +50,7 @@ class InfoHUD {
 
         this.infoBoxWidth = (screenWidth * 0.5);
         this.infoBoxHeight = (screenHeight * 0.5);
-        this.infoBox = 
+        this.infoBox =
         {
             left: ((screenWidth - this.infoBoxWidth) / 2), top: ((screenHeight - this.infoBoxHeight) / 2),
             right: (screenWidth - ((screenWidth - this.infoBoxWidth) / 2)), bottom: (screenHeight - ((screenHeight - this.infoBoxHeight) / 2)),
@@ -68,9 +68,9 @@ class InfoHUD {
         drawingContext.textBaseline = 'top';
         drawingContext.textAlign = 'center';
         drawingContext.fillStyle = "white";
-        for(var i = 0; i < players.length; i++) {
+        for (var i = 0; i < players.length; i++) {
             const player = players[players[i]];
-            if(player) {
+            if (player) {
                 drawingContext.fillText(player.getPlayerDescription() + ', Kill: ' + player.getKill() + ', Death: ' + player.getDeath(), this.infoBox.left + (this.infoBox.width / 2), this.infoBox.top + (i * 20) + 20);
             }
         }
@@ -105,7 +105,7 @@ class UserHUD {
         this.images['handgun'].image = new Image();
         this.images['handgun'].image.src = 'images/weapons/handgun.png';
         this.images['handgun'].isLoaded = false;
-        this.images['handgun'].image.onload = function() {
+        this.images['handgun'].image.onload = function () {
             self.images['handgun'].isLoaded = true;
         };
 
@@ -113,7 +113,7 @@ class UserHUD {
         this.images['rifle'].image = new Image();
         this.images['rifle'].image.src = 'images/weapons/rifle.png';
         this.images['rifle'].isLoaded = false;
-        this.images['rifle'].image.onload = function() {
+        this.images['rifle'].image.onload = function () {
             self.images['rifle'].isLoaded = true;
         };
 
@@ -121,7 +121,7 @@ class UserHUD {
         this.images['shotgun'].image = new Image();
         this.images['shotgun'].image.src = 'images/weapons/shotgun.png';
         this.images['shotgun'].isLoaded = false;
-        this.images['shotgun'].image.onload = function() {
+        this.images['shotgun'].image.onload = function () {
             self.images['shotgun'].isLoaded = true;
         };
     }
@@ -131,13 +131,13 @@ class UserHUD {
     }
 
     drawHUD(drawingContext, players) {
-        for(var i = 0; i < players.length; i++) {
+        for (var i = 0; i < players.length; i++) {
             const player = players[players[i]];
-            if(player && !player.isOtherPlayer()) {
+            if (player && !player.isOtherPlayer()) {
 
                 const image = this.images[player.getWeapon()];
                 var imageHeight = 0;
-                if(image && image.isLoaded) {
+                if (image && image.isLoaded) {
                     drawingContext.drawImage(image.image, this.screenWidth - image.image.width, this.screenHeight - image.image.height);
                     imageHeight = image.image.height;
                 }
@@ -147,7 +147,7 @@ class UserHUD {
                 drawingContext.textAlign = 'right';
                 drawingContext.fillStyle = "white";
                 const ammoInfo = player.getCurrentAmmoInfo();
-                if(ammoInfo) {
+                if (ammoInfo) {
                     drawingContext.fillText(ammoInfo.currentAmmo + ' / ' + ammoInfo.maxAmmo, this.screenWidth - 10, this.screenHeight - image.image.height);
                 }
 
@@ -173,7 +173,7 @@ class MinimapInterfaceClass {
     }
 
     isVisible() {
-        if(this.visible !== undefined) {
+        if (this.visible !== undefined) {
             return this.visible;
         }
         else {
@@ -215,7 +215,7 @@ class MinimapInterfaceClass {
     }
 
     drawUserInterface(drawingContext, mapClass, players, npcs) {
-        if(this.isVisible()) {
+        if (this.isVisible()) {
             drawingContext.beginPath();
             drawingContext.fillStyle = '#313131C0';
             //drawingContext.roundedRect(this.x, this.y, this.minimapSize, this.minimapSize + 28, 5);
@@ -261,9 +261,9 @@ class MinimapInterfaceClass {
                 }
             }
 
-            for(var i = 0; i < npcs.length; i++) {
+            for (var i = 0; i < npcs.length; i++) {
                 const npc = npcs[npcs[i]];
-                if(npc) {
+                if (npc) {
                     var dotX = (npc.getCenterX() / worldWidth) * minimapInnerSize;
                     var dotY = (npc.getCenterY() / worldHeight) * minimapInnerSize;
 

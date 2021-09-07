@@ -8,18 +8,18 @@ class SpriteClass {
         this.image.src = src;
 
         var self = this;
-        this.image.onload = function() {
-            if(tileWidth && tileHeight) {
-                for(var y = 0; y < self.image.height; y += tileHeight) {
-                    for(var x = 0; x < self.image.width; x += tileWidth) {
+        this.image.onload = function () {
+            if (tileWidth && tileHeight) {
+                for (var y = 0; y < self.image.height; y += tileHeight) {
+                    for (var x = 0; x < self.image.width; x += tileWidth) {
                         self.spriteSrcPositions.push({ x: x, y: y });
                     }
                 }
 
-                if(!self.width) {
+                if (!self.width) {
                     self.width = tileWidth;
                 }
-                if(!self.height) {
+                if (!self.height) {
                     self.height = tileHeight;
                 }
             } else {
@@ -27,10 +27,10 @@ class SpriteClass {
                 self.tileHeight = self.image.height;
                 self.spriteSrcPositions.push({ x: 0, y: 0 });
 
-                if(!self.width) {
+                if (!self.width) {
                     self.width = self.image.width;
                 }
-                if(!self.height) {
+                if (!self.height) {
                     self.height = self.image.height;
                 }
             }
@@ -51,9 +51,9 @@ class SpriteClass {
     }
 
     drawSprite(drawingContext, x, y, frameIndex, width, height) {
-        if(this.isSpriteLoaded) {
+        if (this.isSpriteLoaded) {
             const srcSpritePosition = this.spriteSrcPositions[(frameIndex === undefined ? 0 : frameIndex)];
-            if(srcSpritePosition) {
+            if (srcSpritePosition) {
                 drawingContext.drawImage(this.image,
                     srcSpritePosition.x, srcSpritePosition.y, this.tileWidth, this.tileHeight,
                     x, y, (width ? width : this.tileWidth), (height ? height : this.tileHeight));
@@ -81,27 +81,27 @@ class CharacterSpriteClass {
         this.lastDrawTime = now;
 
         const frameCount = Math.floor(this.frameValue);
-        if(playerClass) {
+        if (playerClass) {
             const frameInfo = this.frameInfos[playerClass.getCharacter() % this.frameInfos.length];
             var frameIndex = 0;
-            if(frameInfo) {
-                switch(playerClass.getDirection()) {
+            if (frameInfo) {
+                switch (playerClass.getDirection()) {
                     case 'left':
-                        if(playerClass.getSpeedX() < 0) {
+                        if (playerClass.getSpeedX() < 0) {
                             frameIndex = frameInfo.work.left[(frameCount % frameInfo.work.left.length)];
                         } else {
                             frameIndex = frameInfo.stand.left[(frameCount % frameInfo.stand.left.length)];
                         }
                         break;
                     case 'up':
-                        if(playerClass.getSpeedY() < 0) {
+                        if (playerClass.getSpeedY() < 0) {
                             frameIndex = frameInfo.work.up[(frameCount % frameInfo.work.up.length)];
                         } else {
                             frameIndex = frameInfo.stand.up[(frameCount % frameInfo.stand.up.length)];
                         }
                         break;
                     case 'right':
-                        if(playerClass.getSpeedX() > 0) {
+                        if (playerClass.getSpeedX() > 0) {
                             frameIndex = frameInfo.work.right[(frameCount % frameInfo.work.right.length)];
                         } else {
                             frameIndex = frameInfo.stand.right[(frameCount % frameInfo.stand.right.length)];
@@ -109,7 +109,7 @@ class CharacterSpriteClass {
 
                         break;
                     case 'down':
-                        if(playerClass.getSpeedY() > 0) {
+                        if (playerClass.getSpeedY() > 0) {
                             frameIndex = frameInfo.work.down[(frameCount % frameInfo.work.down.length)];
                         } else {
                             frameIndex = frameInfo.stand.down[(frameCount % frameInfo.stand.down.length)];
@@ -127,27 +127,27 @@ class CharacterSpriteClass {
                 const scaledUserWidth = (playerClass.getWidth() * cameraZoom);
                 const scaledUserHeight = (playerClass.getHeight() * cameraZoom);
 
-                if(viewboxLeft < scaledUserX + scaledUserWidth && viewboxRight > scaledUserX && viewboxTop < scaledUserY + scaledUserHeight && viewboxBottom > scaledUserY) {
+                if (viewboxLeft < scaledUserX + scaledUserWidth && viewboxRight > scaledUserX && viewboxTop < scaledUserY + scaledUserHeight && viewboxBottom > scaledUserY) {
                     this.spriteClass.drawSprite(drawingContext,
                         playerClass.getPositionX() + ((playerClass.getWidth() - this.spriteClass.getTileWidth()) / 2) - viewboxLeft,
                         playerClass.getCenterY() - this.spriteClass.getTileHeight() - viewboxTop,
                         frameIndex, this.spriteClass.getTileWidth(), this.spriteClass.getTileHeight());
-                    
-                        
-                        drawingContext.beginPath();
-                        drawingContext.lineWidth = 2;
-                        drawingContext.strokeStyle = "black";
-                        drawingContext.arc(playerClass.getCenterX() - viewboxLeft, playerClass.getCenterY() - viewboxTop, 100, Math.PI * 0.0, Math.PI * 2, false);
-                        drawingContext.stroke();
-
-                        const angle = 0.0;
 
 
-                        drawingContext.beginPath();
-                        drawingContext.lineWidth = 5;
-                        drawingContext.strokeStyle = "orange";
-                        drawingContext.arc(playerClass.getCenterX() - viewboxLeft, playerClass.getCenterY() - viewboxTop, 100, Math.PI * (angle - 0.05), Math.PI * (angle + 0.05), false);
-                        drawingContext.stroke();
+                    drawingContext.beginPath();
+                    drawingContext.lineWidth = 2;
+                    drawingContext.strokeStyle = "black";
+                    drawingContext.arc(playerClass.getCenterX() - viewboxLeft, playerClass.getCenterY() - viewboxTop, 100, Math.PI * 0.0, Math.PI * 2, false);
+                    drawingContext.stroke();
+
+                    const angle = 0.0;
+
+
+                    drawingContext.beginPath();
+                    drawingContext.lineWidth = 5;
+                    drawingContext.strokeStyle = "orange";
+                    drawingContext.arc(playerClass.getCenterX() - viewboxLeft, playerClass.getCenterY() - viewboxTop, 100, Math.PI * (angle - 0.05), Math.PI * (angle + 0.05), false);
+                    drawingContext.stroke();
                 }
             }
         }
@@ -198,21 +198,21 @@ class SurvivorCharacterClass {
         this.isCharacterLoaded = false;
 
         var self = this;
-        for(var i = 0; i < this.characters.length; i++) {
+        for (var i = 0; i < this.characters.length; i++) {
             const weapon = this.characters[i];
-            if(this.characters[weapon]) {
-                for(var j = 0; j < this.characters[weapon].length; j++) {
+            if (this.characters[weapon]) {
+                for (var j = 0; j < this.characters[weapon].length; j++) {
                     const state = this.characters[weapon][j];
-                    if(this.characters[weapon][state]) {
+                    if (this.characters[weapon][state]) {
                         const frameInfo = this.characters[weapon][state];
                         this.totalImages += frameInfo.totalFrames;
-                        for(var k = 0; k < frameInfo.totalFrames; k++) {
+                        for (var k = 0; k < frameInfo.totalFrames; k++) {
                             var image = new Image();
                             image.src = frameInfo.baseSrc.replace('{index}', k + '');
                             frameInfo.images.push(image)
-                            image.onload = function() {
+                            image.onload = function () {
                                 self.loadedImages++;
-                                if(self.totalImages === self.loadedImages) {
+                                if (self.totalImages === self.loadedImages) {
                                     self.isCharacterLoaded = true;
                                 }
                             };
@@ -233,28 +233,28 @@ class SurvivorCharacterClass {
         this.lastDrawTime = now;
 
         const frameCount = Math.floor(this.frameValue);
-        if(playerClass) {
+        if (playerClass) {
 
             var characterInfo = this.characters[playerClass.getWeapon()];
-            if(!characterInfo) {
+            if (!characterInfo) {
                 characterInfo = this.characters['flashlight'];
             }
 
             var frameInfo = characterInfo['idle'];
-            switch(playerClass.getStatus()) {
+            switch (playerClass.getStatus()) {
                 case 'shoot':
                 case 'meleeattack':
                 case 'reload':
                     frameInfo = characterInfo[playerClass.getStatus()];
                     break;
                 default:
-                    if(playerClass.getSpeedX() !== 0 || playerClass.getSpeedY() !== 0) {
+                    if (playerClass.getSpeedX() !== 0 || playerClass.getSpeedY() !== 0) {
                         frameInfo = characterInfo['move'];
                     }
                     break;
             }
 
-            if(frameInfo) {
+            if (frameInfo) {
                 const viewboxLeft = cameraClass.getViewboxLeft();
                 const viewboxTop = cameraClass.getViewboxTop();
 
@@ -262,8 +262,8 @@ class SurvivorCharacterClass {
                 const userY = (playerClass.getPositionY());
                 const userWidth = (playerClass.getWidth());
                 const userHeight = (playerClass.getHeight());
-                
-                if(cameraClass.containsBox(userX, userY, userWidth, userHeight)) {
+
+                if (cameraClass.containsBox(userX, userY, userWidth, userHeight)) {
 
                     const currentStatusFrame = playerClass.getCurrentStatusFrame();
                     const img = frameInfo.images[(currentStatusFrame !== undefined ? currentStatusFrame : frameCount) % frameInfo.images.length];
@@ -317,21 +317,21 @@ class NpcCharacterClass {
         this.isCharacterLoaded = false;
 
         var self = this;
-        for(var i = 0; i < this.characters.length; i++) {
+        for (var i = 0; i < this.characters.length; i++) {
             const weapon = this.characters[i];
-            if(this.characters[weapon]) {
-                for(var j = 0; j < this.characters[weapon].length; j++) {
+            if (this.characters[weapon]) {
+                for (var j = 0; j < this.characters[weapon].length; j++) {
                     const state = this.characters[weapon][j];
-                    if(this.characters[weapon][state]) {
+                    if (this.characters[weapon][state]) {
                         const frameInfo = this.characters[weapon][state];
                         this.totalImages += frameInfo.totalFrames;
-                        for(var k = 0; k < frameInfo.totalFrames; k++) {
+                        for (var k = 0; k < frameInfo.totalFrames; k++) {
                             var image = new Image();
                             image.src = frameInfo.baseSrc.replace('{index}', k + '');
                             frameInfo.images.push(image)
-                            image.onload = function() {
+                            image.onload = function () {
                                 self.loadedImages++;
-                                if(self.totalImages === self.loadedImages) {
+                                if (self.totalImages === self.loadedImages) {
                                     self.isCharacterLoaded = true;
                                 }
                             };
@@ -353,17 +353,17 @@ class NpcCharacterClass {
 
         const frameCount = Math.floor(this.frameValue);
 
-        if(npcClass) {
+        if (npcClass) {
 
             var characterInfo = this.characters['skeleton'];
-            
+
             var frameInfo = characterInfo['idle'];
-            switch(npcClass.getStatus()) {
+            switch (npcClass.getStatus()) {
                 case 'meleeattack':
                     frameInfo = characterInfo[npcClass.getStatus()];
                     break;
                 default:
-                    if(npcClass.isMoving()) {
+                    if (npcClass.isMoving()) {
                         frameInfo = characterInfo['move'];
                     }
                     break;

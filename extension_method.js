@@ -1,4 +1,4 @@
-CanvasRenderingContext2D.prototype.roundedRect = function(x, y, width, height, radius) {
+CanvasRenderingContext2D.prototype.roundedRect = function (x, y, width, height, radius) {
     this.save();
     this.translate(x, y);
     this.moveTo(width / 2, 0);
@@ -12,13 +12,13 @@ CanvasRenderingContext2D.prototype.roundedRect = function(x, y, width, height, r
 
 
 CanvasRenderingContext2D.prototype.drawText = function drawText(font, text, x, y) {
-	if(text) {
-		if(font) {
-			this.font = font;
-		}
-		this.fillStyle = "black";
-		this.fillText(text, x + 1, y + 1);
-		this.fillStyle = "white";
+    if (text) {
+        if (font) {
+            this.font = font;
+        }
+        this.fillStyle = "black";
+        this.fillText(text, x + 1, y + 1);
+        this.fillStyle = "white";
         this.fillText(text, x, y);
-	}
+    }
 }

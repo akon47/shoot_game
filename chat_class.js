@@ -58,7 +58,7 @@ class ChatClass {
         });
 
         window.addEventListener('keydown', e => {
-            switch(e.keyCode) {
+            switch (e.keyCode) {
                 case KEYCODE_RETURN:
                     if (self.chatElement === document.activeElement) {
                         if (self.chatElement.value && self.chatElement.value.length > 0) {
@@ -75,10 +75,10 @@ class ChatClass {
             }
         }, false);
 
-        window.onresize = function() {
+        window.onresize = function () {
             self.updateSize();
         }
-        window.onorientationchange = function() {
+        window.onorientationchange = function () {
             self.updateSize();
         }
         this.updateSize();
@@ -88,7 +88,7 @@ class ChatClass {
 
     setVisible(visible) {
         const value = (visible ? 'visible' : 'hidden');
-        if(this.chatRootElement.style.visibility !== value) {
+        if (this.chatRootElement.style.visibility !== value) {
             this.chatRootElement.style.visibility = value;
         }
     }
@@ -106,14 +106,14 @@ class ChatClass {
         var chatWidth = 400;
         var chatHeight = 200;
         var margin = 5;
-        
+
         var scaleWidth = (this.canvas.offsetWidth / this.canvas.width);
         var scaleHeight = (this.canvas.offsetHeight / this.canvas.height);
 
         chatWidth *= scaleWidth;
         chatHeight *= scaleHeight;
 
-		this.chatRootElement.style.width = chatWidth + 'px';
+        this.chatRootElement.style.width = chatWidth + 'px';
         this.chatRootElement.style.height = chatHeight + 'px';
         this.chatRootElement.style.left = (this.canvas.offsetLeft + (margin * scaleWidth)) + 'px';
         this.chatRootElement.style.top = (this.canvas.offsetTop + this.canvas.offsetHeight - chatHeight - (margin * scaleHeight)) + 'px';

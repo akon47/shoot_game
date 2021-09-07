@@ -1,29 +1,29 @@
 const heads = document.getElementsByTagName('head');
 if (heads && heads.length > 0) {
     const requireScripts =
-    [
-        'system_class.js',
-        'extension_method.js',
-        'input_class.js',
-        'chat_class.js',
-        'lighting_class.js',
-        'ui_class.js',
-        'graphics_class.js',
-        'map_class.js',
-        'map_office.js',
-        'minimap_class.js',
-        'effect_class.js',
-        'particle_class.js',
-        'object_class.js',
-        'sprite_class.js',
-        'camera_class.js',
-        'sound_class.js',
-        'player_class.js',
-        'npc_class.js',
-        'weather_class.js',
-        'network_class.js',
-        'debug_class.js'
-    ];
+        [
+            'system_class.js',
+            'extension_method.js',
+            'input_class.js',
+            'chat_class.js',
+            'lighting_class.js',
+            'ui_class.js',
+            'graphics_class.js',
+            'map_class.js',
+            'map_office.js',
+            'minimap_class.js',
+            'effect_class.js',
+            'particle_class.js',
+            'object_class.js',
+            'sprite_class.js',
+            'camera_class.js',
+            'sound_class.js',
+            'player_class.js',
+            'npc_class.js',
+            'weather_class.js',
+            'network_class.js',
+            'debug_class.js'
+        ];
 
     for (var i = 0; i < requireScripts.length; i++) {
         var script = document.createElement('script');
@@ -36,7 +36,7 @@ if (heads && heads.length > 0) {
 
 let systemClass;
 
-window.onload = function() {
+window.onload = function () {
     $('html, body').css({
         height: '100%',
         width: '100%',
@@ -50,7 +50,7 @@ window.onload = function() {
     frameworkRootDiv.style.width = '100%';
     frameworkRootDiv.style.height = '100%';
 
-    if(frameworkRootDiv) {
+    if (frameworkRootDiv) {
         const canvas = document.createElement('canvas');
         canvas.width = 1280;
         canvas.height = 720;
@@ -73,9 +73,8 @@ window.onload = function() {
 
         const lightingCanvas = canvas.cloneNode(false);
         const uiCanvas = canvas.cloneNode(false);
-        //effectCanvas.style.zIndex = 2;
 
-        if(canvas.getContext) {
+        if (canvas.getContext) {
             frameworkRootDiv.appendChild(canvas);
             frameworkRootDiv.appendChild(uiCanvas);
 
@@ -93,11 +92,11 @@ function setCookie(name, value, exp) {
     document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
 };
 
-function getCookie (name) {
+function getCookie(name) {
     var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
     return value ? value[2] : null;
 };
 
 function isMobile() {
-	return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }

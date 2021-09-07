@@ -7,7 +7,7 @@ class WeatherClass {
     }
 
     drawWeather(drawingContext) {
-        if(this.weather) {
+        if (this.weather) {
             this.weather.drawWeather(drawingContext);
         }
     }
@@ -52,7 +52,7 @@ class SnowWeatherClass {
     drawWeather(drawingContext) {
         var requireNextFrame = false;
         const now = performance.now();
-        if( ((now - this.lastDrawTime) > (1000 / this.fps))) {
+        if (((now - this.lastDrawTime) > (1000 / this.fps))) {
             requireNextFrame = ((now - this.lastDrawTime) > (1000 / this.fps));
             this.lastDrawTime = now;
         }
@@ -62,7 +62,7 @@ class SnowWeatherClass {
 
         for (var i = 0; i < this.snowArray.length; ++i) {
             var f = this.snowArray[i];
-            if(requireNextFrame) {
+            if (requireNextFrame) {
                 f.t += .05;
                 f.t = f.t >= Math.PI * 2 ? 0 : f.t;
                 f.y += f.sp;
@@ -79,9 +79,9 @@ class SnowWeatherClass {
             }
             f.draw(drawingContext);
         }
-        
 
-        
+
+
     }
 
 }

@@ -21,7 +21,7 @@ class SightEffectClass {
     }
 
     drawSightLighting(drawingContext) {
-        if(!debugClass.debugGraphicsVisible) {
+        if (!debugClass.debugGraphicsVisible) {
             drawingContext.save();
             drawingContext.resetTransform();
             drawingContext.globalCompositeOperation = 'multiply';
@@ -33,7 +33,7 @@ class SightEffectClass {
     }
 
     clipSight(drawingContext) {
-        if(this.sightIntersects) {
+        if (this.sightIntersects) {
             drawingContext.beginPath();
             drawingContext.moveTo(this.sightCenterX, this.sightCenterY);
             for (var j = 0; j < this.sightIntersects.length; j++) {
@@ -47,14 +47,13 @@ class SightEffectClass {
     updateSight(players, cameraClass, objectClass, mapClass) {
 
         this.sightDrawingContext.save();
-        if(cameraClass.getRotate() !== 0) {
+        if (cameraClass.getRotate() !== 0) {
             this.sightDrawingContext.translate(this.screenWidth / 2, this.screenHeight / 2);
             this.sightDrawingContext.rotate(cameraClass.getRotate());
             this.sightDrawingContext.translate(-this.screenWidth / 2, -this.screenHeight / 2);
         }
 
         const range = 700;
-        //const darkness = 0.95;
         const darkness = 0.9;
 
         this.sightDrawingContext.globalCompositeOperation = 'copy';
@@ -65,15 +64,15 @@ class SightEffectClass {
         this.sightDrawingContext.globalCompositeOperation = 'lighter';
 
         var segments = [];
-        if(objectClass) {
+        if (objectClass) {
             const seg = objectClass.getSegments(cameraClass, range * 2);
-            if(seg) {
+            if (seg) {
                 segments = segments.concat(seg);
             }
         }
-        if(mapClass) {
+        if (mapClass) {
             const seg = mapClass.getSegments(cameraClass, range * 2);
-            if(seg) {
+            if (seg) {
                 segments = segments.concat(seg);
             }
         }
@@ -310,30 +309,30 @@ class SightEffectClass {
             drawingContext.arc(intersect.x, intersect.y, 2, 0, 2 * Math.PI, false);
             drawingContext.fill();
         }
-        
+
     }
 
     getSightPolygon(player, cameraClass, segments, lightDegreeRange) {
-        function getRayIntersection(ray, segment){
+        function getRayIntersection(ray, segment) {
             // RAY in parametric: Point + Direction*T1
             var r_px = ray.a.x;
             var r_py = ray.a.y;
             var r_dx = ray.b.x - ray.a.x;
             var r_dy = ray.b.y - ray.a.y;
-        
+
             // SEGMENT in parametric: Point + Direction*T2
             var s_px = segment.a.x;
             var s_py = segment.a.y;
             var s_dx = segment.b.x - segment.a.x;
             var s_dy = segment.b.y - segment.a.y;
-        
+
             // 두 선이 평행하다면 접점 존재하지 않음.
             var r_mag = Math.sqrt(r_dx * r_dx + r_dy * r_dy);
             var s_mag = Math.sqrt(s_dx * s_dx + s_dy * s_dy);
             if (r_dx / r_mag == s_dx / s_mag && r_dy / r_mag == s_dy / s_mag) { // 기울기 같음
                 return null;
             }
-        
+
             // SOLVE FOR T1 & T2
             // r_px+r_dx*T1 = s_px+s_dx*T2 && r_py+r_dy*T1 = s_py+s_dy*T2
             // ==> T1 = (s_px+s_dx*T2-r_px)/r_dx = (s_py+s_dy*T2-r_py)/r_dy
@@ -341,11 +340,11 @@ class SightEffectClass {
             // ==> T2 = (r_dx*(s_py-r_py) + r_dy*(r_px-s_px))/(s_dx*r_dy - s_dy*r_dx)
             var T2 = (r_dx * (s_py - r_py) + r_dy * (r_px - s_px)) / (s_dx * r_dy - s_dy * r_dx);
             var T1 = (s_px + s_dx * T2 - r_px) / r_dx;
-        
+
             // Must be within parametic whatevers for RAY/SEGMENT
             if (T1 < 0) return null;
             if (T2 < 0 || T2 > 1) return null;
-        
+
             // Return the POINT OF INTERSECTION
             return {
                 x: r_px + r_dx * T1,
@@ -356,7 +355,7 @@ class SightEffectClass {
 
         var rayX = player.getCenterX() - cameraClass.getViewboxLeft();
         var rayY = player.getCenterY() - cameraClass.getViewboxTop();
-    
+
         // Get all unique points
         var points = (function (segments) {
             var a = [];
@@ -386,28 +385,28 @@ class SightEffectClass {
             //uniquePoint.angle = angle;
             uniqueAngles.push(angle - 0.00001, angle, angle + 0.00001);
         }
-    
+
         var postEvent = undefined;
 
         var startAngle = (Math.PI / 180 * (-lightDegreeRange + (player.getDirection() % 360)));
         var endAngle = (Math.PI / 180 * (lightDegreeRange + (player.getDirection() % 360)));
-        if(startAngle < -Math.PI) {
+        if (startAngle < -Math.PI) {
             startAngle += (Math.PI * 2);
-            postEvent = function(intersects) {
+            postEvent = function (intersects) {
                 const offset = (Math.PI * 2);
                 for (var j = 0; j < intersects.length; j++) {
-                    if(intersects[j].angle > 0) {
+                    if (intersects[j].angle > 0) {
                         intersects[j].angle -= offset;
                     }
                 }
             }
-       }
-        if(endAngle > Math.PI) {
+        }
+        if (endAngle > Math.PI) {
             endAngle -= (Math.PI * 2);
-            postEvent = function(intersects) {
+            postEvent = function (intersects) {
                 const offset = (Math.PI * 2);
                 for (var j = 0; j < intersects.length; j++) {
-                    if(intersects[j].angle < 0) {
+                    if (intersects[j].angle < 0) {
                         intersects[j].angle += offset;
                     }
                 }
@@ -416,7 +415,7 @@ class SightEffectClass {
 
         uniqueAngles.push(startAngle);
         uniqueAngles.push(endAngle);
-    
+
         var intersects = [];
         for (var j = 0; j < uniqueAngles.length; j++) {
             var angle = uniqueAngles[j];
@@ -424,9 +423,9 @@ class SightEffectClass {
             if ((startAngle < endAngle ? (startAngle <= angle && angle <= endAngle) : (startAngle <= angle || angle <= endAngle))) {
                 var dx = Math.cos(angle);
                 var dy = Math.sin(angle);
-    
+
                 var ray = { a: { x: rayX, y: rayY }, b: { x: rayX + dx, y: rayY + dy } };
-    
+
                 var closestIntersect = null;
                 for (var i = 0; i < segments.length; i++) {
                     var intersect = getRayIntersection(ray, segments[i]);
@@ -440,13 +439,13 @@ class SightEffectClass {
                 intersects.push(closestIntersect);
             }
         }
-        if(postEvent) {
+        if (postEvent) {
             postEvent(intersects);
         }
         intersects = intersects.sort(function (a, b) {
             return a.angle - b.angle;
         });
-    
+
         return intersects;
     }
 }

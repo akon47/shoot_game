@@ -4,6 +4,6 @@ class MinimapClass {
     }
 
     drawMinimap(drawingContext) {
-        
+
     }
 }

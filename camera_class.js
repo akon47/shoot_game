@@ -20,12 +20,12 @@ class CameraClass {
         this.viewboxWidth = (this.screenWidth / this.cameraZoom);
         this.viewboxHeight = (this.screenHeight / this.cameraZoom);
 
-        if(this.cameraX < (this.viewboxWidth / 2)) {
+        if (this.cameraX < (this.viewboxWidth / 2)) {
             const x = (this.viewboxWidth / 2);
             this.viewboxLeft = (x - (this.viewboxWidth / 2));
             this.viewboxRight = (x + (this.viewboxWidth / 2));
             this.viewboxCenterX = x;
-        } else if(this.limitX && this.cameraX > (this.limitX - (this.viewboxWidth / 2))) {
+        } else if (this.limitX && this.cameraX > (this.limitX - (this.viewboxWidth / 2))) {
             const x = (this.limitX - (this.viewboxWidth / 2));
             this.viewboxLeft = (x - (this.viewboxWidth / 2));
             this.viewboxRight = (x + (this.viewboxWidth / 2));
@@ -36,12 +36,12 @@ class CameraClass {
             this.viewboxCenterX = this.cameraX;
         }
 
-        if(this.cameraY < (this.viewboxHeight / 2)) {
+        if (this.cameraY < (this.viewboxHeight / 2)) {
             const y = (this.viewboxHeight / 2);
             this.viewboxTop = (y - (this.viewboxHeight / 2));
             this.viewboxBottom = (y + (this.viewboxHeight / 2));
             this.viewboxCenterY = y;
-        } else if(this.limitY && this.cameraY > (this.limitY - (this.viewboxHeight / 2))) {
+        } else if (this.limitY && this.cameraY > (this.limitY - (this.viewboxHeight / 2))) {
             const y = (this.limitY - (this.viewboxHeight / 2));
             this.viewboxTop = (y - (this.viewboxHeight / 2));
             this.viewboxBottom = (y + (this.viewboxHeight / 2));
@@ -61,7 +61,7 @@ class CameraClass {
     }
 
     setRotate(rotate) {
-        if(this.rotate !== rotate) {
+        if (this.rotate !== rotate) {
             this.rotate = rotate;
         }
     }
@@ -128,21 +128,21 @@ class CameraClass {
     }
 
     containsPlayer(playerClass) {
-        if(playerClass) {
+        if (playerClass) {
             return true;
         }
         return false;
     }
 
     containsNpc(npcClass) {
-        if(npcClass) {
+        if (npcClass) {
             return true;
         }
         return false;
     }
 
     containsBox(x, y, width, height) {
-        if(this.rotate === 0) {
+        if (this.rotate === 0) {
             return (this.viewboxLeft < x + width && this.viewboxRight > x && this.viewboxTop < y + height && this.viewboxBottom > y);
         } else {
             return (this.circumscriptionRect.left < x + width && this.circumscriptionRect.right > x && this.circumscriptionRect.top < y + height && this.circumscriptionRect.bottom > y);
