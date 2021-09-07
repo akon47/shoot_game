@@ -36,7 +36,7 @@ class SightEffectClass {
         if (this.sightIntersects) {
             drawingContext.beginPath();
             drawingContext.moveTo(this.sightCenterX, this.sightCenterY);
-            for (var j = 0; j < this.sightIntersects.length; j++) {
+            for (let j = 0; j < this.sightIntersects.length; j++) {
                 var intersect = this.sightIntersects[j];
                 drawingContext.lineTo(intersect.x, intersect.y);
             }
@@ -78,7 +78,7 @@ class SightEffectClass {
         }
 
         if (players) {
-            for (var i = 0; i < players.length; i++) {
+            for (let i = 0; i < players.length; i++) {
                 const player = players[players[i]];
                 if (player && !player.isOtherPlayer()) {
                     var x = player.getCenterX() - cameraClass.getViewboxLeft();
@@ -104,7 +104,7 @@ class SightEffectClass {
 
                         this.sightDrawingContext.beginPath();
                         this.sightDrawingContext.moveTo(x, y);
-                        for (var j = 0; j < this.sightIntersects.length; j++) {
+                        for (let j = 0; j < this.sightIntersects.length; j++) {
                             var intersect = this.sightIntersects[j];
                             this.sightDrawingContext.lineTo(intersect.x, intersect.y);
                         }
@@ -286,7 +286,7 @@ class SightEffectClass {
         drawingContext.fillStyle = "rgba(255, 255, 0, 0.3)";
         drawingContext.beginPath();
         drawingContext.moveTo(x, y);
-        for (var j = 0; j < intersects.length; j++) {
+        for (let j = 0; j < intersects.length; j++) {
             var intersect = intersects[j];
             drawingContext.lineTo(intersect.x, intersect.y);
         }
@@ -294,7 +294,7 @@ class SightEffectClass {
 
         // debug line
         drawingContext.strokeStyle = "rgba(80, 80, 80, 0.3)";
-        for (var j = 0; j < intersects.length; j++) {
+        for (let j = 0; j < intersects.length; j++) {
             var intersect = intersects[j];
             drawingContext.beginPath();
             drawingContext.moveTo(x, y);
@@ -303,7 +303,7 @@ class SightEffectClass {
         }
 
         drawingContext.fillStyle = "rgba(255, 0, 0, 0.3)";
-        for (var j = 0; j < intersects.length; j++) {
+        for (let j = 0; j < intersects.length; j++) {
             var intersect = intersects[j];
             drawingContext.beginPath();
             drawingContext.arc(intersect.x, intersect.y, 2, 0, 2 * Math.PI, false);
@@ -379,7 +379,7 @@ class SightEffectClass {
 
         // Get all angles
         var uniqueAngles = [];
-        for (var j = 0; j < uniquePoints.length; j++) {
+        for (let j = 0; j < uniquePoints.length; j++) {
             var uniquePoint = uniquePoints[j];
             var angle = Math.atan2(uniquePoint.y - rayY, uniquePoint.x - rayX);
             //uniquePoint.angle = angle;
@@ -394,7 +394,7 @@ class SightEffectClass {
             startAngle += (Math.PI * 2);
             postEvent = function (intersects) {
                 const offset = (Math.PI * 2);
-                for (var j = 0; j < intersects.length; j++) {
+                for (let j = 0; j < intersects.length; j++) {
                     if (intersects[j].angle > 0) {
                         intersects[j].angle -= offset;
                     }
@@ -405,7 +405,7 @@ class SightEffectClass {
             endAngle -= (Math.PI * 2);
             postEvent = function (intersects) {
                 const offset = (Math.PI * 2);
-                for (var j = 0; j < intersects.length; j++) {
+                for (let j = 0; j < intersects.length; j++) {
                     if (intersects[j].angle < 0) {
                         intersects[j].angle += offset;
                     }
@@ -417,7 +417,7 @@ class SightEffectClass {
         uniqueAngles.push(endAngle);
 
         var intersects = [];
-        for (var j = 0; j < uniqueAngles.length; j++) {
+        for (let j = 0; j < uniqueAngles.length; j++) {
             var angle = uniqueAngles[j];
 
             if ((startAngle < endAngle ? (startAngle <= angle && angle <= endAngle) : (startAngle <= angle || angle <= endAngle))) {
@@ -427,7 +427,7 @@ class SightEffectClass {
                 var ray = { a: { x: rayX, y: rayY }, b: { x: rayX + dx, y: rayY + dy } };
 
                 var closestIntersect = null;
-                for (var i = 0; i < segments.length; i++) {
+                for (let i = 0; i < segments.length; i++) {
                     var intersect = getRayIntersection(ray, segments[i]);
                     if (!intersect) continue;
                     if (!closestIntersect || intersect.param < closestIntersect.param) {

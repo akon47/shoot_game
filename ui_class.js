@@ -68,10 +68,10 @@ class InfoHUD {
         drawingContext.textBaseline = 'top';
         drawingContext.textAlign = 'center';
         drawingContext.fillStyle = "white";
-        for (var i = 0; i < players.length; i++) {
+        for (let i = 0; i < players.length; i++) {
             const player = players[players[i]];
             if (player) {
-                drawingContext.fillText(player.getPlayerDescription() + ', Kill: ' + player.getKill() + ', Death: ' + player.getDeath(), this.infoBox.left + (this.infoBox.width / 2), this.infoBox.top + (i * 20) + 20);
+                drawingContext.fillText(player.getPlayerDescription() + ', Kill: ' + player.getKill() + ', Death: ' + player.getDeath(), this.infoBox.left + (this.infoBox.width / 2), this.infoBox.top + (i * 23) + 20);
             }
         }
 
@@ -131,12 +131,12 @@ class UserHUD {
     }
 
     drawHUD(drawingContext, players) {
-        for (var i = 0; i < players.length; i++) {
+        for (let i = 0; i < players.length; i++) {
             const player = players[players[i]];
             if (player && !player.isOtherPlayer()) {
 
                 const image = this.images[player.getWeapon()];
-                var imageHeight = 0;
+                let imageHeight = 0;
                 if (image && image.isLoaded) {
                     drawingContext.drawImage(image.image, this.screenWidth - image.image.width, this.screenHeight - image.image.height);
                     imageHeight = image.image.height;
@@ -240,13 +240,13 @@ class MinimapInterfaceClass {
             drawingContext.textBaseline = 'top';
             drawingContext.textAlign = 'right';
 
-            for (var i = 0; i < players.length; i++) {
+            for (let i = 0; i < players.length; i++) {
                 const player = players[players[i]];
                 if (player) {
                     drawingContext.beginPath();
                     drawingContext.fillStyle = player.isOtherPlayer() ? 'blue' : 'red';
-                    var dotX = (player.getCenterX() / worldWidth) * minimapInnerSize;
-                    var dotY = (player.getCenterY() / worldHeight) * minimapInnerSize;
+                    const dotX = (player.getCenterX() / worldWidth) * minimapInnerSize;
+                    const dotY = (player.getCenterY() / worldHeight) * minimapInnerSize;
                     drawingContext.rect(this.x + dotX + 10, this.y + dotY + 10, 3, 3);
                     drawingContext.fill();
 
@@ -261,7 +261,7 @@ class MinimapInterfaceClass {
                 }
             }
 
-            for (var i = 0; i < npcs.length; i++) {
+            for (let i = 0; i < npcs.length; i++) {
                 const npc = npcs[npcs[i]];
                 if (npc) {
                     var dotX = (npc.getCenterX() / worldWidth) * minimapInnerSize;

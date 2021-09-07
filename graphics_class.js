@@ -83,7 +83,7 @@ class GraphicsClass {
             this.sightEffectClass.updateSight(players, this.cameraClass, this.objectClass, this.mapClass);
 
             if (players) {
-                for (var i = 0; i < players.length; i++) {
+                for (let i = 0; i < players.length; i++) {
                     const player = players[players[i]];
                     if (player && !player.isOtherPlayer()) {
                         this.survivorCharacterClass.drawCharacter(this.drawingContext, player, this.cameraClass, this.screenWidth, this.screenHeight);
@@ -100,7 +100,7 @@ class GraphicsClass {
         }
 
         if (players) {
-            for (var i = 0; i < players.length; i++) {
+            for (let i = 0; i < players.length; i++) {
                 const player = players[players[i]];
                 if (player && player.isOtherPlayer() && this.cameraClass.containsPlayer(player)) {
                     this.survivorCharacterClass.drawCharacter(this.drawingContext, player, this.cameraClass, this.screenWidth, this.screenHeight);
@@ -109,7 +109,7 @@ class GraphicsClass {
         }
 
         if (npcs) {
-            for (var i = 0; i < npcs.length; i++) {
+            for (let i = 0; i < npcs.length; i++) {
                 const npc = npcs[npcs[i]];
                 if (npc && this.cameraClass.containsNpc(npc)) {
                     this.npcCharacterClass.drawCharacter(this.drawingContext, npc, this.cameraClass);
@@ -143,7 +143,7 @@ class GraphicsClass {
 
     drawBullet(players) {
         if (players) {
-            for (var i = 0; i < players.length; i++) {
+            for (let i = 0; i < players.length; i++) {
                 const player = players[players[i]];
                 if (player && player.getStatus() === 'shoot' && player.getCurrentStatusFrame() === 0) {
                     const shootInfo = player.getShootInfo();

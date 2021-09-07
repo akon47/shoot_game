@@ -25,7 +25,7 @@ if (heads && heads.length > 0) {
             'debug_class.js'
         ];
 
-    for (var i = 0; i < requireScripts.length; i++) {
+    for (let i = 0; i < requireScripts.length; i++) {
         var script = document.createElement('script');
         script.setAttribute('type', 'text/javascript');
         script.setAttribute('src', requireScripts[i]);

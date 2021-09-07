@@ -32,11 +32,11 @@ class SnowWeatherClass {
         }
 
         this.snowArray = [];
-        var num = 100, sp = 1;
-        var sc = 1.3, min = 1;
+        const num = 100, sp = 1;
+        const sc = 1.3, min = 1;
 
-        for (var i = 0; i < num; i++) {
-            var snow = new Flake();
+        for (let i = 0; i < num; i++) {
+            let snow = new Flake();
             snow.y = Math.random() * (this.screenHeight + 50);
             snow.x = Math.random() * this.screenWidth;
             snow.t = Math.random() * (Math.PI * 2);
@@ -50,7 +50,7 @@ class SnowWeatherClass {
     }
 
     drawWeather(drawingContext) {
-        var requireNextFrame = false;
+        let requireNextFrame = false;
         const now = performance.now();
         if (((now - this.lastDrawTime) > (1000 / this.fps))) {
             requireNextFrame = ((now - this.lastDrawTime) > (1000 / this.fps));
@@ -60,8 +60,8 @@ class SnowWeatherClass {
         const tsc = 1;
         const mv = 20;
 
-        for (var i = 0; i < this.snowArray.length; ++i) {
-            var f = this.snowArray[i];
+        for (let i = 0; i < this.snowArray.length; ++i) {
+            let f = this.snowArray[i];
             if (requireNextFrame) {
                 f.t += .05;
                 f.t = f.t >= Math.PI * 2 ? 0 : f.t;
@@ -79,9 +79,5 @@ class SnowWeatherClass {
             }
             f.draw(drawingContext);
         }
-
-
-
     }
-
 }

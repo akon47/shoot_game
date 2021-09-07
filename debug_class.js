@@ -39,7 +39,7 @@ class DebugClass {
         drawingContext.textBaseline = 'top';
         drawingContext.textAlign = 'left';
         drawingContext.fillStyle = "white";
-        for (var i = 0; i < debugTexts.length; i++) {
+        for (let i = 0; i < debugTexts.length; i++) {
             drawingContext.fillText(debugTexts[i], 3, 3 + (12 * i));
         }
     }

@@ -64,10 +64,10 @@ class PlayerClass {
         if (hitBoxes) {
             var playerHitBoxes = this.getHitBoxes();
             if (playerHitBoxes) {
-                for (var j = 0; j < playerHitBoxes.length; j++) {
+                for (let j = 0; j < playerHitBoxes.length; j++) {
                     var playerHitBox = playerHitBoxes[j];
                     if (playerHitBox) {
-                        for (var k = 0; k < hitBoxes.length; k++) {
+                        for (let k = 0; k < hitBoxes.length; k++) {
                             var hitBox = hitBoxes[k];
                             if (hitBox) {
                                 if (offsetX !== 0) {
@@ -272,7 +272,7 @@ class PlayerClass {
                 { a: { x: hitBox.left, y: hitBox.top }, b: { x: hitBox.left, y: hitBox.bottom } }
             ];
         if (cameraClass) {
-            for (var i = 0; i < result.length; i++) {
+            for (let i = 0; i < result.length; i++) {
                 result[i].a.x -= cameraClass.getViewboxLeft();
                 result[i].b.x -= cameraClass.getViewboxLeft();
                 result[i].a.y -= cameraClass.getViewboxTop();

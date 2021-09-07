@@ -10,8 +10,8 @@ class SpriteClass {
         var self = this;
         this.image.onload = function () {
             if (tileWidth && tileHeight) {
-                for (var y = 0; y < self.image.height; y += tileHeight) {
-                    for (var x = 0; x < self.image.width; x += tileWidth) {
+                for (let y = 0; y < self.image.height; y += tileHeight) {
+                    for (let x = 0; x < self.image.width; x += tileWidth) {
                         self.spriteSrcPositions.push({ x: x, y: y });
                     }
                 }
@@ -198,15 +198,15 @@ class SurvivorCharacterClass {
         this.isCharacterLoaded = false;
 
         var self = this;
-        for (var i = 0; i < this.characters.length; i++) {
+        for (let i = 0; i < this.characters.length; i++) {
             const weapon = this.characters[i];
             if (this.characters[weapon]) {
-                for (var j = 0; j < this.characters[weapon].length; j++) {
+                for (let j = 0; j < this.characters[weapon].length; j++) {
                     const state = this.characters[weapon][j];
                     if (this.characters[weapon][state]) {
                         const frameInfo = this.characters[weapon][state];
                         this.totalImages += frameInfo.totalFrames;
-                        for (var k = 0; k < frameInfo.totalFrames; k++) {
+                        for (let k = 0; k < frameInfo.totalFrames; k++) {
                             var image = new Image();
                             image.src = frameInfo.baseSrc.replace('{index}', k + '');
                             frameInfo.images.push(image)
@@ -317,15 +317,15 @@ class NpcCharacterClass {
         this.isCharacterLoaded = false;
 
         var self = this;
-        for (var i = 0; i < this.characters.length; i++) {
+        for (let i = 0; i < this.characters.length; i++) {
             const weapon = this.characters[i];
             if (this.characters[weapon]) {
-                for (var j = 0; j < this.characters[weapon].length; j++) {
+                for (let j = 0; j < this.characters[weapon].length; j++) {
                     const state = this.characters[weapon][j];
                     if (this.characters[weapon][state]) {
                         const frameInfo = this.characters[weapon][state];
                         this.totalImages += frameInfo.totalFrames;
-                        for (var k = 0; k < frameInfo.totalFrames; k++) {
+                        for (let k = 0; k < frameInfo.totalFrames; k++) {
                             var image = new Image();
                             image.src = frameInfo.baseSrc.replace('{index}', k + '');
                             frameInfo.images.push(image)

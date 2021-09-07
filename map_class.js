@@ -23,7 +23,7 @@ class MapClass {
     getPlaceableRandomPosition() {
         var self = this;
         function isWall(x, y) {
-            for (var i = 0; i < self.wall_tiles.length; i++) {
+            for (let i = 0; i < self.wall_tiles.length; i++) {
                 if (self.wall_tiles[i] === self.data[(y * self.width) + x]) {
                     return true;
                 }
@@ -54,7 +54,7 @@ class MapClass {
         var segments = [];
         if (hitBoxes) {
             var tempSegments = [];
-            for (var i = 0; i < hitBoxes.length; i++) {
+            for (let i = 0; i < hitBoxes.length; i++) {
                 const hitBox = hitBoxes[i];
                 if (hitBox) {
                     tempSegments.push(
@@ -66,7 +66,7 @@ class MapClass {
                 }
             }
 
-            for (var i = 0; i < tempSegments.length; i++) {
+            for (let i = 0; i < tempSegments.length; i++) {
                 if (tempSegments[i].valid) {
                     const slopeSrc = getSlope(tempSegments[i]);
                     const interceptYSrc = (tempSegments[i].a.y - (tempSegments[i].a.x * slopeSrc));
@@ -75,7 +75,7 @@ class MapClass {
                     const rightSrc = Math.max(tempSegments[i].a.x, tempSegments[i].b.x);
                     const bottomSrc = Math.max(tempSegments[i].a.y, tempSegments[i].b.y);
 
-                    for (var j = 0; j < tempSegments.length; j++) {
+                    for (let j = 0; j < tempSegments.length; j++) {
                         if (i !== j && tempSegments[j].valid) {
                             // tempSegments[i] 안에 tempSegments[j] 가 포함되는지 검사 후 valid 체크
                             const slopeDest = getSlope(tempSegments[j]);
@@ -101,7 +101,7 @@ class MapClass {
                 }
             }
 
-            for (var i = 0; i < tempSegments.length; i++) {
+            for (let i = 0; i < tempSegments.length; i++) {
                 if (tempSegments[i].valid) {
                     segments.push(tempSegments[i]);
                 }
@@ -113,7 +113,7 @@ class MapClass {
     findHitBoxes() {
         var self = this;
         function isWall(x, y) {
-            for (var i = 0; i < self.wall_tiles.length; i++) {
+            for (let i = 0; i < self.wall_tiles.length; i++) {
                 if (self.wall_tiles[i] === self.data[(y * self.width) + x]) {
                     return true;
                 }
@@ -123,7 +123,7 @@ class MapClass {
 
         function findLeftTopRight(findedHitbox) {
             function containsHitboxs(x, y) {
-                for (var i = 0; i < findedHitbox.length; i++) {
+                for (let i = 0; i < findedHitbox.length; i++) {
                     if (x >= findedHitbox[i].left && x <= findedHitbox[i].right && y >= findedHitbox[i].top && y <= findedHitbox[i].bottom) {
                         return true;
                     }
@@ -131,12 +131,12 @@ class MapClass {
                 return false;
             }
 
-            for (var y = 0; y < self.height; y++) {
-                for (var x = 0; x < self.width; x++) {
+            for (let y = 0; y < self.height; y++) {
+                for (let x = 0; x < self.width; x++) {
                     if (!containsHitboxs(x, y) && isWall(x, y)) {
                         const left = x;
                         const top = y;
-                        for (var r = (x + 1); r < self.width; r++) {
+                        for (let r = (x + 1); r < self.width; r++) {
                             if (containsHitboxs(r, y) || !isWall(r, y)) {
                                 return { left: x, top: y, right: (r - 1) };
                             }
@@ -157,8 +157,8 @@ class MapClass {
         }
 
         function findBottom(leftTopRight) {
-            for (var y = (leftTopRight.top + 1); y < self.height; y++) {
-                for (var x = leftTopRight.left; x <= leftTopRight.right; x++) {
+            for (let y = (leftTopRight.top + 1); y < self.height; y++) {
+                for (let x = leftTopRight.left; x <= leftTopRight.right; x++) {
                     if (!isWall(x, y)) {
                         return (y - 1);
                     }
@@ -294,7 +294,7 @@ class MapClass {
     drawLowQualityTile(drawingContext, tileX, tileY, x, y, width, height) {
         var self = this;
         function isWall(x, y) {
-            for (var i = 0; i < self.wall_tiles.length; i++) {
+            for (let i = 0; i < self.wall_tiles.length; i++) {
                 if (self.wall_tiles[i] === self.data[(y * self.width) + x]) {
                     return true;
                 }
@@ -331,7 +331,7 @@ class MapClass {
                 drawingContext.fill();
 
                 drawingContext.fillStyle = 'black';
-                for (var i = 0; i < this.hitBoxes.length; i++) {
+                for (let i = 0; i < this.hitBoxes.length; i++) {
                     const hitBox = this.hitBoxes[i];
                     if (hitBox) {
                         if (cameraClass.containsBox(hitBox.left, hitBox.top, hitBox.right - hitBox.left, hitBox.bottom - hitBox.top)) {
@@ -342,10 +342,10 @@ class MapClass {
                     }
                 }
             } else {
-                for (var y = 0; y < this.width; y++) {
-                    for (var x = 0; x < this.height; x++) {
-                        var tileX = (x * this.tileWidth);
-                        var tileY = (y * this.tileHeight);
+                for (let y = 0; y < this.width; y++) {
+                    for (let x = 0; x < this.height; x++) {
+                        const tileX = (x * this.tileWidth);
+                        const tileY = (y * this.tileHeight);
 
                         if (cameraClass.containsBox(tileX, tileY, this.tileWidth, this.tileHeight)) {
                             //this.drawDebugTile(drawingContext, scaledTileX + drawOffsetX, scaledTileY + drawOffsetY, scaledTileWidth, scaledTileHeight, x + ',' + y);
@@ -369,7 +369,7 @@ class MapClass {
                 drawingContext.textBaseline = 'top';
                 drawingContext.textAlign = 'left';
 
-                for (var i = 0; i < this.hitBoxes.length; i++) {
+                for (let i = 0; i < this.hitBoxes.length; i++) {
                     drawingContext.beginPath();
                     drawingContext.rect(
                         this.hitBoxes[i].left - cameraClass.getViewboxLeft(),
@@ -402,7 +402,7 @@ class MapClass {
 
         var hitBoxSegments = [];
         if (cameraClass) {
-            for (var i = 0; i < this.segments.length; i++) {
+            for (let i = 0; i < this.segments.length; i++) {
                 var segment =
                 {
                     a: { x: this.segments[i].a.x - cameraClass.getViewboxLeft(), y: this.segments[i].a.y - cameraClass.getViewboxTop() },
@@ -415,7 +415,7 @@ class MapClass {
         }
 
         if (rangeBox) {
-            for (var j = 0; j < hitBoxSegments.length; j++) {
+            for (let j = 0; j < hitBoxSegments.length; j++) {
                 if ((rangeBox.left <= hitBoxSegments[j].a.x && rangeBox.right >= hitBoxSegments[j].a.x && rangeBox.top <= hitBoxSegments[j].a.y && rangeBox.bottom >= hitBoxSegments[j].a.y) ||
                     (rangeBox.left <= hitBoxSegments[j].b.x && rangeBox.right >= hitBoxSegments[j].b.x && rangeBox.top <= hitBoxSegments[j].b.y && rangeBox.bottom >= hitBoxSegments[j].b.y)) {
                     segments.push(hitBoxSegments[j]);

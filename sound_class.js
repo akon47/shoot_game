@@ -6,7 +6,7 @@ class SoundEffect {
         this.loadedAudios = 0;
 
         var self = this;
-        for (var i = 0; i < (bufferCount ? bufferCount : 20); i++) {
+        for (let i = 0; i < (bufferCount ? bufferCount : 20); i++) {
             var audio = new Audio();
             this.sounds.push(audio);
 
@@ -25,7 +25,7 @@ class SoundEffect {
     }
 
     play() {
-        for (var i = 0; i < this.sounds.length; i++) {
+        for (let i = 0; i < this.sounds.length; i++) {
             if (this.sounds[i].paused || this.sounds[i].ended) {
                 this.sounds[i].play();
                 console.log(this.sounds[i].src + ' -> play');
@@ -36,21 +36,21 @@ class SoundEffect {
 
     setVolume(volume) {
         this.volume = volume;
-        for (var i = 0; i < this.sounds.length; i++) {
+        for (let i = 0; i < this.sounds.length; i++) {
             this.sounds[i].volume = volume;
         }
     }
 
     setLoop(loop) {
         this.loop = loop
-        for (var i = 0; i < this.sounds.length; i++) {
+        for (let i = 0; i < this.sounds.length; i++) {
             this.sounds[i].loop = loop;
         }
     }
 
     setMuted(muted) {
         this.muted = muted
-        for (var i = 0; i < this.sounds.length; i++) {
+        for (let i = 0; i < this.sounds.length; i++) {
             this.sounds[i].muted = muted;
         }
     }
@@ -135,11 +135,11 @@ class SoundClass {
         });
 
         createjs.Sound.registerSound(this.bgm, this.bgm);
-        for (var i = 0; i < this.stepSounds.length; i++) {
+        for (let i = 0; i < this.stepSounds.length; i++) {
             createjs.Sound.registerSound(this.stepSounds[i], this.stepSounds[i]);
         }
-        for (var i = 0; i < this.weaponSounds.length; i++) {
-            var weaponSoundInfo = this.weaponSounds[this.weaponSounds[i]];
+        for (let i = 0; i < this.weaponSounds.length; i++) {
+            const weaponSoundInfo = this.weaponSounds[this.weaponSounds[i]];
             if (weaponSoundInfo) {
                 if (weaponSoundInfo.shoot) {
                     createjs.Sound.registerSound(weaponSoundInfo.shoot, weaponSoundInfo.shoot);
@@ -149,7 +149,7 @@ class SoundClass {
                 }
             }
         }
-        for (var i = 0; i < this.impactSounds.length; i++) {
+        for (let i = 0; i < this.impactSounds.length; i++) {
             createjs.Sound.registerSound(this.impactSounds[i], this.impactSounds[i]);
         }
     }

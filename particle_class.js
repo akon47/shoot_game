@@ -1,13 +1,13 @@
 class ParticleClass {
     constructor() {
         this.particles = [];
-        for (var i = 0; i < 500; i++) {
+        for (let i = 0; i < 500; i++) {
             this.particles.push(new ParticleObject());
         }
     }
 
     drawParticles(drawingContext, cameraClass) {
-        for (var i = 0; i < this.particles.length; i++) {
+        for (let i = 0; i < this.particles.length; i++) {
             if (this.particles[i].active === true) {
                 this.particles[i].draw(drawingContext, -cameraClass.getViewboxLeft(), -cameraClass.getViewboxTop());
             }
@@ -19,7 +19,7 @@ class ParticleClass {
         const angleRange = (60 * Math.PI / 180);
 
         var count = 0;
-        for (var i = 0; i < this.particles.length; i++) {
+        for (let i = 0; i < this.particles.length; i++) {
             if (this.particles[i].active === false) {
                 const angle = (startAngle + (Math.random() * angleRange));
 

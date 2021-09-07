@@ -23,7 +23,6 @@ class SystemClass {
         this.connectedUserCount = 0;
 
         var self = this;
-        //
         this.chatClass.chat = function (message) {
             if (self.currentId !== undefined) {
                 self.networkClass.sendChat(message);
@@ -33,10 +32,8 @@ class SystemClass {
             const player = self.players[self.currentId];
             if (player) {
                 player.setName(name);
-                //self.networkClass.sendNameChanged(self.currentId, name);
             }
         }
-        //
         this.inputClass.onmousedown = function (button) {
             const player = self.players[self.currentId];
 
@@ -591,7 +588,7 @@ class SystemClass {
             const segments = this.graphicsClass.mapClass.getSegments();
             const ray = { a: { x: player.shootInfo.muzzle.x, y: player.shootInfo.muzzle.y }, b: { x: player.shootInfo.target.x, y: player.shootInfo.target.y } };
             var closestIntersect = null;
-            for (var i = 0; i < segments.length; i++) {
+            for (let i = 0; i < segments.length; i++) {
                 var intersect = getRayIntersection(ray, segments[i]);
                 if (!intersect) continue;
                 if (!closestIntersect || intersect.param < closestIntersect.param) {
@@ -637,7 +634,7 @@ class SystemClass {
         }
 
         if (this.players && this.npcs) {
-            for (var i = 0; i < this.players.length; i++) {
+            for (let i = 0; i < this.players.length; i++) {
                 const player = this.players[this.players[i]];
                 if (player && player.getStatus() === 'shoot' && player.getCurrentStatusFrame() === 0) {
                     const shootInfo = player.getShootInfo();
@@ -650,7 +647,7 @@ class SystemClass {
                         var hitObjectIntersection = undefined;
                         var hitObjectType = undefined;
                         var minDistance = 1000000000;
-                        for (var j = 0; j < this.npcs.length; j++) {
+                        for (let j = 0; j < this.npcs.length; j++) {
                             const npc = this.npcs[this.npcs[j]];
                             if (npc) {
                                 if (bulletBox.left < (npc.x + npc.width) && bulletBox.right > npc.x && bulletBox.top < (npc.y + npc.height) && bulletBox.bottom > npc.y) {
@@ -668,7 +665,7 @@ class SystemClass {
                             }
                         }
 
-                        for (var j = 0; j < this.players.length; j++) {
+                        for (let j = 0; j < this.players.length; j++) {
                             const player = this.players[this.players[j]];
                             if (player) {
                                 if (bulletBox.left < (player.x + player.width) && bulletBox.right > player.x && bulletBox.top < (player.y + player.height) && bulletBox.bottom > player.y) {
@@ -713,7 +710,7 @@ class SystemClass {
         }
 
         if (this.players) {
-            for (var i = 0; i < this.players.length; i++) {
+            for (let i = 0; i < this.players.length; i++) {
                 const playerClass = this.players[this.players[i]];
                 if (playerClass !== undefined) {
                     playerClass.frame(hitBoxes);
@@ -736,7 +733,7 @@ class SystemClass {
 
     npcsframe() {
         if (this.npcs) {
-            for (var i = 0; i < this.npcs.length; i++) {
+            for (let i = 0; i < this.npcs.length; i++) {
                 const npc = this.npcs[this.npcs[i]];
                 if (npc !== undefined) {
                     npc.frame();

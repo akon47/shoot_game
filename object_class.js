@@ -7,7 +7,7 @@ class ObjectClass {
         const drawOffsetX = ((cameraClass.getViewboxWidth() / 2) - cameraClass.getViewboxCenterX());
         const drawOffsetY = ((cameraClass.getViewboxHeight() / 2) - cameraClass.getViewboxCenterY());
 
-        for (var i = 0; i < this.objects.length; i++) {
+        for (let i = 0; i < this.objects.length; i++) {
             var obj = this.objects[i];
             if (obj) {
                 if (cameraClass.containsBox(obj.x, obj.y, obj.width, obj.height)) {
@@ -32,12 +32,12 @@ class ObjectClass {
                 left: x - range, top: y - range, right: x + range, bottom: y + range
             };
         }
-        for (var i = 0; i < this.objects.length; i++) {
+        for (let i = 0; i < this.objects.length; i++) {
             var obj = this.objects[i];
             if (obj) {
                 const objectSegments = obj.getSegments(cameraClass);
                 if (rangeBox) {
-                    for (var j = 0; j < objectSegments.length; j++) {
+                    for (let j = 0; j < objectSegments.length; j++) {
                         if ((rangeBox.left <= objectSegments[j].a.x && rangeBox.right >= objectSegments[j].a.x && rangeBox.top <= objectSegments[j].a.y && rangeBox.bottom >= objectSegments[j].a.y) ||
                             (rangeBox.left <= objectSegments[j].b.x && rangeBox.right >= objectSegments[j].b.x && rangeBox.top <= objectSegments[j].b.y && rangeBox.bottom >= objectSegments[j].b.y)) {
                             segments.push(objectSegments[j]);
@@ -54,7 +54,7 @@ class ObjectClass {
 
     getHitBoxes() {
         var hitBoxes = [];
-        for (var i = 0; i < this.objects.length; i++) {
+        for (let i = 0; i < this.objects.length; i++) {
             var obj = this.objects[i];
             if (obj) {
                 hitBoxes = hitBoxes.concat(obj.getHitBoxes());
@@ -93,7 +93,7 @@ class WallObjectClass {
                 { a: { x: this.left, y: this.top }, b: { x: this.left, y: this.bottom } }
             ];
         if (cameraClass) {
-            for (var i = 0; i < result.length; i++) {
+            for (let i = 0; i < result.length; i++) {
                 result[i].a.x -= cameraClass.getViewboxLeft();
                 result[i].b.x -= cameraClass.getViewboxLeft();
                 result[i].a.y -= cameraClass.getViewboxTop();
