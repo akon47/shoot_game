@@ -19,7 +19,6 @@ if (heads && heads.length > 0) {
             'camera_class.js',
             'sound_class.js',
             'player_class.js',
-            'npc_class.js',
             'weather_class.js',
             'network_class.js',
             'debug_class.js'

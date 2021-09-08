@@ -331,6 +331,17 @@ class SystemClass {
                 }
             }
         }
+        this.networkClass.userchathistory = function (chats) {
+            if(chats) {
+                for(let i = 0; i < chats.length; i++) {
+                    let description = chats[i].name;
+                    if (!(chats[i].name) || (chats[i].name.length === 0 || !(chats[i].name.trim()))) {
+                        description = chats[i].id;
+                    }
+                    self.chatClass.writeToMessage('[' + description + ']: ' + chats[i].chat + '<br/>');
+                }
+            }
+        }
     }
 
     getCurrentPlayerClass() {

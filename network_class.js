@@ -100,6 +100,11 @@ class NetworkClass {
                     this.userchat(msg.data.id, msg.data.chat);
                 }
                 break;
+            case 'user_chat_history':
+                if (this.userchathistory) {
+                    this.userchathistory(msg.data);
+                }
+                break;
             case 'user_speed':
                 if (this.userspeedchanged) {
                     this.userspeedchanged(msg.data.id, msg.data.speedX, msg.data.speedY);
