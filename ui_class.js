@@ -14,10 +14,10 @@ class UserInterfaceClass {
         this.infoHUDVisible = false;
     }
 
-    update(mapClass, players, npcs) {
+    update(mapClass, players) {
         this.drawingContext.clearRect(0, 0, this.screenWidth, this.screenHeight);
         if (debugClass.debugGraphicsVisible) {
-            this.minimapInterfaceClass.drawUserInterface(this.drawingContext, mapClass, players, npcs);
+            this.minimapInterfaceClass.drawUserInterface(this.drawingContext, mapClass, players);
         }
         this.userHUD.drawHUD(this.drawingContext, players);
 
@@ -219,7 +219,7 @@ class MinimapInterfaceClass {
         return this.minimapSize;
     }
 
-    drawUserInterface(drawingContext, mapClass, players, npcs) {
+    drawUserInterface(drawingContext, mapClass, players) {
         if (this.isVisible()) {
             drawingContext.beginPath();
             drawingContext.fillStyle = '#313131C0';
@@ -254,35 +254,8 @@ class MinimapInterfaceClass {
                     const dotY = (player.getCenterY() / worldHeight) * minimapInnerSize;
                     drawingContext.rect(this.x + dotX + 10, this.y + dotY + 10, 3, 3);
                     drawingContext.fill();
-
-                    /*
-                    if(!player.isOtherPlayer()) {
-                        var tileX = Math.floor(player.getPositionX() / mapClass.getTileWidth());
-                        var tileY = Math.floor(player.getPositionY() / mapClass.getTileHeight());
-                        drawingContext.fillStyle = "white";
-                        drawingContext.fillText('x: ' + tileX + ', y: ' + tileY, this.x + this.minimapSize - 10, this.y + 10 + this.minimapSize - 20 + 3 + 14 + 3);
-                    }
-                    */
                 }
             }
-
-            for (let i = 0; i < npcs.length; i++) {
-                const npc = npcs[npcs[i]];
-                if (npc) {
-                    var dotX = (npc.getCenterX() / worldWidth) * minimapInnerSize;
-                    var dotY = (npc.getCenterY() / worldHeight) * minimapInnerSize;
-
-                    drawingContext.beginPath();
-                    drawingContext.fillStyle = 'lightgreen';
-                    drawingContext.rect(this.x + dotX + 10, this.y + dotY + 10, 3, 3);
-                    drawingContext.fill();
-                }
-            }
-
-            /*
-            drawingContext.fillStyle = "white";
-            drawingContext.fillText(mapClass.getDescription(), this.x + this.minimapSize - 10, this.y + 10 + this.minimapSize - 20 + 3);
-            */
         }
     }
 }

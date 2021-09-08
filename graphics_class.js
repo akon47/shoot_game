@@ -19,7 +19,6 @@ class GraphicsClass {
         this.weatherClass = new WeatherClass(canvas.width, canvas.height);
 
         this.survivorCharacterClass = new SurvivorCharacterClass();
-        this.npcCharacterClass = new NpcCharacterClass();
     }
 
     setCameraPosition(x, y) {
@@ -31,7 +30,7 @@ class GraphicsClass {
         this.shakeThreshold = (threshold ? threshold : 5);
     }
 
-    frame(players, npcs) {
+    frame(players) {
         this.beginScene(this.drawingContext, 0, 0, 0, 1);
         if (debugClass.black) {
             return;
@@ -108,15 +107,6 @@ class GraphicsClass {
             }
         }
 
-        if (npcs) {
-            for (let i = 0; i < npcs.length; i++) {
-                const npc = npcs[npcs[i]];
-                if (npc && this.cameraClass.containsNpc(npc)) {
-                    this.npcCharacterClass.drawCharacter(this.drawingContext, npc, this.cameraClass);
-                }
-            }
-        }
-
         if (this.weatherClass) {
             //this.weatherClass.drawWeather(this.drawingContext);
         }
@@ -135,7 +125,7 @@ class GraphicsClass {
         this.drawingContext.restore();
 
         if (this.uiClass) {
-            this.uiClass.update(this.mapClass, players, npcs)
+            this.uiClass.update(this.mapClass, players)
         }
 
         this.endScene();

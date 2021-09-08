@@ -19,7 +19,6 @@ class SystemClass {
         this.currentId = undefined;
         this.pointerLockMode = false;
         this.players = [];
-        this.npcs = [];
         this.connectedUserCount = 0;
 
         var self = this;
@@ -184,7 +183,6 @@ class SystemClass {
             self.chatClass.writeToMessage('The connection with the server has been lost.<br/>');
             self.currentId = undefined;
             self.players = [];
-            self.npcs = [];
             self.connectedUserCount = 0;
         }
         this.networkClass.tryreconnect = function (tryCount) {
@@ -299,8 +297,6 @@ class SystemClass {
                             providerName = providerPlayer.getPlayerDescription();
                         }
                         break;
-                    case 'npc':
-                        break;
                 }
                 self.chatClass.writeToMessage('<b>[' + providerName + '] -> [' + player.getPlayerDescription() + '] <font color=\"red\">KILL</font></b><br/>');
             }
@@ -335,34 +331,6 @@ class SystemClass {
                 }
             }
         }
-        //
-        this.networkClass.npccreated = function (id, x, y, destX, destY, speed, type, hp) {
-            var npc = self.addNpc(id);
-            if (npc) {
-                npc.setPosition(x, y);
-                npc.setSpeed(speed);
-                npc.setDestination(destX, destY);
-                npc.setType(type);
-                npc.setHp(hp);
-            }
-        }
-        this.networkClass.npcdeleted = function (id) {
-            self.removeNpc(id);
-        }
-        this.networkClass.npcdestinationchanged = function (id, x, y, destX, destY) {
-            var npc = self.addNpc(id);
-            if (npc) {
-                npc.setPosition(x, y);
-                npc.setDestination(destX, destY);
-            }
-        }
-        this.networkClass.npchpchanged = function (id, hp) {
-            var npc = self.addNpc(id);
-            if (npc) {
-                npc.setHp(hp);
-            }
-        }
-        //
     }
 
     getCurrentPlayerClass() {
@@ -527,20 +495,6 @@ class SystemClass {
         }
     }
 
-    addNpc(id) {
-        if (this.npcs[id] === undefined) {
-            this.npcs[id] = new NpcClass(id);
-            this.npcs.push(id);
-        }
-        return this.npcs[id];
-    }
-
-    removeNpc(id) {
-        if (this.npcs[id] !== undefined) {
-            delete this.npcs[id];
-        }
-    }
-
     updateShootTarget(player) {
         function getRayIntersection(ray, segment) {
             // RAY in parametric: Point + Direction*T1
@@ -631,7 +585,7 @@ class SystemClass {
             }
         }
 
-        if (this.players && this.npcs) {
+        if (this.players) {
             for (let i = 0; i < this.players.length; i++) {
                 const player = this.players[this.players[i]];
                 if (player && player.getStatus() === 'shoot' && player.getCurrentStatusFrame() === 0) {
@@ -645,23 +599,6 @@ class SystemClass {
                         var hitObjectIntersection = undefined;
                         var hitObjectType = undefined;
                         var minDistance = 1000000000;
-                        for (let j = 0; j < this.npcs.length; j++) {
-                            const npc = this.npcs[this.npcs[j]];
-                            if (npc) {
-                                if (bulletBox.left < (npc.x + npc.width) && bulletBox.right > npc.x && bulletBox.top < (npc.y + npc.height) && bulletBox.bottom > npc.y) {
-                                    var intersection = shootIntersection(p1, p2, npc.x + (npc.width / 2), npc.y + (npc.height / 2), 16);
-                                    if (intersection) {
-                                        const distance = (Math.pow(intersection.x - p1.x, 2) + Math.pow(intersection.y - p1.y, 2));
-                                        if (distance < minDistance) {
-                                            minDistance = distance;
-                                            hitObject = npc;
-                                            hitObjectIntersection = intersection;
-                                            hitObjectType = 'npc';
-                                        }
-                                    }
-                                }
-                            }
-                        }
 
                         for (let j = 0; j < this.players.length; j++) {
                             const player = this.players[this.players[j]];
@@ -724,17 +661,6 @@ class SystemClass {
                     if (ammoInfo.currentAmmo <= 0) {
                         currentPlayerClass.reload();
                     }
-                }
-            }
-        }
-    }
-
-    npcsframe() {
-        if (this.npcs) {
-            for (let i = 0; i < this.npcs.length; i++) {
-                const npc = this.npcs[this.npcs[i]];
-                if (npc !== undefined) {
-                    npc.frame();
                 }
             }
         }
@@ -836,10 +762,9 @@ class SystemClass {
 
                 sender.inputFrame();
                 sender.playersFrame();
-                sender.npcsframe();
 
                 sender.soundClass.frame(sender.players, sender.graphicsClass);
-                sender.graphicsClass.frame(sender.players, sender.npcs);
+                sender.graphicsClass.frame(sender.players);
 
 
                 if (debugClass) {

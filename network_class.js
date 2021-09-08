@@ -150,27 +150,6 @@ class NetworkClass {
                     this.userdeathchanged(msg.data.id, msg.data.death);
                 }
                 break;
-
-            case 'npc_created':
-                if (this.npccreated) {
-                    this.npccreated(msg.data.id, msg.data.x, msg.data.y, msg.data.destinationX, msg.data.destinationY, msg.data.speed, msg.data.type, msg.data.hp);
-                }
-                break;
-            case 'npc_deleted':
-                if (this.npcdeleted) {
-                    this.npcdeleted(msg.data.id);
-                }
-                break;
-            case 'npc_destination':
-                if (this.npcdestinationchanged) {
-                    this.npcdestinationchanged(msg.data.id, msg.data.x, msg.data.y, msg.data.destinationX, msg.data.destinationY);
-                }
-                break;
-            case 'npc_hp':
-                if (this.npchpchanged) {
-                    this.npchpchanged(msg.data.id, msg.data.hp);
-                }
-                break;
         }
     }
 
