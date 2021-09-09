@@ -35,3 +35,20 @@ body {
   font-weight: normal;
   font-style: normal;
 }
+
+#repo {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 50%;
+  min-height: 40px;
+  height: calc((100% - 720px) / 2);
+  z-index: 1000;
+}
+
+#repo a {
+  position: relative;
+  left: 50%;
+}
