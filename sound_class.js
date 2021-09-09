@@ -226,13 +226,11 @@ class SoundClass {
         switch (playerClass.getStatus()) {
             case 'shoot':
                 if (playerClass.getCurrentStatusFrame() == 0) {
-                    //this.weaponSounds[playerClass.getWeapon()].shoot.play();
                     createjs.Sound.play(this.weaponSounds[playerClass.getWeapon()].shoot, new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }));
                 }
                 break;
             case 'reload':
                 if (playerClass.getCurrentStatusFrame() == 0) {
-                    //this.weaponSounds[playerClass.getWeapon()].reload.play();
                     createjs.Sound.play(this.weaponSounds[playerClass.getWeapon()].reload, new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }));
                 }
                 break;
@@ -241,22 +239,17 @@ class SoundClass {
 
     frame(players, graphicsClass) {
 
-        // if(this.bgm && this.bgm.paused) {
-        //     this.bgm.play();
-        // }
-
         if (players) {
-            for (var i = 0; i < players.length; i++) {
+            for (let i = 0; i < players.length; i++) {
                 const player = players[players[i]];
                 if (player) {
                     if (!player.isOtherPlayer()) {
                         if (player.getSpeedX() !== 0 || player.getSpeedY() !== 0) {
-                            var now = performance.now();
-                            if (now - this.lastStepPlayedTime > 300) {
+                            const now = performance.now();
+                            if (now - this.lastStepPlayedTime > (player.isPlayerRunning() ? 300 : 400)) {
                                 this.lastStepPlayedTime = now;
                                 if (!this.muted) {
-                                    //this.stepSounds[(this.playedStepIndex++) % 2].play();
-                                    createjs.Sound.play(this.stepSounds[(this.playedStepIndex++) % 2]);
+                                    createjs.Sound.play(this.stepSounds[(this.playedStepIndex++) % 2], new createjs.PlayPropsConfig().set({ volume: 0.1 }));
                                 }
                             }
                         }

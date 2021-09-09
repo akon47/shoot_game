@@ -698,8 +698,9 @@ class SystemClass {
                 } else if (this.inputClass.isKeyDown(KEYCODE_3)) {
                     playerClass.setWeapon('rifle');
                 }
+                playerClass.setRunning(this.inputClass.isKeyDown(KEYCODE_SHIFT));
 
-                const baseSpeed = 3;
+                const baseSpeed = playerClass.getBaseSpeed();
                 var newPlayerSpeedX = 0, newPlayerSpeedY = 0, newPlayerDirection = playerClass.getDirection();
 
                 if (this.pointerLockMode) {

@@ -44,12 +44,11 @@ const KEYCODE_R = 82;
 
 const KEYCODE_TILDE = 192;
 
+const KEYCODE_SHIFT = 16;
 
 const MOUSE_LEFT_BUTTON = 0;
 const MOUSE_MIDDLE_BUTTON = 1;
 const MOUSE_RIGHT_BUTTON = 2;
-
-
 
 
 class InputClass {

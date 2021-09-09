@@ -17,6 +17,7 @@ class PlayerClass {
         this.kill = 0;
         this.death = 0;
         this.status = 'idle';
+        this.isRunning = false;
         this.currentStatusFrame = undefined;
         this.otherPlayer = (isOtherPlayer === undefined ? false : isOtherPlayer);
 
@@ -42,6 +43,14 @@ class PlayerClass {
 
     isOtherPlayer() {
         return this.otherPlayer;
+    }
+
+    isPlayerRunning() {
+        return this.isRunning;
+    }
+
+    setRunning(running) {
+        this.isRunning = running;
     }
 
     frame(hitBoxes) {
@@ -422,6 +431,10 @@ class PlayerClass {
 
     getSpeedY() {
         return this.speedY;
+    }
+
+    getBaseSpeed() {
+        return this.isRunning ? 5 : 2;
     }
 
     setSpeed(speedX, speedY) {
