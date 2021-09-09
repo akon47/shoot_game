@@ -7,12 +7,13 @@ You can play multi-play games with multiple people using a web socket.
 
 ## 📃 Usage
 - Orient characters using the mouse
-- Attack with left click.
+- Attack with left click
 - Use ASDW key to move characters
+- You can run by pressing the shift key
 - Load using R key
-- Change knife, pistol, rifle using keys 1, 2 and 3.
+- Change knife, pistol, rifle using keys 1, 2 and 3
 - Change nickname using F8 key
-- Using the &#96; key to check the complete connection of users.
+- Using the &#96; key to check the complete connection of users
 
 ## 🖼️ Screenshot
 
