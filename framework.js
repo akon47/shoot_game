@@ -66,11 +66,22 @@ window.onload = function () {
         canvas.style.left = '0';
         canvas.style.right = '0';
 
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
         canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
         document.exitPointerLock = document.exitPointerLock || document.mozExitPointerLock;
 
         const lightingCanvas = canvas.cloneNode(false);
+        lightingCanvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
         const uiCanvas = canvas.cloneNode(false);
+        uiCanvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
 
         if (canvas.getContext) {
             frameworkRootDiv.appendChild(canvas);

@@ -434,7 +434,7 @@ class PlayerClass {
     }
 
     getBaseSpeed() {
-        return this.isRunning ? 5 : 2;
+        return this.isRunning ? 4 : 2;
     }
 
     setSpeed(speedX, speedY) {

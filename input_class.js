@@ -163,14 +163,6 @@ class InputClass {
             }
         }
 
-        /*
-        document.addEventListener("touchstart", function (e) {
-            e.stopPropagation();
-        }, false);
-        document.addEventListener("touchmove", function (e) {
-            e.stopPropagation();
-        }, false);
-*/
         document.body.addEventListener("touchstart", function (e) {
             //e.preventDefault();
         }, false);

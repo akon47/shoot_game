@@ -86,8 +86,8 @@ class SightEffectClass {
 
                     const userLightRadius = Math.max(player.getWidth(), player.getHeight()) * 2;
                     var characterLight = this.sightDrawingContext.createRadialGradient(x, y, 0, x, y, userLightRadius);
-                    characterLight.addColorStop(0, 'rgba(255, 255, 255,' + darkness + ')');
-                    characterLight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    characterLight.addColorStop(0, 'rgba(255, 255, 220,' + darkness + ')');
+                    characterLight.addColorStop(1, 'rgba(255, 255, 220, 0)');
 
                     this.sightDrawingContext.beginPath();
                     this.sightDrawingContext.fillStyle = characterLight;
@@ -112,8 +112,8 @@ class SightEffectClass {
                     }
 
                     var light = this.sightDrawingContext.createRadialGradient(x, y, 0, x, y, range);
-                    light.addColorStop(0, 'rgba(150, 150, 150,' + darkness + ')');
-                    light.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    light.addColorStop(0, 'rgba(150, 150, 140,' + darkness + ')');
+                    light.addColorStop(1, 'rgba(255, 255, 200, 0)');
 
                     this.sightDrawingContext.fillStyle = light;
                     this.sightDrawingContext.beginPath();
@@ -334,10 +334,6 @@ class SightEffectClass {
             }
 
             // SOLVE FOR T1 & T2
-            // r_px+r_dx*T1 = s_px+s_dx*T2 && r_py+r_dy*T1 = s_py+s_dy*T2
-            // ==> T1 = (s_px+s_dx*T2-r_px)/r_dx = (s_py+s_dy*T2-r_py)/r_dy
-            // ==> s_px*r_dy + s_dx*T2*r_dy - r_px*r_dy = s_py*r_dx + s_dy*T2*r_dx - r_py*r_dx
-            // ==> T2 = (r_dx*(s_py-r_py) + r_dy*(r_px-s_px))/(s_dx*r_dy - s_dy*r_dx)
             var T2 = (r_dx * (s_py - r_py) + r_dy * (r_px - s_px)) / (s_dx * r_dy - s_dy * r_dx);
             var T1 = (s_px + s_dx * T2 - r_px) / r_dx;
 
