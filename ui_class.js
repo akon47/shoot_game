@@ -68,13 +68,15 @@ class InfoHUD {
         drawingContext.textBaseline = 'top';
         drawingContext.textAlign = 'center';
         drawingContext.fillStyle = "white";
+
+        let y = 0;
         for (let i = 0; i < players.length; i++) {
             const player = players[players[i]];
             if (player) {
-                drawingContext.fillText(player.getPlayerDescription() + ', Kill: ' + player.getKill() + ', Death: ' + player.getDeath(), this.infoBox.left + (this.infoBox.width / 2), this.infoBox.top + (i * 23) + 20);
+                drawingContext.fillText(player.getPlayerDescription() + ', Kill: ' + player.getKill() + ', Death: ' + player.getDeath(), this.infoBox.left + (this.infoBox.width / 2), this.infoBox.top + (y * 23) + 20);
+                y++;
             }
         }
-
     }
 }
 
