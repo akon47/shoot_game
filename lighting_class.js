@@ -85,7 +85,7 @@ class SightEffectClass {
                     var y = player.getCenterY() - cameraClass.getViewboxTop();
 
                     const userLightRadius = Math.max(player.getWidth(), player.getHeight()) * 2;
-                    var characterLight = this.sightDrawingContext.createRadialGradient(x, y, 0, x, y, userLightRadius);
+                    const characterLight = this.sightDrawingContext.createRadialGradient(x, y, 0, x, y, userLightRadius);
                     characterLight.addColorStop(0, 'rgba(255, 255, 220,' + darkness + ')');
                     characterLight.addColorStop(1, 'rgba(255, 255, 220, 0)');
 

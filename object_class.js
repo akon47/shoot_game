@@ -21,7 +21,7 @@ class ObjectClass {
     }
 
     getSegments(cameraClass, range) {
-        var segments = [];
+        let segments = [];
 
         var rangeBox = undefined;
         if (range) {
@@ -33,7 +33,7 @@ class ObjectClass {
             };
         }
         for (let i = 0; i < this.objects.length; i++) {
-            var obj = this.objects[i];
+            const obj = this.objects[i];
             if (obj) {
                 const objectSegments = obj.getSegments(cameraClass);
                 if (rangeBox) {
@@ -53,7 +53,7 @@ class ObjectClass {
     }
 
     getHitBoxes() {
-        var hitBoxes = [];
+        let hitBoxes = [];
         for (let i = 0; i < this.objects.length; i++) {
             var obj = this.objects[i];
             if (obj) {

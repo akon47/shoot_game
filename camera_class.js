@@ -74,10 +74,6 @@ class CameraClass {
         return this.cameraY;
     }
 
-    // getCameraZoom() {
-    //     return this.cameraZoom;
-    // }
-
     getViewboxWidth() {
         return this.viewboxWidth;
     }

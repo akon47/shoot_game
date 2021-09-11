@@ -10,7 +10,6 @@ class ChatClass {
         this.chatRootElement.style.height = Math.floor(canvas.offsetHeight * 0.3) + 'px';
         this.chatRootElement.style.padding = '0px';
         this.chatRootElement.style.margin = '0px';
-        //this.chatRootElement.style.borderRadius = '5px';
         this.chatRootElement.style.display = 'flex';
         this.chatRootElement.style.flexDirection = 'column';
 
@@ -20,7 +19,6 @@ class ChatClass {
         this.messageElement.style.background = '#00000000';
         this.messageElement.style.flex = '1';
         this.messageElement.style.margin = '2% 2% 0% 2%';
-        //this.messageElement.style.borderRadius = '5px';
         this.messageElement.style.fontSize = '12px';
         this.messageElement.style.fontWeight = 'normal';
         this.messageElement.style.color = 'white';
@@ -35,8 +33,6 @@ class ChatClass {
         this.chatElement.setAttribute('type', 'text');
         this.chatElement.style.position = 'relative';
         this.chatElement.style.background = '#000000A0';
-        //this.chatElement.style.borderRadius = '5px';
-        //this.chatElement.style.width = '96%';
         this.chatElement.style.width = 'calc(96% - 10px)';
         this.chatElement.style.height = 'Auto';
         this.chatElement.style.flex = '0';

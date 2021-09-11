@@ -43,18 +43,6 @@ class SystemClass {
                     canvas.requestPointerLock();
                 }
             }
-            // switch(button) {
-            //     case MOUSE_LEFT_BUTTON:
-            //         if (player) {
-            //             player.shoot({ x: self.graphicsClass.cameraClass.getViewboxLeft() + self.inputClass.getCursorX(), y: self.graphicsClass.cameraClass.getViewboxTop() + self.inputClass.getCursorY() });
-            //         }
-            //         break;
-            //     case MOUSE_RIGHT_BUTTON:
-            //         if (player) {
-            //             player.meleeAttack();
-            //         }
-            //         break;
-            // }
             return true;
         }
         this.inputClass.onmouseup = function (button) {
@@ -237,49 +225,49 @@ class SystemClass {
             self.connectedUserCount = count;
         }
         this.networkClass.usernamechanged = function (id, name) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player && player.getId() !== self.currentId) {
                 player.setName(name);
             }
         }
         this.networkClass.userspeedchanged = function (id, speedX, speedY) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player && player.getId() !== self.currentId) {
                 player.setSpeed(speedX, speedY);
             }
         }
         this.networkClass.userpositionchanged = function (id, x, y) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player && player.getId() !== self.currentId) {
                 player.setPosition(x, y);
             }
         }
         this.networkClass.userdirectionchanged = function (id, direction) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player && player.getId() !== self.currentId) {
                 player.setDirection(direction);
             }
         }
         this.networkClass.usercharacterchanged = function (id, character) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player && player.getId() !== self.currentId) {
                 player.setCharacter(character);
             }
         }
         this.networkClass.userweaponchanged = function (id, weapon) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player && player.getId() !== self.currentId) {
                 player.setWeapon(weapon);
             }
         }
         this.networkClass.userhpchanged = function (id, hp) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player) {
                 player.setHp(hp);
             }
         }
         this.networkClass.userdie = function (id, reason) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player) {
                 if (player.getId() === self.currentId) {
                     const placeableRandomPosition = self.graphicsClass.mapClass.getPlaceableRandomPosition();
@@ -287,35 +275,28 @@ class SystemClass {
                     player.resetAmmo();
                     self.networkClass.sendUserInit(player);
                 }
-
-                var providerName = '';
-                switch (reason.provider) {
-                    case 'user':
-                    case 'ai':
-                        const providerPlayer = self.players[reason.provider_id];
-                        if (providerPlayer) {
-                            providerName = providerPlayer.getPlayerDescription();
-                        }
-                        break;
+                const providerPlayer = self.players[reason.provider_id];
+                if(providerPlayer) {
+                    self.graphicsClass.uiClass.writeDieMessage(player, providerPlayer, reason);
+                    //self.chatClass.writeToMessage('<b>[' + providerName + '] -> [' + player.getPlayerDescription() + '] <font color=\"red\">KILL</font></b><br/>');
                 }
-                self.chatClass.writeToMessage('<b>[' + providerName + '] -> [' + player.getPlayerDescription() + '] <font color=\"red\">KILL</font></b><br/>');
             }
         }
         this.networkClass.userkillchanged = function (id, kill) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player) {
                 player.setKill(kill);
             }
         }
         this.networkClass.userdeathchanged = function (id, death) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player) {
                 player.setDeath(death);
             }
         }
 
         this.networkClass.usershoot = function (id, weapon, muzzlePoint, targetPoint, angle) {
-            var player = self.addPlayer(id);
+            const player = self.addPlayer(id);
             if (player && player.getId() !== self.currentId) {
                 player.shoot(targetPoint, true);
             }
@@ -409,7 +390,7 @@ class SystemClass {
             }
 
             this.players[id].onshoot = function (player, weapon, muzzlePoint, targetPoint, angle) {
-                var volume = 0.2, pan = 0.0;
+                var volume = 0.1, pan = 0.0;
 
                 self.updateShootTarget(player);
                 if (player.getId() === self.currentId) {
@@ -448,7 +429,6 @@ class SystemClass {
 
                 self.updateShootIntersection(player);
 
-                //console.log("Sound Pan: " + pan);
                 if (volume > 0) {
                     self.soundClass.playWeaponSound(player, volume, pan);
                 }
@@ -466,7 +446,6 @@ class SystemClass {
                     self.soundClass.playImpactSound(volume, pan);
                 } else {
                     self.graphicsClass.particleClass.setParticles(player.shootInfo);
-                    //console.log(player.shootInfo);
                 }
             }
 
