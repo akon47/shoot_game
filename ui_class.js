@@ -35,6 +35,14 @@ class UserInterfaceClass {
       this.infoHUD.drawHUD(this.drawingContext, players);
     }
 
+    this.drawingContext.font = "15px Arial";
+    this.drawingContext.textBaseline = "top";
+    this.drawingContext.textAlign = "center";
+    this.drawingContext.fillStyle = "white";
+
+    
+    this.drawingContext.fillText(`${players.filter((elem) => players[elem]).length} players are online`, this.screenWidth / 2, 10);
+
     if (debugClass) {
       debugClass.drawDebugInfo(this.drawingContext);
     }
@@ -343,30 +351,30 @@ class KillHUD {
       height: this.hudBoxHeight,
     };
 
-    this.images = [];
-    this.images["knife"] = [];
-    this.images["knife"].image = new Image();
-    this.images["knife"].image.src = "images/weapons/knife.png";
-    this.images["knife"].isLoaded = false;
-    this.images["knife"].image.onload = function () {
-      self.images["knife"].isLoaded = true;
-    };
+    // this.images = [];
+    // this.images["knife"] = [];
+    // this.images["knife"].image = new Image();
+    // this.images["knife"].image.src = "images/weapons/knife.png";
+    // this.images["knife"].isLoaded = false;
+    // this.images["knife"].image.onload = function () {
+    //   self.images["knife"].isLoaded = true;
+    // };
 
-    this.images["handgun"] = [];
-    this.images["handgun"].image = new Image();
-    this.images["handgun"].image.src = "images/weapons/handgun.png";
-    this.images["handgun"].isLoaded = false;
-    this.images["handgun"].image.onload = function () {
-      self.images["handgun"].isLoaded = true;
-    };
+    // this.images["handgun"] = [];
+    // this.images["handgun"].image = new Image();
+    // this.images["handgun"].image.src = "images/weapons/handgun.png";
+    // this.images["handgun"].isLoaded = false;
+    // this.images["handgun"].image.onload = function () {
+    //   self.images["handgun"].isLoaded = true;
+    // };
 
-    this.images["rifle"] = [];
-    this.images["rifle"].image = new Image();
-    this.images["rifle"].image.src = "images/weapons/rifle.png";
-    this.images["rifle"].isLoaded = false;
-    this.images["rifle"].image.onload = function () {
-      self.images["rifle"].isLoaded = true;
-    };
+    // this.images["rifle"] = [];
+    // this.images["rifle"].image = new Image();
+    // this.images["rifle"].image.src = "images/weapons/rifle.png";
+    // this.images["rifle"].isLoaded = false;
+    // this.images["rifle"].image.onload = function () {
+    //   self.images["rifle"].isLoaded = true;
+    // };
   }
 
   drawHUD(drawingContext) {
