@@ -1,147 +1,172 @@
 class CameraClass {
-    constructor(canvas) {
-        this.cameraX = 0;
-        this.cameraY = 0;
-        this.screenWidth = canvas.width;
-        this.screenHeight = canvas.height;
-        this.limitX = undefined;
-        this.limitY = undefined;
-        this.cameraZoom = 1.0;
-        this.rotate = 0.0;
-        this.validation();
+  constructor(canvas) {
+    this.cameraX = 0;
+    this.cameraY = 0;
+    this.screenWidth = canvas.width;
+    this.screenHeight = canvas.height;
+    this.limitX = undefined;
+    this.limitY = undefined;
+    this.cameraZoom = 1.0;
+    this.rotate = 0.0;
+    this.validation();
+  }
+
+  setLimit(x, y) {
+    this.limitX = x;
+    this.limitY = y;
+  }
+
+  validation() {
+    this.viewboxWidth = this.screenWidth / this.cameraZoom;
+    this.viewboxHeight = this.screenHeight / this.cameraZoom;
+
+    if (this.cameraX < this.viewboxWidth / 2) {
+      const x = this.viewboxWidth / 2;
+      this.viewboxLeft = x - this.viewboxWidth / 2;
+      this.viewboxRight = x + this.viewboxWidth / 2;
+      this.viewboxCenterX = x;
+    } else if (
+      this.limitX &&
+      this.cameraX > this.limitX - this.viewboxWidth / 2
+    ) {
+      const x = this.limitX - this.viewboxWidth / 2;
+      this.viewboxLeft = x - this.viewboxWidth / 2;
+      this.viewboxRight = x + this.viewboxWidth / 2;
+      this.viewboxCenterX = x;
+    } else {
+      this.viewboxLeft = this.cameraX - this.viewboxWidth / 2;
+      this.viewboxRight = this.cameraX + this.viewboxWidth / 2;
+      this.viewboxCenterX = this.cameraX;
     }
 
-    setLimit(x, y) {
-        this.limitX = x;
-        this.limitY = y;
+    if (this.cameraY < this.viewboxHeight / 2) {
+      const y = this.viewboxHeight / 2;
+      this.viewboxTop = y - this.viewboxHeight / 2;
+      this.viewboxBottom = y + this.viewboxHeight / 2;
+      this.viewboxCenterY = y;
+    } else if (
+      this.limitY &&
+      this.cameraY > this.limitY - this.viewboxHeight / 2
+    ) {
+      const y = this.limitY - this.viewboxHeight / 2;
+      this.viewboxTop = y - this.viewboxHeight / 2;
+      this.viewboxBottom = y + this.viewboxHeight / 2;
+      this.viewboxCenterY = y;
+    } else {
+      this.viewboxTop = this.cameraY - this.viewboxHeight / 2;
+      this.viewboxBottom = this.cameraY + this.viewboxHeight / 2;
+      this.viewboxCenterY = this.cameraY;
     }
 
-    validation() {
-        this.viewboxWidth = (this.screenWidth / this.cameraZoom);
-        this.viewboxHeight = (this.screenHeight / this.cameraZoom);
+    this.circumscriptionRadius =
+      Math.sqrt(
+        this.viewboxWidth * this.viewboxWidth +
+          this.viewboxHeight * this.viewboxHeight
+      ) / 2;
+    this.circumscriptionRect = {
+      left: this.viewboxCenterX - this.circumscriptionRadius,
+      top: this.viewboxCenterY - this.circumscriptionRadius,
+      right: this.viewboxCenterX + this.circumscriptionRadius,
+      bottom: this.viewboxCenterY + this.circumscriptionRadius,
+    };
+  }
 
-        if (this.cameraX < (this.viewboxWidth / 2)) {
-            const x = (this.viewboxWidth / 2);
-            this.viewboxLeft = (x - (this.viewboxWidth / 2));
-            this.viewboxRight = (x + (this.viewboxWidth / 2));
-            this.viewboxCenterX = x;
-        } else if (this.limitX && this.cameraX > (this.limitX - (this.viewboxWidth / 2))) {
-            const x = (this.limitX - (this.viewboxWidth / 2));
-            this.viewboxLeft = (x - (this.viewboxWidth / 2));
-            this.viewboxRight = (x + (this.viewboxWidth / 2));
-            this.viewboxCenterX = x;
-        } else {
-            this.viewboxLeft = (this.cameraX - (this.viewboxWidth / 2));
-            this.viewboxRight = (this.cameraX + (this.viewboxWidth / 2));
-            this.viewboxCenterX = this.cameraX;
-        }
+  getRotate() {
+    return this.rotate;
+  }
 
-        if (this.cameraY < (this.viewboxHeight / 2)) {
-            const y = (this.viewboxHeight / 2);
-            this.viewboxTop = (y - (this.viewboxHeight / 2));
-            this.viewboxBottom = (y + (this.viewboxHeight / 2));
-            this.viewboxCenterY = y;
-        } else if (this.limitY && this.cameraY > (this.limitY - (this.viewboxHeight / 2))) {
-            const y = (this.limitY - (this.viewboxHeight / 2));
-            this.viewboxTop = (y - (this.viewboxHeight / 2));
-            this.viewboxBottom = (y + (this.viewboxHeight / 2));
-            this.viewboxCenterY = y;
-        } else {
-            this.viewboxTop = (this.cameraY - (this.viewboxHeight / 2));
-            this.viewboxBottom = (this.cameraY + (this.viewboxHeight / 2));
-            this.viewboxCenterY = this.cameraY;
-        }
-
-        this.circumscriptionRadius = (Math.sqrt((this.viewboxWidth * this.viewboxWidth) + (this.viewboxHeight * this.viewboxHeight)) / 2);
-        this.circumscriptionRect = { left: this.viewboxCenterX - this.circumscriptionRadius, top: this.viewboxCenterY - this.circumscriptionRadius, right: this.viewboxCenterX + this.circumscriptionRadius, bottom: this.viewboxCenterY + this.circumscriptionRadius };
+  setRotate(rotate) {
+    if (this.rotate !== rotate) {
+      this.rotate = rotate;
     }
+  }
 
-    getRotate() {
-        return this.rotate;
-    }
+  getCameraX() {
+    return this.cameraX;
+  }
 
-    setRotate(rotate) {
-        if (this.rotate !== rotate) {
-            this.rotate = rotate;
-        }
-    }
+  getCameraY() {
+    return this.cameraY;
+  }
 
-    getCameraX() {
-        return this.cameraX;
-    }
+  getViewboxWidth() {
+    return this.viewboxWidth;
+  }
 
-    getCameraY() {
-        return this.cameraY;
-    }
+  getViewboxHeight() {
+    return this.viewboxHeight;
+  }
 
-    getViewboxWidth() {
-        return this.viewboxWidth;
-    }
+  getViewboxLeft() {
+    return this.viewboxLeft;
+  }
 
-    getViewboxHeight() {
-        return this.viewboxHeight;
-    }
+  getViewboxTop() {
+    return this.viewboxTop;
+  }
 
-    getViewboxLeft() {
-        return this.viewboxLeft;
-    }
+  getViewboxRight() {
+    return this.viewboxRight;
+  }
 
-    getViewboxTop() {
-        return this.viewboxTop;
-    }
+  getViewboxBottom() {
+    return this.viewboxBottom;
+  }
 
-    getViewboxRight() {
-        return this.viewboxRight;
-    }
+  getViewboxCenterX() {
+    return this.viewboxCenterX;
+  }
 
-    getViewboxBottom() {
-        return this.viewboxBottom;
-    }
+  getViewboxCenterY() {
+    return this.viewboxCenterY;
+  }
 
-    getViewboxCenterX() {
-        return this.viewboxCenterX;
-    }
+  setCameraPosition(x, y) {
+    this.cameraX = x;
+    this.cameraY = y;
+    this.validation();
+  }
 
-    getViewboxCenterY() {
-        return this.viewboxCenterY;
-    }
+  moveCameraPosition(offsetX, offsetY) {
+    this.cameraX += offsetX;
+    this.cameraY += offsetY;
+    this.validation();
+  }
 
-    setCameraPosition(x, y) {
-        this.cameraX = x;
-        this.cameraY = y;
-        this.validation();
-    }
+  setCameraZoom(zoom) {
+    this.cameraZoom = zoom;
+    this.validation();
+  }
 
-    moveCameraPosition(offsetX, offsetY) {
-        this.cameraX += offsetX;
-        this.cameraY += offsetY;
-        this.validation();
+  containsPlayer(playerClass) {
+    if (playerClass) {
+      return true;
     }
+    return false;
+  }
 
-    setCameraZoom(zoom) {
-        this.cameraZoom = zoom;
-        this.validation();
+  containsNpc(npcClass) {
+    if (npcClass) {
+      return true;
     }
+    return false;
+  }
 
-    containsPlayer(playerClass) {
-        if (playerClass) {
-            return true;
-        }
-        return false;
+  containsBox(x, y, width, height) {
+    if (this.rotate === 0) {
+      return (
+        this.viewboxLeft < x + width &&
+        this.viewboxRight > x &&
+        this.viewboxTop < y + height &&
+        this.viewboxBottom > y
+      );
+    } else {
+      return (
+        this.circumscriptionRect.left < x + width &&
+        this.circumscriptionRect.right > x &&
+        this.circumscriptionRect.top < y + height &&
+        this.circumscriptionRect.bottom > y
+      );
     }
-
-    containsNpc(npcClass) {
-        if (npcClass) {
-            return true;
-        }
-        return false;
-    }
-
-    containsBox(x, y, width, height) {
-        if (this.rotate === 0) {
-            return (this.viewboxLeft < x + width && this.viewboxRight > x && this.viewboxTop < y + height && this.viewboxBottom > y);
-        } else {
-            return (this.circumscriptionRect.left < x + width && this.circumscriptionRect.right > x && this.circumscriptionRect.top < y + height && this.circumscriptionRect.bottom > y);
-        }
-    }
+  }
 }

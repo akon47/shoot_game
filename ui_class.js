@@ -20,7 +20,7 @@ class UserInterfaceClass {
 
   update(mapClass, players) {
     this.drawingContext.clearRect(0, 0, this.screenWidth, this.screenHeight);
-
+    /*
     if (debugClass.debugGraphicsVisible) {
       this.minimapInterfaceClass.drawUserInterface(
         this.drawingContext,
@@ -28,7 +28,7 @@ class UserInterfaceClass {
         players
       );
     }
-
+    */
     this.userHUD.drawHUD(this.drawingContext, players);
     this.killHUD.drawHUD(this.drawingContext);
     if (this.infoHUDVisible) {

@@ -50,162 +50,193 @@ const MOUSE_LEFT_BUTTON = 0;
 const MOUSE_MIDDLE_BUTTON = 1;
 const MOUSE_RIGHT_BUTTON = 2;
 
-
 class InputClass {
-    constructor(window, canvas) {
-        this.canvas = canvas;
-        this.cursorX = 0;
-        this.cursorY = 0;
-        this.leftButtonDown = false;
-        this.middleButtonDown = false;
-        this.rightButtonDown = false;
-        this.isKeyStatus = [];
+  constructor(window, canvas) {
+    this.canvas = canvas;
+    this.cursorX = 0;
+    this.cursorY = 0;
+    this.leftButtonDown = false;
+    this.middleButtonDown = false;
+    this.rightButtonDown = false;
+    this.isKeyStatus = [];
 
-        var self = this;
-        window.onkeydown = function (e) {
-            if (!self.isKeyStatus[e.keyCode]) {
-                self.isKeyStatus[e.keyCode] = [];
-            }
+    var self = this;
+    window.onkeydown = function (e) {
+      if (!self.isKeyStatus[e.keyCode]) {
+        self.isKeyStatus[e.keyCode] = [];
+      }
 
-            if (!self.isKeyStatus[e.keyCode].isPressed) {
-                self.isKeyStatus[e.keyCode].isPressed = true;
-                if (self.onkeydown) {
-                    if (self.onkeydown(e.keyCode)) {
-                        e.preventDefault();
-                    }
-                    console.log('KeyDown -> Code: ' + e.keyCode);
-                }
-            }
-        }
-
-        window.onkeyup = function (e) {
-            if (!self.isKeyStatus[e.keyCode]) {
-                self.isKeyStatus[e.keyCode] = [];
-            }
-            if (self.isKeyStatus[e.keyCode].isPressed) {
-                self.isKeyStatus[e.keyCode].isPressed = false;
-                if (self.onkeyup) {
-                    self.onkeyup(e.keyCode);
-                }
-            }
-        }
-
-        window.onmousemove = function (e) {
-            var x = e.clientX - self.canvas.offsetLeft;
-            var y = e.clientY - self.canvas.offsetTop;
-            if (x >= 0 && y >= 0 && x <= self.canvas.offsetWidth && y <= self.canvas.offsetHeight) {
-                self.cursorX = x;
-                self.cursorY = y;
-                self.cursorX *= (self.canvas.width / self.canvas.offsetWidth);
-                self.cursorY *= (self.canvas.height / self.canvas.offsetHeight);
-
-                if (self.onmousemove) {
-                    if (self.onmousemove(self.cursorX, self.cursorY, e.movementX, e.movementY)) {
-                        e.preventDefault();
-                    }
-                }
-            }
-
-        }
-
-        window.onmousedown = function (e) {
-            var x = e.clientX - self.canvas.offsetLeft;
-            var y = e.clientY - self.canvas.offsetTop;
-            if (x >= 0 && y >= 0 && x <= self.canvas.offsetWidth && y <= self.canvas.offsetHeight) {
-                self.cursorX = x;
-                self.cursorY = y;
-                self.cursorX *= (self.canvas.width / self.canvas.offsetWidth);
-                self.cursorY *= (self.canvas.height / self.canvas.offsetHeight);
-
-                switch (e.button) {
-                    case 0:
-                        self.leftButtonDown = true;
-                        break;
-                    case 1:
-                        self.middleButtonDown = true;
-                        break;
-                    case 2:
-                        self.rightButtonDown = true;
-                        break;
-                }
-                if (self.onmousedown) {
-                    if (self.onmousedown(e.button)) {
-                        e.preventDefault();
-                    }
-                }
-            }
-
-        }
-
-        window.onmouseup = function (e) {
-            var x = e.clientX - self.canvas.offsetLeft;
-            var y = e.clientY - self.canvas.offsetTop;
-            if (x >= 0 && y >= 0 && x <= self.canvas.offsetWidth && y <= self.canvas.offsetHeight) {
-                self.cursorX = x;
-                self.cursorY = y;
-                self.cursorX *= (self.canvas.width / self.canvas.offsetWidth);
-                self.cursorY *= (self.canvas.height / self.canvas.offsetHeight);
-
-                switch (e.button) {
-                    case 0:
-                        self.leftButtonDown = false;
-                        break;
-                    case 1:
-                        self.middleButtonDown = false;
-                        break;
-                    case 2:
-                        self.rightButtonDown = false;
-                        break;
-                }
-                if (self.onmouseup) {
-                    self.onmouseup(e.button);
-                }
-            }
-        }
-
-        document.body.addEventListener("touchstart", function (e) {
-            //e.preventDefault();
-        }, false);
-
-        document.body.addEventListener("touchmove", function (e) {
-            var x = e.touches[0].clientX - self.canvas.offsetLeft;
-            var y = e.touches[0].clientY - self.canvas.offsetTop;
-            if (x >= 0 && y >= 0 && x <= self.canvas.offsetWidth && y <= self.canvas.offsetHeight) {
-                self.cursorX = x;
-                self.cursorY = y;
-                self.cursorX *= (self.canvas.width / self.canvas.offsetWidth);
-                self.cursorY *= (self.canvas.height / self.canvas.offsetHeight);
-
-                if (self.onmousemove) {
-                    self.onmousemove(self.cursorX, self.cursorY);
-                }
-            }
+      if (!self.isKeyStatus[e.keyCode].isPressed) {
+        self.isKeyStatus[e.keyCode].isPressed = true;
+        if (self.onkeydown) {
+          if (self.onkeydown(e.keyCode)) {
             e.preventDefault();
-        }, false);
-    }
-
-    isKeyDown(keyCode) {
-        if (this.isKeyStatus[keyCode]) {
-            return this.isKeyStatus[keyCode].isPressed;
-        } else {
-            return false;
+          }
+          console.log("KeyDown -> Code: " + e.keyCode);
         }
-    }
+      }
+    };
 
-    isMouseLeftButtonDown() {
-        return this.leftButtonDown;
-    }
+    window.onkeyup = function (e) {
+      if (!self.isKeyStatus[e.keyCode]) {
+        self.isKeyStatus[e.keyCode] = [];
+      }
+      if (self.isKeyStatus[e.keyCode].isPressed) {
+        self.isKeyStatus[e.keyCode].isPressed = false;
+        if (self.onkeyup) {
+          self.onkeyup(e.keyCode);
+        }
+      }
+    };
 
-    isMouseRightButtonDown() {
-        return this.rightButtonDown;
-    }
+    window.onmousemove = function (e) {
+      var x = e.clientX - self.canvas.offsetLeft;
+      var y = e.clientY - self.canvas.offsetTop;
+      if (
+        x >= 0 &&
+        y >= 0 &&
+        x <= self.canvas.offsetWidth &&
+        y <= self.canvas.offsetHeight
+      ) {
+        self.cursorX = x;
+        self.cursorY = y;
+        self.cursorX *= self.canvas.width / self.canvas.offsetWidth;
+        self.cursorY *= self.canvas.height / self.canvas.offsetHeight;
 
-    getCursorX() {
-        return this.cursorX;
-    }
+        if (self.onmousemove) {
+          if (
+            self.onmousemove(
+              self.cursorX,
+              self.cursorY,
+              e.movementX,
+              e.movementY
+            )
+          ) {
+            e.preventDefault();
+          }
+        }
+      }
+    };
 
-    getCursorY() {
-        return this.cursorY;
+    window.onmousedown = function (e) {
+      var x = e.clientX - self.canvas.offsetLeft;
+      var y = e.clientY - self.canvas.offsetTop;
+      if (
+        x >= 0 &&
+        y >= 0 &&
+        x <= self.canvas.offsetWidth &&
+        y <= self.canvas.offsetHeight
+      ) {
+        self.cursorX = x;
+        self.cursorY = y;
+        self.cursorX *= self.canvas.width / self.canvas.offsetWidth;
+        self.cursorY *= self.canvas.height / self.canvas.offsetHeight;
+
+        switch (e.button) {
+          case 0:
+            self.leftButtonDown = true;
+            break;
+          case 1:
+            self.middleButtonDown = true;
+            break;
+          case 2:
+            self.rightButtonDown = true;
+            break;
+        }
+        if (self.onmousedown) {
+          if (self.onmousedown(e.button)) {
+            e.preventDefault();
+          }
+        }
+      }
+    };
+
+    window.onmouseup = function (e) {
+      var x = e.clientX - self.canvas.offsetLeft;
+      var y = e.clientY - self.canvas.offsetTop;
+      if (
+        x >= 0 &&
+        y >= 0 &&
+        x <= self.canvas.offsetWidth &&
+        y <= self.canvas.offsetHeight
+      ) {
+        self.cursorX = x;
+        self.cursorY = y;
+        self.cursorX *= self.canvas.width / self.canvas.offsetWidth;
+        self.cursorY *= self.canvas.height / self.canvas.offsetHeight;
+
+        switch (e.button) {
+          case 0:
+            self.leftButtonDown = false;
+            break;
+          case 1:
+            self.middleButtonDown = false;
+            break;
+          case 2:
+            self.rightButtonDown = false;
+            break;
+        }
+        if (self.onmouseup) {
+          self.onmouseup(e.button);
+        }
+      }
+    };
+
+    document.body.addEventListener(
+      "touchstart",
+      function (e) {
+        //e.preventDefault();
+      },
+      false
+    );
+
+    document.body.addEventListener(
+      "touchmove",
+      function (e) {
+        var x = e.touches[0].clientX - self.canvas.offsetLeft;
+        var y = e.touches[0].clientY - self.canvas.offsetTop;
+        if (
+          x >= 0 &&
+          y >= 0 &&
+          x <= self.canvas.offsetWidth &&
+          y <= self.canvas.offsetHeight
+        ) {
+          self.cursorX = x;
+          self.cursorY = y;
+          self.cursorX *= self.canvas.width / self.canvas.offsetWidth;
+          self.cursorY *= self.canvas.height / self.canvas.offsetHeight;
+
+          if (self.onmousemove) {
+            self.onmousemove(self.cursorX, self.cursorY);
+          }
+        }
+        e.preventDefault();
+      },
+      false
+    );
+  }
+
+  isKeyDown(keyCode) {
+    if (this.isKeyStatus[keyCode]) {
+      return this.isKeyStatus[keyCode].isPressed;
+    } else {
+      return false;
     }
+  }
+
+  isMouseLeftButtonDown() {
+    return this.leftButtonDown;
+  }
+
+  isMouseRightButtonDown() {
+    return this.rightButtonDown;
+  }
+
+  getCursorX() {
+    return this.cursorX;
+  }
+
+  getCursorY() {
+    return this.cursorY;
+  }
 }
-

@@ -1,9 +1,5 @@
 class MinimapClass {
-    constructor() {
+  constructor() {}
 
-    }
-
-    drawMinimap(drawingContext) {
-
-    }
+  drawMinimap(drawingContext) {}
 }
