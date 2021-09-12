@@ -18,7 +18,6 @@ class GraphicsClass {
     );
 
     this.particleClass = new ParticleClass();
-
     this.weatherClass = new WeatherClass(canvas.width, canvas.height);
 
     this.survivorCharacterClass = new SurvivorCharacterClass();
@@ -171,6 +170,16 @@ class GraphicsClass {
 
     this.drawBullet(players);
 
+    //
+    //this.drawingContext.save();
+    if (this.sightEffectClass) {
+      //this.drawingContext.globalCompositeOperation = 'source-in';
+      //this.sightEffectClass.clipSight(this.drawingContext);
+    }
+    this.drawStep(players);
+    //this.drawingContext.restore();
+    //
+
     if (this.particleClass) {
       this.particleClass.drawParticles(this.drawingContext, this.cameraClass);
     }
@@ -182,6 +191,53 @@ class GraphicsClass {
     }
 
     this.endScene();
+  }
+
+  drawStep(players) {
+    if (players) {
+      const now = performance.now();
+      for (let i = 0; i < players.length; i++) {
+        const player = players[players[i]];
+        if (player && player.isOtherPlayer()) {
+          const centerX =
+            player.getCenterX() - this.cameraClass.getViewboxLeft();
+          const centerY =
+            player.getCenterY() - this.cameraClass.getViewboxTop();
+          const speed = Math.sqrt(
+            player.getSpeedX() * player.getSpeedX() +
+              player.getSpeedY() * player.getSpeedY()
+          );
+          if (!player.lastStepInfo) {
+            player.lastStepInfo = {
+              time: 0,
+              size: 0,
+            };
+          }
+
+          const interval = now - player.lastStepInfo.time;
+          if (interval < 200) {
+            this.drawingContext.beginPath();
+            this.drawingContext.arc(
+              centerX,
+              centerY,
+              player.lastStepInfo.size * (interval / 200),
+              0,
+              2 * Math.PI,
+              false
+            );
+            this.drawingContext.strokeStyle = `rgba(200, 200, 200, ${255 - interval})`;
+            this.drawingContext.stroke();
+          } else {
+            if (speed > 3 && interval > 400) {
+              player.lastStepInfo = {
+                time: now,
+                size: 5,
+              };
+            }
+          }
+        }
+      }
+    }
   }
 
   drawBullet(players) {
