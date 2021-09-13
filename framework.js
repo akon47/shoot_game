@@ -69,6 +69,10 @@ window.onload = function () {
       e.preventDefault();
     });
 
+    document.addEventListener("keydown", (e) => {
+      e.preventDefault();
+    });
+
     canvas.requestPointerLock =
       canvas.requestPointerLock || canvas.mozRequestPointerLock;
     document.exitPointerLock =

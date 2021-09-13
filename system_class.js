@@ -787,7 +787,7 @@ class SystemClass {
 
   inputFrame() {
     if (this.inputClass) {
-      if (this.inputClass.isKeyDown(KEYCODE_TILDE)) {
+      if (this.inputClass.isKeyDown(KEYCODE_TILDE) || this.inputClass.isKeyDown(KEYCODE_TAB)) {
         this.graphicsClass.uiClass.showInfoHUD();
       } else {
         this.graphicsClass.uiClass.hideInfoHUD();
