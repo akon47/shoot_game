@@ -70,7 +70,13 @@ window.onload = function () {
     });
 
     document.addEventListener("keydown", (e) => {
-      e.preventDefault();
+      switch (e.keyCode) {
+        case KEYCODE_TAB:
+        case KEYCODE_F5:
+        case KEYCODE_F12:
+          e.preventDefault();
+          break;
+      }
     });
 
     canvas.requestPointerLock =

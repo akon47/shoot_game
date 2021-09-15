@@ -16,6 +16,9 @@ const KEYCODE_F6 = 117;
 const KEYCODE_F7 = 118;
 const KEYCODE_F8 = 119;
 const KEYCODE_F9 = 120;
+const KEYCODE_F10 = 121;
+const KEYCODE_F11 = 122;
+const KEYCODE_F12 = 123;
 
 const KEYCODE_A = 65;
 const KEYCODE_W = 87;
