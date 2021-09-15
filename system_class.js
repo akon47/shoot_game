@@ -538,6 +538,7 @@ class SystemClass {
 
       this.players[id].onmeleeattack = function (player, weapon) {
         if (player.getId() === self.currentId) {
+          self.networkClass.sendMeleeAttack(weapon);
         }
       };
 

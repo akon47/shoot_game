@@ -251,6 +251,17 @@ class NetworkClass {
     );
   }
 
+  sendMeleeAttack(weapon) {
+    this.webSocket.send(
+      JSON.stringify({
+        type: "user_melee_attack",
+        data: {
+          weapon: weapon,
+        },
+      })
+    );
+  }
+
   sendReload(weapon) {
     this.webSocket.send(
       JSON.stringify({ type: "user_reload", data: { weapon: weapon } })
