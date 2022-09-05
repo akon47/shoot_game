@@ -27,5 +27,4 @@ HTML5의 Canvas 를 이용하여 게임도 만들 수 있을까? 하는 호기�
 
 
 ## 🚀 Demo
-
-https://www.kimhwan.kr/shoot_game/
+https://shootgame.kimhwan.kr/
