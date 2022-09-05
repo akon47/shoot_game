@@ -28,4 +28,4 @@ You can play multi-play games with multiple people using a web socket.
 
 ## 🚀 Demo
 
-https://www.kimhwan.kr/shoot_game/
+https://shootgame.kimhwan.kr/
