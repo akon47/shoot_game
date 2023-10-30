@@ -70,7 +70,7 @@ class SightEffectClass {
 
     this.sightDrawingContext.globalCompositeOperation = "copy";
     this.sightDrawingContext.beginPath();
-    this.sightDrawingContext.fillStyle = "rgb(0, 0, 0, " + darkness + ")";
+    this.sightDrawingContext.fillStyle = "rgb(20, 20, 20, " + darkness + ")";
     this.sightDrawingContext.arc(
       this.screenWidth / 2,
       this.screenHeight / 2,
