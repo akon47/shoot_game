@@ -2,9 +2,7 @@
 
 # shoot_game
 
-<p>
-  <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fakon47%2Fshoot_game&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false" />
-</p>
+[![Hits](https://counter.kimhwan.kr/?key=github-akon47-shoot-game)](https://github.com/akon47/shoot_game)
 
 HTML5의 Canvas 를 이용하여 게임도 만들 수 있을까? 하는 호기심에 만들어본 웹 게임 프로젝트.   
 웹소켓을 이용하여 여러 사람과 멀티 플레이 게임을 즐길 수 있습니다.   
