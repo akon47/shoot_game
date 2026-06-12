@@ -455,7 +455,7 @@ class SurvivorCharacterClass {
 
     const frameCount = Math.floor(this.frameValue);
     if (playerClass) {
-      const characterInfo = this.characters[playerClass.getWeapon()];
+      let characterInfo = this.characters[playerClass.getWeapon()];
       if (!characterInfo) {
         characterInfo = this.characters["flashlight"];
       }

@@ -107,10 +107,21 @@ window.onload = function () {
 };
 
 function setCookie(name, value, exp) {
+  if (exp === undefined) {
+    exp = 365;
+  }
   var date = new Date();
   date.setTime(date.getTime() + exp * 24 * 60 * 60 * 1000);
   document.cookie =
     name + "=" + value + ";expires=" + date.toUTCString() + ";path=/";
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 function getCookie(name) {

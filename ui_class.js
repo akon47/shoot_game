@@ -229,7 +229,7 @@ class UserHUD {
 
 class MinimapInterfaceClass {
   constructor(size, x, y) {
-    this.minimapSize = size !== undefined ? 200 : 0;
+    this.minimapSize = size !== undefined ? size : 0;
     this.x = x !== undefined ? x : 0;
     this.y = y !== undefined ? y : 0;
     this.visible = true;
@@ -379,6 +379,9 @@ class KillHUD {
 
   drawHUD(drawingContext) {
     const nowTicks = Date.now();
+    this.messages = this.messages.filter(
+      (message) => message.expire > nowTicks
+    );
     drawingContext.textBaseline = "top";
     drawingContext.textAlign = "right";
     drawingContext.fillStyle = "white";

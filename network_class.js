@@ -36,7 +36,7 @@ class NetworkClass {
     }
   }
 
-  isConnected() {
+  getIsConnected() {
     return this.isConnected;
   }
 

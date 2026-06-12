@@ -37,7 +37,7 @@ class GraphicsClass {
     if (debugClass.black) {
       return;
     }
-    if (systemClass.pointerLockMode) {
+    if (systemClass.pointerLockMode && systemClass.getCurrentPlayerClass()) {
       this.cameraClass.setRotate(
         -(systemClass.getCurrentPlayerClass().getDirection() + 90) *
           (Math.PI / 180)
@@ -225,7 +225,7 @@ class GraphicsClass {
               2 * Math.PI,
               false
             );
-            this.drawingContext.strokeStyle = `rgba(200, 200, 200, ${255 - interval})`;
+            this.drawingContext.strokeStyle = `rgba(200, 200, 200, ${(200 - interval) / 200})`;
             this.drawingContext.stroke();
           } else {
             if (speed > 3 && interval > 400) {

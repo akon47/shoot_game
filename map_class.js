@@ -432,8 +432,8 @@ class MapClass {
           }
         }
       } else {
-        for (let y = 0; y < this.width; y++) {
-          for (let x = 0; x < this.height; x++) {
+        for (let y = 0; y < this.height; y++) {
+          for (let x = 0; x < this.width; x++) {
             const tileX = x * this.tileWidth;
             const tileY = y * this.tileHeight;
 

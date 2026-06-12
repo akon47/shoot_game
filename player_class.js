@@ -272,7 +272,7 @@ class PlayerClass {
     }
 
     getSegments(cameraClass) {
-        const hitBox = getHitBoxes()[0];
+        const hitBox = this.getHitBoxes()[0];
         const result =
             [
                 { a: { x: hitBox.left, y: hitBox.top }, b: { x: hitBox.right, y: hitBox.top } },
@@ -294,7 +294,7 @@ class PlayerClass {
     setDeath(death) {
         if (this.death !== death) {
             this.death = death;
-            if (this.onkillchanged) {
+            if (this.ondeathchanged) {
                 this.ondeathchanged(this, death);
             }
         }

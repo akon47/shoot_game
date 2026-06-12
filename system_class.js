@@ -101,7 +101,7 @@ class SystemClass {
             case KEYCODE_S:
               break;
             case KEYCODE_M:
-              self.graphicsClass.userInterfaceClass.minimapInterfaceClass.toggleVisible();
+              self.graphicsClass.uiClass.minimapInterfaceClass.toggleVisible();
               break;
 
             case KEYCODE_1:
@@ -232,7 +232,7 @@ class SystemClass {
     ) {
       var isNewConnection = self.players[id] === undefined;
       var player = self.addPlayer(id);
-      if (player && player != self.currentId) {
+      if (player && player.getId() !== self.currentId) {
         player.setName(name);
         player.setPosition(x, y);
         player.setSpeed(speedX, speedY);
@@ -246,18 +246,21 @@ class SystemClass {
       if (id !== self.currentId && isNewConnection) {
         self.chatClass.writeToMessage(
           "[" +
-            self.players[id].getPlayerDescription() +
+            escapeHtml(self.players[id].getPlayerDescription()) +
             "] has connected.<br/>"
         );
       }
     };
     this.networkClass.userdisconnected = function (id) {
-      self.chatClass.writeToMessage(
-        "[" +
-          self.players[id].getPlayerDescription() +
-          "] has disconnected.<br/>"
-      );
-      self.removePlayer(id);
+      const player = self.players[id];
+      if (player) {
+        self.chatClass.writeToMessage(
+          "[" +
+            escapeHtml(player.getPlayerDescription()) +
+            "] has disconnected.<br/>"
+        );
+        self.removePlayer(id);
+      }
     };
     this.networkClass.usercountchanged = function (count) {
       self.connectedUserCount = count;
@@ -362,7 +365,7 @@ class SystemClass {
           self.players[id].setChat(chat);
           self.chatClass.writeToMessage(
             "[" +
-              self.players[id].getPlayerDescription() +
+              escapeHtml(self.players[id].getPlayerDescription()) +
               "]: " +
               chat +
               "<br/>"
@@ -382,7 +385,7 @@ class SystemClass {
             description = chats[i].id;
           }
           self.chatClass.writeToMessage(
-            "[" + description + "]: " + chats[i].chat + "<br/>"
+            "[" + escapeHtml(description) + "]: " + chats[i].chat + "<br/>"
           );
         }
       }
@@ -573,6 +576,10 @@ class SystemClass {
   removePlayer(id) {
     if (this.players[id] !== undefined) {
       delete this.players[id];
+      const index = this.players.indexOf(id);
+      if (index >= 0) {
+        this.players.splice(index, 1);
+      }
     }
   }
 
@@ -654,7 +661,7 @@ class SystemClass {
       c -= 2 * (circle.centerX * p1.x + circle.centerY * p1.y);
       c -= circle.radius * circle.radius;
       bb4ac = b * b - 4 * a * c;
-      if (Math.abs(a) < Math.Epsilon || bb4ac < 0) {
+      if (Math.abs(a) < Number.EPSILON || bb4ac < 0) {
         //  line does not intersect
         return undefined;
       }
