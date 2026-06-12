@@ -10,7 +10,16 @@ class GraphicsClass {
     this.uiClass = new UserInterfaceClass(uiCanvas);
 
     this.cameraClass = new CameraClass(canvas);
-    this.mapClass = new MapClass(map_office_data);
+
+    // 모든 맵을 미리 구성해두고(히트박스/세그먼트 계산 포함) 라운드마다 교체한다
+    this.mapClasses = {};
+    const mapNames = Object.keys(MAP_REGISTRY);
+    for (let i = 0; i < mapNames.length; i++) {
+      this.mapClasses[mapNames[i]] = new MapClass(MAP_REGISTRY[mapNames[i]]);
+    }
+    this.currentMapName = DEFAULT_MAP_NAME;
+    this.mapClass = this.mapClasses[this.currentMapName];
+
     this.objectClass = objectClass;
     this.cameraClass.setLimit(
       this.mapClass.getPixelWidth(),
@@ -25,6 +34,24 @@ class GraphicsClass {
 
   setCameraPosition(x, y) {
     this.cameraClass.setCameraPosition(x, y);
+  }
+
+  getMapName() {
+    return this.currentMapName;
+  }
+
+  // 활성 맵을 교체한다. 실제로 바뀌었으면 true (이미 같은 맵이면 false)
+  setMap(name) {
+    if (!this.mapClasses[name] || this.currentMapName === name) {
+      return false;
+    }
+    this.currentMapName = name;
+    this.mapClass = this.mapClasses[name];
+    this.cameraClass.setLimit(
+      this.mapClass.getPixelWidth(),
+      this.mapClass.getPixelHeight(),
+    );
+    return true;
   }
 
   shakeScreen(threshold, doFramesCount) {

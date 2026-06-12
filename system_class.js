@@ -299,18 +299,7 @@ class SystemClass {
       const player = self.addPlayer(id);
       if (player) {
         if (player.getId() === self.currentId) {
-          const placeableRandomPosition =
-            self.graphicsClass.mapClass.getPlaceableRandomPosition();
-          player.setPosition(
-            placeableRandomPosition.x,
-            placeableRandomPosition.y,
-          );
-          // 서버는 user_init 수신 시 hp를 100으로 되돌리지만, 본인 user_connected 는
-          // 클라이언트가 무시하므로 로컬 hp도 여기서 직접 되돌려야 한다
-          player.setHp(100);
-          player.resetAmmo();
-          self.networkClass.sendUserInit(player);
-          player.setSpawnProtection(SPAWN_PROTECTION_DURATION);
+          self.respawnCurrentPlayer();
         }
         const providerPlayer = self.players[reason.provider_id];
         if (providerPlayer) {
@@ -394,9 +383,13 @@ class SystemClass {
         player.resetAmmo();
       }
     };
-    this.networkClass.roundinfo = function (remainMs) {
+    this.networkClass.roundinfo = function (remainMs, map) {
       self.roundRemainMs = remainMs;
       self.roundInfoReceivedAt = performance.now();
+      // 라운드 로테이션으로 활성 맵이 바뀌면 새 맵 위에서 리스폰한다
+      if (map && self.graphicsClass.setMap(map)) {
+        self.respawnCurrentPlayer();
+      }
     };
     // 서버 공지(킬스트릭/라운드)는 key+params 로 받아 현재 언어로 렌더링한다
     this.networkClass.servernotice = function (key, params) {
@@ -442,6 +435,23 @@ class SystemClass {
 
   getCurrentPlayerClass() {
     return this.players[this.currentId];
+  }
+
+  // 본인 플레이어를 현재 맵의 임의 위치에 리스폰시키고 서버에 user_init 으로 알린다.
+  // 사망 후 리스폰과 라운드 맵 교체 시에 공용으로 쓰인다.
+  respawnCurrentPlayer() {
+    const player = this.players[this.currentId];
+    if (!player) {
+      return;
+    }
+    const position = this.graphicsClass.mapClass.getPlaceableRandomPosition();
+    player.setPosition(position.x, position.y);
+    // 서버는 user_init 수신 시 hp를 100으로 되돌리지만, 본인 user_connected 는
+    // 클라이언트가 무시하므로 로컬 hp도 여기서 직접 되돌려야 한다
+    player.setHp(100);
+    player.resetAmmo();
+    this.networkClass.sendUserInit(player);
+    player.setSpawnProtection(SPAWN_PROTECTION_DURATION);
   }
 
   togglePointerLockMode() {

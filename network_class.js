@@ -202,7 +202,7 @@ class NetworkClass {
         break;
       case "round_info":
         if (this.roundinfo) {
-          this.roundinfo(msg.data.remainMs);
+          this.roundinfo(msg.data.remainMs, msg.data.map);
         }
         break;
       case "server_notice":

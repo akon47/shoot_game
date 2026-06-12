@@ -10,6 +10,9 @@ if (heads && heads.length > 0) {
     "graphics_class.js",
     "map_class.js",
     "map_office.js",
+    "map_arena.js",
+    "map_ruins.js",
+    "map_registry.js",
     "particle_class.js",
     "object_class.js",
     "item_class.js",
@@ -27,6 +30,9 @@ if (heads && heads.length > 0) {
     var script = document.createElement("script");
     script.setAttribute("type", "text/javascript");
     script.setAttribute("src", requireScripts[i]);
+    // 동적 삽입 스크립트는 기본이 async 라 실행 순서가 보장되지 않는다.
+    // map_registry.js 처럼 앞 스크립트의 전역을 참조하는 파일이 있으므로 순서를 고정한다.
+    script.async = false;
     heads[0].appendChild(script);
   }
 }

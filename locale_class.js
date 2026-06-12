@@ -36,6 +36,7 @@ const LOCALE_STRINGS = {
     round_end: "Round over!",
     round_start:
       "A new round has started! The winner will be announced in {minutes} minutes.",
+    map_changed: "Map changed: {name}",
   },
   ko: {
     // 시스템/채팅 메시지
@@ -67,6 +68,7 @@ const LOCALE_STRINGS = {
     round_end_winner: "🏆 라운드 종료! 우승: [{name}] ({kill}킬 / {death}데스)",
     round_end: "라운드 종료!",
     round_start: "새 라운드 시작! {minutes}분 후 우승자가 발표됩니다.",
+    map_changed: "맵이 변경되었습니다: {name}",
   },
 };
 

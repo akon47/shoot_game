@@ -122,13 +122,22 @@ SystemClass
 - 연결 끊김 시 1초 간격 자동 재접속(`onClose` → `initializeWebSocket`).
 - 메시지 타입을 추가/변경하면 서버 저장소의 `websocket-server.js`도 함께 수정해야 한다.
 
-## 맵 데이터
+## 맵 데이터 / 라운드 맵 로테이션
 
-- 맵은 전역 const 객체로 정의: `map_office.js`의 `map_office_data`(현재 사용 중),
-  `map_data1.js`의 `map_data1`(미사용 예비). GraphicsClass 생성자에서 `new MapClass(map_office_data)`로 선택.
+- 맵은 전역 const 객체로 정의: `map_office.js`/`map_arena.js`/`map_ruins.js`
+  (`map_data1.js`는 미사용 예비). arena/ruins 는 `tools/generate_maps.js`(시드 고정)가
+  생성하므로 직접 수정하지 말고 생성기를 고친 뒤 재생성한다.
 - 형식: `{ name, tile_src, width, height, tile_width, tile_height, wall_tiles: [...], data: [타일 인덱스 1차원 배열] }`
+  + 파일 끝에 서버 require 용 `module.exports.mapData` (브라우저에서는 무시).
+- `map_registry.js`의 `MAP_REGISTRY`가 이름→데이터 매핑이며, **서버 config.js 의
+  `MAP_ROTATION` 과 키가 일치해야 한다**. `DEFAULT_MAP_NAME`은 `MAP_ROTATION[0]`과 동일하게.
+- GraphicsClass 가 시작 시 모든 맵의 `MapClass`(히트박스/세그먼트 포함)를 미리 만들어두고,
+  `round_info`의 `map` 필드가 바뀌면 `setMap()`으로 교체 + `respawnCurrentPlayer()` 호출.
+  접속 시 서버가 `round_info`를 `id`보다 먼저 보내므로 첫 스폰부터 올바른 맵에서 이뤄진다.
 - `MapClass`가 생성 시 `wall_tiles` 기준으로 충돌 히트박스와 시야/사격 레이캐스트용 세그먼트를 미리 계산한다.
-- 서버 저장소의 `map-helper.js`가 맵 관련 보조 도구다.
+- 새 JS 파일 로드 순서는 framework.js 가 `script.async = false`로 보장한다
+  (map_registry.js 처럼 앞 파일의 전역을 즉시 참조하는 경우 필수).
+- 서버 저장소의 `map-helper.js`가 같은 맵 파일들을 require 해서 길찾기/세그먼트를 만든다.
 
 ## 디버그
 
