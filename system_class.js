@@ -11,6 +11,9 @@ window.requestAnimFrame = (function (callback) {
   );
 })();
 
+// 리스폰 직후 무적 시간(ms). 서버의 SPAWN_PROTECTION_DURATION 과 같은 값을 유지해야 한다.
+const SPAWN_PROTECTION_DURATION = 3000;
+
 class SystemClass {
   constructor(window, rootDiv, canvas, uiCanvas) {
     this.isRunning = false;
@@ -19,6 +22,7 @@ class SystemClass {
     this.renderFramesCount = 0;
     this.chatClass = new ChatClass(window, rootDiv, canvas);
     this.objectClass = new ObjectClass();
+    this.itemManagerClass = new ItemManagerClass();
     this.graphicsClass = new GraphicsClass(canvas, uiCanvas, this.objectClass);
     this.inputClass = new InputClass(window, canvas);
     this.soundClass = new SoundClass();
@@ -41,31 +45,16 @@ class SystemClass {
       }
     };
     this.inputClass.onmousedown = function (button) {
-      const player = self.players[self.currentId];
-
-      if (
+      // 포인터락 모드인데 아직 락이 걸려있지 않으면 클릭 시 다시 요청한다
+      const isPointerLocked =
         document.pointerLockElement === this.canvas ||
-        document.mozPointerLockElement === this.canvas
-      ) {
-        //
-      } else {
-        if (self.pointerLockMode) {
-          canvas.requestPointerLock();
-        }
+        document.mozPointerLockElement === this.canvas;
+      if (!isPointerLocked && self.pointerLockMode) {
+        canvas.requestPointerLock();
       }
       return true;
     };
     this.inputClass.onmouseup = function (button) {
-      const player = self.players[self.currentId];
-      switch (button) {
-        case MOUSE_LEFT_BUTTON:
-          if (player) {
-            //player.idle();
-          }
-          break;
-        case MOUSE_RIGHT_BUTTON:
-          break;
-      }
       return true;
     };
     this.inputClass.onmousemove = function (x, y, movementX, movementY) {
@@ -114,20 +103,10 @@ class SystemClass {
               playerClass.setWeapon("rifle");
               break;
             case KEYCODE_4:
-              //playerClass.setWeapon('shotgun');
-              break;
-            case KEYCODE_F:
-              //playerClass.setWeapon('flashlight');
+              playerClass.setWeapon("shotgun");
               break;
             case KEYCODE_R:
               playerClass.reload();
-              break;
-
-            case KEYCODE_PAGEUP:
-              //this.canvas.style.webkitTransform = 'rotate(45deg)';
-              break;
-            case KEYCODE_PAGEDOWN:
-              //self.graphicsClass.cameraClass.rotate -= (Math.PI / 180 * 5);
               break;
 
             case KEYCODE_F1:
@@ -147,12 +126,15 @@ class SystemClass {
               debugClass.debugLowQualityMap = !debugClass.debugLowQualityMap;
               break;
             case KEYCODE_F7:
-              //debugClass.black = !debugClass.black;
+              localeClass.toggleLanguage();
+              self.chatClass.writeToMessage(
+                "<b>" + localeClass.getHtml("language_changed") + "</b><br/>",
+              );
               break;
             case KEYCODE_F8:
               var name = prompt(
-                "Enter a new name",
-                self.getCurrentPlayerClass().getName() ?? ""
+                localeClass.get("prompt_enter_name"),
+                self.getCurrentPlayerClass().getName() ?? "",
               );
               if (name) {
                 self.chatClass.name(name);
@@ -182,15 +164,16 @@ class SystemClass {
     //
     this.networkClass.disconnected = function () {
       self.chatClass.writeToMessage(
-        "The connection with the server has been lost.<br/>"
+        localeClass.getHtml("connection_lost") + "<br/>",
       );
       self.currentId = undefined;
       self.players = [];
       self.connectedUserCount = 0;
+      self.itemManagerClass.setItems([]);
     };
     this.networkClass.tryreconnect = function (tryCount) {
       self.chatClass.writeToMessage(
-        "Attempt to connect with the server. (" + tryCount + ")<br/>"
+        localeClass.getHtml("reconnecting", { count: tryCount }) + "<br/>",
       );
     };
 
@@ -202,7 +185,7 @@ class SystemClass {
           self.graphicsClass.mapClass.getPlaceableRandomPosition();
         let playerName = getCookie("user_name");
         if (playerName === null || playerName === "") {
-          playerName = prompt("Enter a new name", undefined);
+          playerName = prompt(localeClass.get("prompt_enter_name"), undefined);
           if (playerName) {
             setCookie("user_name", playerName);
           }
@@ -213,7 +196,10 @@ class SystemClass {
         player.x = placeableRandomPosition.x;
         player.y = placeableRandomPosition.y;
         self.networkClass.sendUserInit(player);
-        self.chatClass.writeToMessage("You are connected.<br/>");
+        player.setSpawnProtection(SPAWN_PROTECTION_DURATION);
+        self.chatClass.writeToMessage(
+          localeClass.getHtml("connected") + "<br/>",
+        );
       }
     };
     this.networkClass.userconnected = function (
@@ -228,7 +214,8 @@ class SystemClass {
       weapon,
       hp,
       kill,
-      death
+      death,
+      protectedMs,
     ) {
       var isNewConnection = self.players[id] === undefined;
       var player = self.addPlayer(id);
@@ -242,12 +229,13 @@ class SystemClass {
         player.setHp(hp);
         player.setKill(kill);
         player.setDeath(death);
+        player.setSpawnProtection(protectedMs);
       }
       if (id !== self.currentId && isNewConnection) {
         self.chatClass.writeToMessage(
-          "[" +
-            escapeHtml(self.players[id].getPlayerDescription()) +
-            "] has connected.<br/>"
+          localeClass.getHtml("player_joined", {
+            name: self.players[id].getPlayerDescription(),
+          }) + "<br/>",
         );
       }
     };
@@ -255,9 +243,9 @@ class SystemClass {
       const player = self.players[id];
       if (player) {
         self.chatClass.writeToMessage(
-          "[" +
-            escapeHtml(player.getPlayerDescription()) +
-            "] has disconnected.<br/>"
+          localeClass.getHtml("player_left", {
+            name: player.getPlayerDescription(),
+          }) + "<br/>",
         );
         self.removePlayer(id);
       }
@@ -315,19 +303,19 @@ class SystemClass {
             self.graphicsClass.mapClass.getPlaceableRandomPosition();
           player.setPosition(
             placeableRandomPosition.x,
-            placeableRandomPosition.y
+            placeableRandomPosition.y,
           );
           player.resetAmmo();
           self.networkClass.sendUserInit(player);
+          player.setSpawnProtection(SPAWN_PROTECTION_DURATION);
         }
         const providerPlayer = self.players[reason.provider_id];
         if (providerPlayer) {
           self.graphicsClass.uiClass.writeDieMessage(
             player,
             providerPlayer,
-            reason
+            reason,
           );
-          //self.chatClass.writeToMessage('<b>[' + providerName + '] -> [' + player.getPlayerDescription() + '] <font color=\"red\">KILL</font></b><br/>');
         }
       }
     };
@@ -348,13 +336,70 @@ class SystemClass {
       id,
       weapon,
       muzzlePoint,
-      targetPoint,
-      angle
+      targetPoints,
+      angle,
     ) {
       const player = self.addPlayer(id);
       if (player && player.getId() !== self.currentId) {
-        player.shoot(targetPoint, true);
+        // 서버가 중계한 탄도(targetPoints)를 그대로 재현한다
+        player.shoot(
+          targetPoints && targetPoints.length > 0 ? targetPoints[0] : undefined,
+          true,
+          targetPoints,
+        );
       }
+    };
+    this.networkClass.usermeleeattack = function (id, weapon) {
+      const player = self.addPlayer(id);
+      if (player && player.getId() !== self.currentId) {
+        player.meleeAttack();
+      }
+    };
+    this.networkClass.userreload = function (id, weapon) {
+      const player = self.addPlayer(id);
+      if (player && player.getId() !== self.currentId) {
+        player.reload();
+      }
+    };
+    this.networkClass.itemlist = function (items) {
+      self.itemManagerClass.setItems(items);
+    };
+    this.networkClass.itemspawn = function (item) {
+      self.itemManagerClass.addItem(item);
+    };
+    this.networkClass.itempicked = function (itemId, by, type) {
+      self.itemManagerClass.removeItem(itemId);
+      if (by === self.currentId) {
+        if (type === "medkit") {
+          self.chatClass.writeToMessage(
+            '<b><font color="lightgreen">' +
+              localeClass.getHtml("pickup_medkit") +
+              "</font></b><br/>",
+          );
+        } else if (type === "ammo") {
+          self.chatClass.writeToMessage(
+            '<b><font color="yellow">' +
+              localeClass.getHtml("pickup_ammo") +
+              "</font></b><br/>",
+          );
+        }
+      }
+    };
+    this.networkClass.ammorefill = function () {
+      const player = self.players[self.currentId];
+      if (player) {
+        player.resetAmmo();
+      }
+    };
+    this.networkClass.roundinfo = function (remainMs) {
+      self.roundRemainMs = remainMs;
+      self.roundInfoReceivedAt = performance.now();
+    };
+    // 서버 공지(킬스트릭/라운드)는 key+params 로 받아 현재 언어로 렌더링한다
+    this.networkClass.servernotice = function (key, params) {
+      self.chatClass.writeToMessage(
+        "<b>" + localeClass.getServerNoticeHtml(key, params) + "</b><br/>",
+      );
     };
     this.networkClass.userchat = function (id, chat) {
       if (id === "server") {
@@ -368,7 +413,7 @@ class SystemClass {
               escapeHtml(self.players[id].getPlayerDescription()) +
               "]: " +
               chat +
-              "<br/>"
+              "<br/>",
           );
         }
       }
@@ -385,7 +430,7 @@ class SystemClass {
             description = chats[i].id;
           }
           self.chatClass.writeToMessage(
-            "[" + escapeHtml(description) + "]: " + chats[i].chat + "<br/>"
+            "[" + escapeHtml(description) + "]: " + chats[i].chat + "<br/>",
           );
         }
       }
@@ -399,21 +444,9 @@ class SystemClass {
   togglePointerLockMode() {
     this.pointerLockMode = !this.pointerLockMode;
     if (this.pointerLockMode) {
+      this.canvas.requestPointerLock();
     } else {
       document.exitPointerLock();
-    }
-
-    if (
-      document.pointerLockElement === this.canvas ||
-      document.mozPointerLockElement === this.canvas
-    ) {
-      if (!this.pointerLockMode) {
-        document.exitPointerLock();
-      }
-    } else {
-      if (this.pointerLockMode) {
-        this.canvas.requestPointerLock();
-      }
     }
   }
 
@@ -439,7 +472,7 @@ class SystemClass {
           if (player.getSpeedX() === 0 && player.getSpeedY() === 0) {
             self.networkClass.sendPositionChanged(
               player.getPositionX(),
-              player.getPositionY()
+              player.getPositionY(),
             );
           }
         }
@@ -447,7 +480,6 @@ class SystemClass {
       this.players[id].directionchanged = function (player, direction) {
         if (player.getId() === self.currentId) {
           self.networkClass.sendDirectionChanged(direction);
-          //self.canvas.style.webkitTransform = 'rotate(' + direction + 'deg)';
         }
       };
       this.players[id].characterchanged = function (player, character) {
@@ -465,43 +497,49 @@ class SystemClass {
         player,
         weapon,
         muzzlePoint,
-        targetPoint,
-        angle
+        targets,
+        angle,
       ) {
         var volume = 0.1,
           pan = 0.0;
 
         self.updateShootTarget(player);
         if (player.getId() === self.currentId) {
-          self.networkClass.sendShoot(weapon, muzzlePoint, targetPoint, angle);
+          // updateShootTarget 으로 벽에 맞게 잘린 탄도를 보낸다
+          self.networkClass.sendShoot(
+            weapon,
+            muzzlePoint,
+            player.shootInfo.targets,
+            angle,
+          );
 
-          var threadhold = 0,
+          var threshold = 0,
             shakeFrames = 0;
           switch (weapon) {
             case "handgun":
-              threadhold = 1;
+              threshold = 1;
               shakeFrames = 6;
               break;
             case "rifle":
-              threadhold = 2;
+              threshold = 2;
               shakeFrames = 6;
               break;
             case "shotgun":
-              threadhold = 5;
+              threshold = 5;
               shakeFrames = 10;
               break;
           }
           if (player.getSpeedX() !== 0 || player.getSpeedY() !== 0) {
-            threadhold *= 2;
+            threshold *= 2;
           }
-          self.graphicsClass.shakeScreen(threadhold, shakeFrames);
+          self.graphicsClass.shakeScreen(threshold, shakeFrames);
         } else {
           const soundInfo = self.soundClass.getSoundVolumePanByPosition(
             {
               x: self.graphicsClass.cameraClass.getViewboxCenterX(),
               y: self.graphicsClass.cameraClass.getViewboxCenterY(),
             },
-            { x: muzzlePoint.x, y: muzzlePoint.y }
+            { x: muzzlePoint.x, y: muzzlePoint.y },
           );
 
           if (soundInfo) {
@@ -527,16 +565,16 @@ class SystemClass {
             {
               x: player.shootInfo.hitObjectIntersection.x,
               y: player.shootInfo.hitObjectIntersection.y,
-            }
+            },
           );
           if (soundInfo) {
             volume *= soundInfo.volume;
             pan = soundInfo.pan;
           }
           self.soundClass.playImpactSound(volume, pan);
-        } else {
-          self.graphicsClass.particleClass.setParticles(player.shootInfo);
         }
+        // 명중하지 않은 탄도(펠릿)는 setParticles 내부에서 골라 불꽃을 만든다
+        self.graphicsClass.particleClass.setParticles(player.shootInfo);
       };
 
       this.players[id].onmeleeattack = function (player, weapon) {
@@ -556,7 +594,7 @@ class SystemClass {
               x: self.graphicsClass.cameraClass.getViewboxCenterX(),
               y: self.graphicsClass.cameraClass.getViewboxCenterY(),
             },
-            { x: player.x, y: player.y }
+            { x: player.x, y: player.y },
           );
 
           if (soundInfo) {
@@ -629,21 +667,26 @@ class SystemClass {
 
     if (player) {
       const segments = this.graphicsClass.mapClass.getSegments();
-      const ray = {
-        a: { x: player.shootInfo.muzzle.x, y: player.shootInfo.muzzle.y },
-        b: { x: player.shootInfo.target.x, y: player.shootInfo.target.y },
-      };
-      var closestIntersect = null;
-      for (let i = 0; i < segments.length; i++) {
-        var intersect = getRayIntersection(ray, segments[i]);
-        if (!intersect) continue;
-        if (!closestIntersect || intersect.param < closestIntersect.param) {
-          closestIntersect = intersect;
+      const targets = player.shootInfo.targets
+        ? player.shootInfo.targets
+        : [player.shootInfo.target];
+      for (let t = 0; t < targets.length; t++) {
+        const ray = {
+          a: { x: player.shootInfo.muzzle.x, y: player.shootInfo.muzzle.y },
+          b: { x: targets[t].x, y: targets[t].y },
+        };
+        var closestIntersect = null;
+        for (let i = 0; i < segments.length; i++) {
+          var intersect = getRayIntersection(ray, segments[i]);
+          if (!intersect) continue;
+          if (!closestIntersect || intersect.param < closestIntersect.param) {
+            closestIntersect = intersect;
+          }
         }
-      }
-      if (closestIntersect) {
-        player.shootInfo.target.x = closestIntersect.x;
-        player.shootInfo.target.y = closestIntersect.y;
+        if (closestIntersect) {
+          targets[t].x = closestIntersect.x;
+          targets[t].y = closestIntersect.y;
+        }
       }
     }
   }
@@ -689,63 +732,70 @@ class SystemClass {
 
     if (this.players) {
       for (let i = 0; i < this.players.length; i++) {
-        const player = this.players[this.players[i]];
+        const shooter = this.players[this.players[i]];
         if (
-          player &&
-          player.getStatus() === "shoot" &&
-          player.getCurrentStatusFrame() === 0
+          shooter &&
+          shooter.getStatus() === "shoot" &&
+          shooter.getCurrentStatusFrame() === 0
         ) {
-          const shootInfo = player.getShootInfo();
+          const shootInfo = shooter.getShootInfo();
           if (shootInfo) {
-            const p1 = shootInfo.muzzle;
-            const p2 = shootInfo.target;
-            const bulletBox = {
-              left: Math.min(p1.x, p2.x),
-              top: Math.min(p1.y, p2.y),
-              right: Math.max(p1.x, p2.x),
-              bottom: Math.max(p1.y, p2.y),
-            };
+            const targets = shootInfo.targets
+              ? shootInfo.targets
+              : [shootInfo.target];
+            shootInfo.hitObjectIntersections = new Array(targets.length);
+            shootInfo.hitObjectIntersection = undefined;
 
-            var hitObject = undefined;
-            var hitObjectIntersection = undefined;
-            var hitObjectType = undefined;
-            var minDistance = 1000000000;
+            for (let t = 0; t < targets.length; t++) {
+              const p1 = shootInfo.muzzle;
+              const p2 = targets[t];
+              const bulletBox = {
+                left: Math.min(p1.x, p2.x),
+                top: Math.min(p1.y, p2.y),
+                right: Math.max(p1.x, p2.x),
+                bottom: Math.max(p1.y, p2.y),
+              };
 
-            for (let j = 0; j < this.players.length; j++) {
-              const player = this.players[this.players[j]];
-              if (player) {
-                if (
-                  bulletBox.left < player.x + player.width &&
-                  bulletBox.right > player.x &&
-                  bulletBox.top < player.y + player.height &&
-                  bulletBox.bottom > player.y
-                ) {
-                  var intersection = shootIntersection(
-                    p1,
-                    p2,
-                    player.x + player.width / 2,
-                    player.y + player.height / 2,
-                    16
-                  );
-                  if (intersection) {
-                    const distance =
-                      Math.pow(intersection.x - p1.x, 2) +
-                      Math.pow(intersection.y - p1.y, 2);
-                    if (distance < minDistance) {
-                      minDistance = distance;
-                      hitObject = player;
-                      hitObjectIntersection = intersection;
-                      hitObjectType = "user";
+              var hitObjectIntersection = undefined;
+              var minDistance = 1000000000;
+
+              for (let j = 0; j < this.players.length; j++) {
+                const player = this.players[this.players[j]];
+                // 스폰 무적 상태인 플레이어는 서버에서도 피격되지 않으므로 시각 효과도 생략
+                if (player && !player.isSpawnProtected()) {
+                  if (
+                    bulletBox.left < player.x + player.width &&
+                    bulletBox.right > player.x &&
+                    bulletBox.top < player.y + player.height &&
+                    bulletBox.bottom > player.y
+                  ) {
+                    var intersection = shootIntersection(
+                      p1,
+                      p2,
+                      player.x + player.width / 2,
+                      player.y + player.height / 2,
+                      16,
+                    );
+                    if (intersection) {
+                      const distance =
+                        Math.pow(intersection.x - p1.x, 2) +
+                        Math.pow(intersection.y - p1.y, 2);
+                      if (distance < minDistance) {
+                        minDistance = distance;
+                        hitObjectIntersection = intersection;
+                      }
                     }
                   }
                 }
               }
-            }
 
-            if (hitObject) {
-              player.shootInfo.hitObjectIntersection = hitObjectIntersection;
-            } else {
-              player.shootInfo.hitObjectIntersection = undefined;
+              shootInfo.hitObjectIntersections[t] = hitObjectIntersection;
+              if (
+                hitObjectIntersection &&
+                shootInfo.hitObjectIntersection === undefined
+              ) {
+                shootInfo.hitObjectIntersection = hitObjectIntersection;
+              }
             }
           }
         }
@@ -780,7 +830,7 @@ class SystemClass {
       if (currentPlayerClass) {
         this.graphicsClass.setCameraPosition(
           currentPlayerClass.getCenterX(),
-          currentPlayerClass.getCenterY()
+          currentPlayerClass.getCenterY(),
         );
 
         const ammoInfo = currentPlayerClass.getCurrentAmmoInfo();
@@ -795,7 +845,10 @@ class SystemClass {
 
   inputFrame() {
     if (this.inputClass) {
-      if (this.inputClass.isKeyDown(KEYCODE_TILDE) || this.inputClass.isKeyDown(KEYCODE_TAB)) {
+      if (
+        this.inputClass.isKeyDown(KEYCODE_TILDE) ||
+        this.inputClass.isKeyDown(KEYCODE_TAB)
+      ) {
         this.graphicsClass.uiClass.showInfoHUD();
       } else {
         this.graphicsClass.uiClass.hideInfoHUD();
@@ -811,6 +864,8 @@ class SystemClass {
           playerClass.setWeapon("handgun");
         } else if (this.inputClass.isKeyDown(KEYCODE_3)) {
           playerClass.setWeapon("rifle");
+        } else if (this.inputClass.isKeyDown(KEYCODE_4)) {
+          playerClass.setWeapon("shotgun");
         }
         playerClass.setRunning(this.inputClass.isKeyDown(KEYCODE_SHIFT));
 
@@ -819,37 +874,34 @@ class SystemClass {
           newPlayerSpeedY = 0,
           newPlayerDirection = playerClass.getDirection();
 
-        if (this.pointerLockMode) {
-          if (!this.chatClass.isInputActive()) {
-            if (
-              this.inputClass.isKeyDown(KEYCODE_LEFT_ARROW) ||
-              this.inputClass.isKeyDown(KEYCODE_A)
-            ) {
-              // left
-              newPlayerSpeedX = -baseSpeed;
-            }
-            if (
-              this.inputClass.isKeyDown(KEYCODE_UP_ARROW) ||
-              this.inputClass.isKeyDown(KEYCODE_W)
-            ) {
-              // up
-              newPlayerSpeedY = -baseSpeed;
-            }
-            if (
-              this.inputClass.isKeyDown(KEYCODE_RIGHT_ARROW) ||
-              this.inputClass.isKeyDown(KEYCODE_D)
-            ) {
-              // right
-              newPlayerSpeedX = baseSpeed;
-            }
-            if (
-              this.inputClass.isKeyDown(KEYCODE_DOWN_ARROW) ||
-              this.inputClass.isKeyDown(KEYCODE_S)
-            ) {
-              // down
-              newPlayerSpeedY = baseSpeed;
-            }
+        if (!this.chatClass.isInputActive()) {
+          if (
+            this.inputClass.isKeyDown(KEYCODE_LEFT_ARROW) ||
+            this.inputClass.isKeyDown(KEYCODE_A)
+          ) {
+            newPlayerSpeedX = -baseSpeed;
+          }
+          if (
+            this.inputClass.isKeyDown(KEYCODE_UP_ARROW) ||
+            this.inputClass.isKeyDown(KEYCODE_W)
+          ) {
+            newPlayerSpeedY = -baseSpeed;
+          }
+          if (
+            this.inputClass.isKeyDown(KEYCODE_RIGHT_ARROW) ||
+            this.inputClass.isKeyDown(KEYCODE_D)
+          ) {
+            newPlayerSpeedX = baseSpeed;
+          }
+          if (
+            this.inputClass.isKeyDown(KEYCODE_DOWN_ARROW) ||
+            this.inputClass.isKeyDown(KEYCODE_S)
+          ) {
+            newPlayerSpeedY = baseSpeed;
+          }
 
+          if (this.pointerLockMode) {
+            // 포인터락 모드: 캐릭터가 보는 방향 기준의 상대 이동
             if (newPlayerSpeedX !== 0 || newPlayerSpeedY !== 0) {
               const moveVectorAngle =
                 Math.atan2(newPlayerSpeedY, newPlayerSpeedX) +
@@ -857,38 +909,8 @@ class SystemClass {
               newPlayerSpeedX = Math.cos(moveVectorAngle) * baseSpeed;
               newPlayerSpeedY = Math.sin(moveVectorAngle) * baseSpeed;
             }
-          }
-        } else {
-          if (!this.chatClass.isInputActive()) {
-            if (
-              this.inputClass.isKeyDown(KEYCODE_LEFT_ARROW) ||
-              this.inputClass.isKeyDown(KEYCODE_A)
-            ) {
-              // left
-              newPlayerSpeedX = -baseSpeed;
-            }
-            if (
-              this.inputClass.isKeyDown(KEYCODE_UP_ARROW) ||
-              this.inputClass.isKeyDown(KEYCODE_W)
-            ) {
-              // up
-              newPlayerSpeedY = -baseSpeed;
-            }
-            if (
-              this.inputClass.isKeyDown(KEYCODE_RIGHT_ARROW) ||
-              this.inputClass.isKeyDown(KEYCODE_D)
-            ) {
-              // right
-              newPlayerSpeedX = baseSpeed;
-            }
-            if (
-              this.inputClass.isKeyDown(KEYCODE_DOWN_ARROW) ||
-              this.inputClass.isKeyDown(KEYCODE_S)
-            ) {
-              // down
-              newPlayerSpeedY = baseSpeed;
-            }
-
+          } else {
+            // 일반 모드: 마우스 커서를 바라보도록 방향 갱신
             const userInScreenX =
               playerClass.getCenterX() -
               this.graphicsClass.cameraClass.getViewboxLeft();
@@ -898,14 +920,16 @@ class SystemClass {
             newPlayerDirection =
               (Math.atan2(
                 this.inputClass.getCursorY() - userInScreenY,
-                this.inputClass.getCursorX() - userInScreenX
+                this.inputClass.getCursorX() - userInScreenX,
               ) *
                 180) /
               Math.PI;
           }
-          playerClass.setDirection(newPlayerDirection);
         }
 
+        if (!this.pointerLockMode) {
+          playerClass.setDirection(newPlayerDirection);
+        }
         playerClass.setSpeed(newPlayerSpeedX, newPlayerSpeedY);
 
         if (this.inputClass.isMouseLeftButtonDown()) {
@@ -923,7 +947,7 @@ class SystemClass {
             if (
               Math.sqrt(
                 Math.pow(targetPoint.x - playerClass.getCenterX(), 2) +
-                  Math.pow(targetPoint.y - playerClass.getCenterY(), 2)
+                  Math.pow(targetPoint.y - playerClass.getCenterY(), 2),
               ) >
               playerClass.getWidth() * 2
             ) {
@@ -942,8 +966,6 @@ class SystemClass {
       this.isRunning = true;
 
       function onVsync(sender) {
-        // do something
-
         sender.inputFrame();
         sender.playersFrame();
 
@@ -954,14 +976,11 @@ class SystemClass {
           debugClass.frame();
         }
 
-        //
         if (sender.isRunning) {
           sender.renderFramesCount++;
           requestAnimFrame(function () {
             onVsync(sender);
           });
-        } else {
-          // stop
         }
       }
 

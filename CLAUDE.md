@@ -26,8 +26,9 @@ npx serve .
 정적 서버에서는 쿼리스트링이 리터럴로 전달될 뿐 동작에는 지장 없다.
 
 서버 실행 (별도 저장소): `cd ..\shoot_game_server; npm install; node server.js`
-클라이언트의 접속 주소는 `network_class.js` 1행의 `wsUri` 상수(`wss://www.kimhwan.kr:8081`)로 고정되어
-있으므로, 로컬 서버 테스트 시 이 값을 변경해야 한다.
+클라이언트의 접속 주소는 `network_class.js` 상단의 `wsUri`가 자동 선택한다:
+`localhost`/`127.0.0.1`에서 서빙하면 `ws://localhost:8080`(로컬 서버), 그 외에는
+`wss://www.kimhwan.kr:8081`(운영 서버)로 접속한다.
 
 ## 부팅/스크립트 로딩 구조
 
@@ -52,19 +53,25 @@ SystemClass
  ├─ ChatClass       채팅 입력/메시지 표시 (DOM 기반)
  ├─ SoundClass      SoundJS 래퍼, 위치 기반 볼륨/팬 계산
  ├─ ObjectClass     맵 위 오브젝트(벽 등)
+ ├─ ItemManagerClass  서버 권위 아이템(메드킷/탄약) 보관·렌더링 (item_class.js)
  ├─ GraphicsClass   렌더링 총괄
  │   ├─ CameraClass            뷰박스/회전/카메라 제한
  │   ├─ MapClass(map_office_data)  타일맵 렌더링 + 히트박스/세그먼트 생성
  │   ├─ SightEffectClass       시야(라이팅) 효과 — lighting_class.js에 정의
  │   ├─ UserInterfaceClass     HUD (ui_class.js: InfoHUD, UserHUD, KillHUD, MinimapInterfaceClass)
- │   ├─ ParticleClass, WeatherClass, SurvivorCharacterClass(스프라이트)
+ │   ├─ ParticleClass, WeatherClass(비활성), SurvivorCharacterClass(스프라이트)
  └─ players[]       id를 키로 쓰는 PlayerClass 맵 (배열을 맵처럼 사용)
 ```
+
+`sprite_class.js`의 `NpcCharacterClass`는 미사용 예비 클래스다 (PvE 몬스터 기능용,
+`images/Monster/skeleton`·`sound/monster` 에셋과 세트).
 
 전역 인스턴스: `systemClass`(framework.js), `debugClass`(debug_class.js) — 여러 파일에서 직접 참조한다.
 
 ## 구현 패턴 (코드 수정 시 따를 것)
 
+- **포맷팅**: Prettier 기본 설정(2-space)으로 통일되어 있다. 맵 데이터 파일
+  (`map_office.js`, `map_data1.js`)은 포맷 대상에서 제외한다.
 - **파일/클래스 명명**: 파일은 `snake_case_class.js`, 클래스는 `PascalCase + Class` 접미사
   (예: `player_class.js` → `PlayerClass`). 한 파일에 보조 클래스가 같이 있을 수 있다.
 - **콜백 할당 패턴**: 이벤트는 EventEmitter가 아니라 인스턴스 프로퍼티에 함수를 직접 할당하는 방식.
@@ -86,7 +93,28 @@ SystemClass
 - 메시지 형식: `JSON.stringify({ type, data })`. 수신은 `network_class.js`의 `onMessage` switch에서 분기.
 - 주요 타입: `id`(접속 시 ID 할당), `user_init`, `user_connected/disconnected/count`,
   `user_position/speed/direction/weapon/character/name`, `user_shoot/melee_attack/reload`,
-  `user_hp/die/kill/death`, `user_chat/chat_history`, `echo`(레이턴시 측정, 1초 주기).
+  `user_hp/die/kill/death`, `user_chat/chat_history`, `echo`(레이턴시 측정, 1초 주기),
+  `item_list/item_spawn/item_picked/ammo_refill`(아이템), `round_info`(라운드 남은 시간).
+- `user_shoot`의 `data.targetPoints`는 **배열**이다. 샷건은 펠릿 7개(`SHOTGUN_PELLET_COUNT`,
+  클라·서버 동일 값 유지), 그 외 무기는 1개. 원격 사격 재현 시 `PlayerClass.shoot()`의
+  3번째 인자(`presetTargets`)로 그대로 전달한다.
+- `user_connected`의 `data.protectedMs`는 남은 스폰 무적 시간(ms). 클라이언트는
+  `PlayerClass.setSpawnProtection()`으로 반영하고, 무적 시간 동안 피격 시각 효과를 생략한다.
+  본인 무적은 `sendUserInit` 직후 `SPAWN_PROTECTION_DURATION`(system_class.js 상단, 서버와 동일 값)으로 설정.
+- 아이템(메드킷/탄약 상자)은 전부 서버 권위: 클라이언트(`item_class.js`의 `ItemManagerClass`)는
+  보관·렌더링만 하고 획득 판정은 서버가 한다. 탄약 보급은 `ammo_refill` 수신 시 `resetAmmo()`.
+- `server_notice`(킬스트릭/라운드 공지)는 문자열이 아니라 `{key, params}`로 온다.
+  `localeClass.getServerNoticeHtml()`이 현재 언어로 렌더링한다 (아래 다국어 항목 참고).
+
+## 다국어 (locale_class.js)
+
+- 게임 중 메시지(채팅 시스템 메시지, HUD 텍스트, 서버 공지)는 전역 `localeClass`를 통해 출력한다.
+  기본 언어 영어(`en`), F7 키로 한국어(`ko`) 전환, 선택은 쿠키(`language`)에 저장.
+- API: `get(key, params)` 캔버스용 일반 문자열 / `getHtml(key, params)` 채팅(innerHTML)용 —
+  params(닉네임 등 유저 입력)를 escapeHtml 처리 / `getServerNoticeHtml(key, params)` 서버 공지용.
+- 문자열 추가 시 `LOCALE_STRINGS`의 en/ko 양쪽에 같은 키를 넣는다. 현재 언어에 없으면 영어로,
+  영어에도 없으면 키 그대로 폴백된다. 템플릿 플레이스홀더는 `{name}` 형식.
+- 서버가 새 공지 종류를 추가하면(서버 rounds.js 등) 클라이언트 `LOCALE_STRINGS`에도 키를 추가해야 한다.
 - **클라이언트 권위(client-authoritative)** 구조: 본인 플레이어의 이동/사격을 로컬에서 계산해 서버로
   전송하고, 서버는 다른 클라이언트에 중계한다. 수신 핸들러는 `id !== currentId`일 때만 원격 플레이어에
   적용한다. 피격 판정(레이-세그먼트/원 교차)도 클라이언트(`SystemClass.updateShootTarget/
@@ -106,4 +134,5 @@ SystemClass
 
 게임 내 F1~F9 키로 디버그 토글 (debug_class.js, system_class.js 참고):
 F1 디버그 정보(FPS/레이턴시), F2 디버그 그래픽, F3 포인터락 모드, F4 음소거,
-F6 저화질 맵, F8 닉네임 변경, F9 imageSmoothing 토글. 닉네임은 쿠키(`user_name`)에 저장된다.
+F6 저화질 맵, F7 언어 전환(en/ko), F8 닉네임 변경, F9 imageSmoothing 토글.
+닉네임은 쿠키(`user_name`)에, 언어는 쿠키(`language`)에 저장된다.

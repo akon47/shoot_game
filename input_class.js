@@ -112,7 +112,7 @@ class InputClass {
               self.cursorX,
               self.cursorY,
               e.movementX,
-              e.movementY
+              e.movementY,
             )
           ) {
             e.preventDefault();
@@ -190,7 +190,7 @@ class InputClass {
       function (e) {
         //e.preventDefault();
       },
-      false
+      false,
     );
 
     document.body.addEventListener(
@@ -215,7 +215,7 @@ class InputClass {
         }
         e.preventDefault();
       },
-      false
+      false,
     );
   }
 

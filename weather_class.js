@@ -26,7 +26,7 @@ class SnowWeatherClass {
           0,
           this.x,
           this.y,
-          this.sz
+          this.sz,
         );
         this.g.addColorStop(0, "hsla(255,255%,255%,1)");
         this.g.addColorStop(1, "hsla(255,255%,255%,0)");

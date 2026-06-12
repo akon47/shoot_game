@@ -12,28 +12,50 @@ class ParticleClass {
         this.particles[i].draw(
           drawingContext,
           -cameraClass.getViewboxLeft(),
-          -cameraClass.getViewboxTop()
+          -cameraClass.getViewboxTop(),
         );
       }
     }
   }
 
   setParticles(shootInfo) {
-    var startAngle = ((shootInfo.angle - 180 - 30) * Math.PI) / 180;
+    // 명중한 탄도(피격 사운드로 처리)는 제외하고, 벽/바닥에 맞은 탄도마다 불꽃을 만든다
+    const targets = shootInfo.targets ? shootInfo.targets : [shootInfo.target];
+    const countPerRay = Math.max(8, Math.floor(50 / targets.length));
+    for (let t = 0; t < targets.length; t++) {
+      if (
+        shootInfo.hitObjectIntersections &&
+        shootInfo.hitObjectIntersections[t]
+      ) {
+        continue;
+      }
+      const rayAngle =
+        (Math.atan2(
+          targets[t].y - shootInfo.muzzle.y,
+          targets[t].x - shootInfo.muzzle.x,
+        ) *
+          180) /
+        Math.PI;
+      this.setRayParticles(targets[t], rayAngle, countPerRay);
+    }
+  }
+
+  setRayParticles(target, angleDeg, count) {
+    var startAngle = ((angleDeg - 180 - 30) * Math.PI) / 180;
     const angleRange = (60 * Math.PI) / 180;
 
-    var count = 0;
+    var builtCount = 0;
     for (let i = 0; i < this.particles.length; i++) {
       if (this.particles[i].active === false) {
         const angle = startAngle + Math.random() * angleRange;
 
         this.particles[i].build(
-          shootInfo.target.x,
-          shootInfo.target.y,
+          target.x,
+          target.y,
           Math.cos(angle) * Math.random() * 10,
-          Math.sin(angle) * Math.random() * 10
+          Math.sin(angle) * Math.random() * 10,
         );
-        if (count++ > 50) {
+        if (builtCount++ > count) {
           break;
         }
       }

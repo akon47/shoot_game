@@ -26,16 +26,18 @@ class DebugClass {
     debugTexts.push("[F2]: Debug Graphics: " + this.debugGraphicsVisible);
     //
     debugTexts.push(
-      "[F3]: Character Lock Mode: " + systemClass.pointerLockMode
+      "[F3]: Character Lock Mode: " + systemClass.pointerLockMode,
     );
     //
     debugTexts.push("[F4]: Muted: " + systemClass.soundClass.muted);
     //
     debugTexts.push("[F6]: Low Quality Map: " + this.debugLowQualityMap);
     //
+    debugTexts.push("[F7]: Language: " + localeClass.getLanguage());
+    //
     debugTexts.push(
       "[F9]: imageSmoothingEnabled: " +
-        systemClass.graphicsClass.drawingContext.imageSmoothingEnabled
+        systemClass.graphicsClass.drawingContext.imageSmoothingEnabled,
     );
 
     const fontHeightPixel = 12;

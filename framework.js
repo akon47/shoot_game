@@ -10,16 +10,16 @@ if (heads && heads.length > 0) {
     "graphics_class.js",
     "map_class.js",
     "map_office.js",
-    "minimap_class.js",
-    "effect_class.js",
     "particle_class.js",
     "object_class.js",
+    "item_class.js",
     "sprite_class.js",
     "camera_class.js",
     "sound_class.js",
     "player_class.js",
     "weather_class.js",
     "network_class.js",
+    "locale_class.js",
     "debug_class.js",
   ];
 
@@ -131,6 +131,6 @@ function getCookie(name) {
 
 function isMobile() {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
+    navigator.userAgent,
   );
 }

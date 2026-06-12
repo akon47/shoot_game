@@ -1,14 +1,5 @@
-class LightingClass {
-  constructor(screenWidth, screenHeight) {
-    this.screenWidth = screenWidth;
-    this.screenHeight = screenHeight;
-  }
-
-  drawLighting(drawingContext, players, cameraClass, objectClass, mapClass) {
-    //this.sightEffectClass.drawSightEffect(drawingContext, players, cameraClass, objectClass, mapClass);
-  }
-}
-
+// 본인 시야(부채꼴 라이트 + 벽 차폐)를 오프스크린 캔버스에 그린 뒤
+// multiply 합성으로 화면을 어둡게 덮는 라이팅 효과를 담당한다.
 class SightEffectClass {
   constructor(screenWidth, screenHeight) {
     this.screenWidth = screenWidth;
@@ -34,7 +25,7 @@ class SightEffectClass {
         drawingContext,
         this.sightCenterX,
         this.sightCenterY,
-        this.sightIntersects
+        this.sightIntersects,
       );
     }
   }
@@ -56,12 +47,12 @@ class SightEffectClass {
     if (cameraClass.getRotate() !== 0) {
       this.sightDrawingContext.translate(
         this.screenWidth / 2,
-        this.screenHeight / 2
+        this.screenHeight / 2,
       );
       this.sightDrawingContext.rotate(cameraClass.getRotate());
       this.sightDrawingContext.translate(
         -this.screenWidth / 2,
-        -this.screenHeight / 2
+        -this.screenHeight / 2,
       );
     }
 
@@ -77,7 +68,7 @@ class SightEffectClass {
       cameraClass.circumscriptionRadius,
       0,
       Math.PI * 2,
-      false
+      false,
     );
     this.sightDrawingContext.fill();
     this.sightDrawingContext.globalCompositeOperation = "lighter";
@@ -111,11 +102,11 @@ class SightEffectClass {
             0,
             x,
             y,
-            userLightRadius
+            userLightRadius,
           );
           characterLight.addColorStop(
             0,
-            "rgba(255, 255, 220," + darkness + ")"
+            "rgba(255, 255, 220," + darkness + ")",
           );
           characterLight.addColorStop(1, "rgba(255, 255, 220, 0)");
 
@@ -125,7 +116,7 @@ class SightEffectClass {
             x - userLightRadius,
             y - userLightRadius,
             userLightRadius * 2,
-            userLightRadius * 2
+            userLightRadius * 2,
           );
           this.sightDrawingContext.fill();
 
@@ -137,7 +128,7 @@ class SightEffectClass {
               player,
               cameraClass,
               segments,
-              lightDegreeRange
+              lightDegreeRange,
             );
             this.sightCenterX = x;
             this.sightCenterY = y;
@@ -157,7 +148,7 @@ class SightEffectClass {
             0,
             x,
             y,
-            range
+            range,
           );
           light.addColorStop(0, "rgba(150, 150, 140," + darkness + ")");
           light.addColorStop(1, "rgba(255, 255, 200, 0)");
@@ -171,7 +162,7 @@ class SightEffectClass {
             range,
             ((-lightDegreeRange + player.getDirection()) * Math.PI) / 180,
             ((lightDegreeRange + player.getDirection()) * Math.PI) / 180,
-            false
+            false,
           );
           this.sightDrawingContext.closePath();
           this.sightDrawingContext.fill();
@@ -193,11 +184,11 @@ class SightEffectClass {
                 0,
                 muzzleX,
                 muzzleY,
-                150
+                150,
               );
               bulletLight.addColorStop(
                 0,
-                "rgba(150, 150, 150," + darkness + ")"
+                "rgba(150, 150, 150," + darkness + ")",
               );
               bulletLight.addColorStop(1, "rgba(255, 255, 170, 0)");
 
@@ -210,7 +201,7 @@ class SightEffectClass {
                 150,
                 0,
                 Math.PI * 2,
-                false
+                false,
               );
               this.sightDrawingContext.closePath();
               this.sightDrawingContext.fill();
@@ -222,138 +213,6 @@ class SightEffectClass {
 
     this.sightDrawingContext.restore();
   }
-
-  /*
-    drawSightEffect(drawingContext, players, cameraClass, objectClass, mapClass) {
-
-        this.sightDrawingContext.save();
-        if(cameraClass.getRotate() !== 0) {
-            this.sightDrawingContext.translate(this.screenWidth / 2, this.screenHeight / 2);
-            this.sightDrawingContext.rotate(cameraClass.getRotate());
-            this.sightDrawingContext.translate(-this.screenWidth / 2, -this.screenHeight / 2);
-        }
-
-        const range = 350;
-        //const darkness = 0.95;
-        const darkness = 0.90;
-
-        this.sightDrawingContext.globalCompositeOperation = 'copy';
-        this.sightDrawingContext.beginPath();
-        this.sightDrawingContext.fillStyle = 'rgb(0, 0, 0, ' + darkness + ')';
-        this.sightDrawingContext.arc(this.screenWidth / 2, this.screenHeight / 2, cameraClass.circumscriptionRadius, 0, Math.PI * 2, false);
-        this.sightDrawingContext.fill();
-        this.sightDrawingContext.globalCompositeOperation = 'lighter';
-
-        var segments = [];
-        if(objectClass) {
-            const seg = objectClass.getSegments(cameraClass, range * 2);
-            if(seg) {
-                segments.concat(seg);
-            }
-        }
-        if(mapClass) {
-            const seg = mapClass.getSegments(cameraClass, range * 2);
-            if(seg) {
-                segments.concat(seg);
-
-                segments = seg;
-            }
-        }
-        if(segments && segments.length > 0) {
-            segments.push({ a: { x: -range, y: -range }, b: { x: this.screenWidth + range, y: -range } });
-            segments.push({ a: { x: this.screenWidth + range, y: -range }, b: { x: this.screenWidth + range, y: this.screenHeight + range } });
-            segments.push({ a: { x: -range, y: this.screenHeight + range}, b: { x: this.screenWidth + range, y: this.screenHeight + range } });
-            segments.push({ a: { x: -range, y: -range }, b: { x: -range, y: this.screenHeight + range } });
-        }
-
-        if (players) {
-            for (var i = 0; i < players.length; i++) {
-                const player = players[players[i]];
-                if (player) {
-                    var x = player.getCenterX() - cameraClass.getViewboxLeft();
-                    var y = player.getCenterY() - cameraClass.getViewboxTop();
-
-                    if (darkness > 0.4) {
-                        const userLightRadius = Math.max(player.getWidth(), player.getHeight()) * 2;
-                        var characterLight = this.sightDrawingContext.createRadialGradient(x, y, 0, x, y, userLightRadius);
-                        characterLight.addColorStop(0, 'rgba(255, 255, 255,' + darkness + ')');
-                        characterLight.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-                        this.sightDrawingContext.beginPath();
-                        this.sightDrawingContext.fillStyle = characterLight;
-                        this.sightDrawingContext.rect(x - userLightRadius, y - userLightRadius, userLightRadius * 2, userLightRadius * 2);
-                        this.sightDrawingContext.fill();
-
-                        if (player.getWeapon() === 'flashlight' || player.getWeapon() === 'handgun' || player.getWeapon() === 'rifle' || player.getWeapon() === 'shotgun') {
-                            var lightDegreeRange = 10;
-                            if(player.getWeapon() === 'flashlight') {
-                                lightDegreeRange = 25;
-                            }
-
-                            this.sightDrawingContext.save();
-
-                            if(segments && segments.length > 0) {
-                                var intersects = this.getSightPolygon(player, cameraClass, segments, lightDegreeRange);
-                                this.sightDrawingContext.beginPath();
-                                this.sightDrawingContext.moveTo(x, y);
-                                for (var j = 0; j < intersects.length; j++) {
-                                    var intersect = intersects[j];
-                                    this.sightDrawingContext.lineTo(intersect.x, intersect.y);
-                                }
-                                this.sightDrawingContext.clip();
-                                if(debugClass.debugGraphicsVisible) {
-                                    this.drawDebugSightInfo(drawingContext, x, y, intersects);
-                                }
-                            }
-                            
-                            var light = this.sightDrawingContext.createRadialGradient(x, y, 0, x, y, range - (Math.random() * 15));
-                            light.addColorStop(0, 'rgba(100, 100, 100,' + darkness + ')');
-                            light.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-                            this.sightDrawingContext.fillStyle = light;
-                            this.sightDrawingContext.beginPath();
-                            this.sightDrawingContext.moveTo(x, y);
-                            this.sightDrawingContext.arc(x, y, range, (-lightDegreeRange + Math.random() + player.getDirection()) * Math.PI / 180, (lightDegreeRange + Math.random() + player.getDirection()) * Math.PI / 180, false);
-                            this.sightDrawingContext.closePath();
-                            this.sightDrawingContext.fill();
-
-                            this.sightDrawingContext.restore();
-
-                            if(player.getStatus() === 'shoot' && player.getCurrentStatusFrame() == 0) {
-                                const shootInfo = player.getShootInfo();
-                                if(shootInfo) {
-                                    const muzzleX = shootInfo.muzzle.x - cameraClass.getViewboxLeft();
-                                    const muzzleY = shootInfo.muzzle.y - cameraClass.getViewboxTop();
-
-                                    var bulletLight = this.sightDrawingContext.createRadialGradient(muzzleX, muzzleY, 0, muzzleX, muzzleY, 150);
-                                    bulletLight.addColorStop(0, 'rgba(255, 255, 255,' + darkness + ')');
-                                    bulletLight.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-                                    this.sightDrawingContext.fillStyle = bulletLight;
-                                    this.sightDrawingContext.beginPath();
-                                    this.sightDrawingContext.moveTo(muzzleX, muzzleY);
-                                    this.sightDrawingContext.arc(muzzleX, muzzleY, 150, 0, Math.PI * 2, false);
-                                    this.sightDrawingContext.closePath();
-                                    this.sightDrawingContext.fill();
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if(!debugClass.debugGraphicsVisible) {
-            drawingContext.save();
-            drawingContext.resetTransform();
-            drawingContext.globalCompositeOperation = 'multiply';
-            drawingContext.drawImage(this.sightCanvas, 0, 0);
-            drawingContext.restore();
-        }
-
-        this.sightDrawingContext.restore();
-    }
-    */
 
   drawDebugSightInfo(drawingContext, x, y, intersects) {
     // sight polygon

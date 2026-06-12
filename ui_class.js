@@ -8,7 +8,7 @@ class UserInterfaceClass {
     this.minimapInterfaceClass = new MinimapInterfaceClass(200);
     this.minimapInterfaceClass.setPosition(
       this.screenWidth - this.minimapInterfaceClass.getWidth() - 5,
-      5
+      5,
     );
 
     this.userHUD = new UserHUD(this.screenWidth, this.screenHeight);
@@ -20,15 +20,7 @@ class UserInterfaceClass {
 
   update(mapClass, players) {
     this.drawingContext.clearRect(0, 0, this.screenWidth, this.screenHeight);
-    /*
-    if (debugClass.debugGraphicsVisible) {
-      this.minimapInterfaceClass.drawUserInterface(
-        this.drawingContext,
-        mapClass,
-        players
-      );
-    }
-    */
+    // 미니맵은 현재 비활성 상태 (재활성화 시 minimapInterfaceClass.drawUserInterface 호출)
     this.userHUD.drawHUD(this.drawingContext, players);
     this.killHUD.drawHUD(this.drawingContext);
     if (this.infoHUDVisible) {
@@ -40,8 +32,35 @@ class UserInterfaceClass {
     this.drawingContext.textAlign = "center";
     this.drawingContext.fillStyle = "white";
 
-    
-    this.drawingContext.fillText(`${players.filter((elem) => players[elem]).length} players are online`, this.screenWidth / 2, 10);
+    this.drawingContext.fillText(
+      localeClass.get("players_online", {
+        count: players.filter((elem) => players[elem]).length,
+      }),
+      this.screenWidth / 2,
+      10,
+    );
+
+    // 서버가 보내준 라운드 남은 시간 표시 (round_info 수신 시점부터 로컬로 카운트다운)
+    if (
+      typeof systemClass !== "undefined" &&
+      systemClass.roundRemainMs !== undefined
+    ) {
+      const elapsed = performance.now() - systemClass.roundInfoReceivedAt;
+      const remain = Math.max(0, systemClass.roundRemainMs - elapsed);
+      const minutes = Math.floor(remain / 60000);
+      const seconds = Math.floor((remain % 60000) / 1000);
+      this.drawingContext.font = "bold 17px Arial";
+      this.drawingContext.fillText(
+        localeClass.get("round_label") +
+          " " +
+          minutes +
+          ":" +
+          (seconds < 10 ? "0" : "") +
+          seconds,
+        this.screenWidth / 2,
+        30,
+      );
+    }
 
     if (debugClass) {
       debugClass.drawDebugInfo(this.drawingContext);
@@ -88,7 +107,7 @@ class InfoHUD {
       this.infoBox.left,
       this.infoBox.top,
       this.infoBox.width,
-      this.infoBox.height
+      this.infoBox.height,
     );
     drawingContext.fillStyle = "rgba(70, 70, 70, 0.8)";
     drawingContext.fill();
@@ -98,21 +117,36 @@ class InfoHUD {
     drawingContext.textAlign = "center";
     drawingContext.fillStyle = "white";
 
-    let y = 0;
+    // 킬 수 내림차순으로 정렬해 순위표처럼 보여준다
+    const sortedPlayers = [];
     for (let i = 0; i < players.length; i++) {
       const player = players[players[i]];
       if (player) {
-        drawingContext.fillText(
-          player.getPlayerDescription() +
-            ", Kill: " +
-            player.getKill() +
-            ", Death: " +
-            player.getDeath(),
-          this.infoBox.left + this.infoBox.width / 2,
-          this.infoBox.top + y * 23 + 20
-        );
-        y++;
+        sortedPlayers.push(player);
       }
+    }
+    sortedPlayers.sort(function (a, b) {
+      return b.getKill() - a.getKill();
+    });
+
+    for (let i = 0; i < sortedPlayers.length; i++) {
+      const player = sortedPlayers[i];
+      drawingContext.fillText(
+        i +
+          1 +
+          ". " +
+          player.getPlayerDescription() +
+          ", " +
+          localeClass.get("kill_label") +
+          ": " +
+          player.getKill() +
+          ", " +
+          localeClass.get("death_label") +
+          ": " +
+          player.getDeath(),
+        this.infoBox.left + this.infoBox.width / 2,
+        this.infoBox.top + i * 23 + 20,
+      );
     }
   }
 }
@@ -123,45 +157,20 @@ class UserHUD {
     this.screenHeight = screenHeight;
     this.images = [];
 
+    const weapons = ["knife", "handgun", "rifle", "shotgun"];
+    for (let i = 0; i < weapons.length; i++) {
+      this.loadWeaponImage(weapons[i]);
+    }
+  }
+
+  loadWeaponImage(weapon) {
     var self = this;
-    // this.images['flashlight'] = [];
-    // this.images['flashlight'].image = new Image();
-    // this.images['flashlight'].image.src = 'images/weapons/flashlight.png';
-    // this.images['flashlight'].isLoaded = false;
-    // this.images['flashlight'].image.onload = function() {
-    //     self.images['flashlight'].isLoaded = true;
-    // };
-
-    this.images["knife"] = [];
-    this.images["knife"].image = new Image();
-    this.images["knife"].image.src = "images/weapons/knife.png";
-    this.images["knife"].isLoaded = false;
-    this.images["knife"].image.onload = function () {
-      self.images["knife"].isLoaded = true;
-    };
-
-    this.images["handgun"] = [];
-    this.images["handgun"].image = new Image();
-    this.images["handgun"].image.src = "images/weapons/handgun.png";
-    this.images["handgun"].isLoaded = false;
-    this.images["handgun"].image.onload = function () {
-      self.images["handgun"].isLoaded = true;
-    };
-
-    this.images["rifle"] = [];
-    this.images["rifle"].image = new Image();
-    this.images["rifle"].image.src = "images/weapons/rifle.png";
-    this.images["rifle"].isLoaded = false;
-    this.images["rifle"].image.onload = function () {
-      self.images["rifle"].isLoaded = true;
-    };
-
-    this.images["shotgun"] = [];
-    this.images["shotgun"].image = new Image();
-    this.images["shotgun"].image.src = "images/weapons/shotgun.png";
-    this.images["shotgun"].isLoaded = false;
-    this.images["shotgun"].image.onload = function () {
-      self.images["shotgun"].isLoaded = true;
+    this.images[weapon] = [];
+    this.images[weapon].image = new Image();
+    this.images[weapon].image.src = "images/weapons/" + weapon + ".png";
+    this.images[weapon].isLoaded = false;
+    this.images[weapon].image.onload = function () {
+      self.images[weapon].isLoaded = true;
     };
   }
 
@@ -183,7 +192,7 @@ class UserHUD {
           drawingContext.drawImage(
             image.image,
             this.screenWidth - image.image.width,
-            this.screenHeight - image.image.height
+            this.screenHeight - image.image.height,
           );
           imageHeight = image.image.height;
         }
@@ -197,7 +206,7 @@ class UserHUD {
           drawingContext.fillText(
             "∞",
             this.screenWidth - 10,
-            this.screenHeight - image.image.height
+            this.screenHeight - image.image.height,
           );
         } else {
           const ammoInfo = player.getCurrentAmmoInfo();
@@ -205,7 +214,7 @@ class UserHUD {
             drawingContext.fillText(
               ammoInfo.currentAmmo + " / " + ammoInfo.maxAmmo,
               this.screenWidth - 10,
-              this.screenHeight - image.image.height
+              this.screenHeight - image.image.height,
             );
           }
         }
@@ -213,13 +222,13 @@ class UserHUD {
         drawingContext.fillText(
           player.getHp() + " +",
           this.screenWidth - 10,
-          this.screenHeight - imageHeight - 30 - 5
+          this.screenHeight - imageHeight - 30 - 5,
         );
 
         drawingContext.fillText(
           player.getPlayerDescription(),
           this.screenWidth - 10,
-          this.screenHeight - imageHeight - 30 - 30 - 5 - 5
+          this.screenHeight - imageHeight - 30 - 30 - 5 - 5,
         );
         break;
       }
@@ -290,7 +299,7 @@ class MinimapInterfaceClass {
         this.y,
         this.minimapSize,
         this.minimapSize,
-        5
+        5,
       );
       drawingContext.fill();
 
@@ -301,7 +310,7 @@ class MinimapInterfaceClass {
         this.x + 10,
         this.y + 10,
         this.minimapSize - 20,
-        this.minimapSize - 20
+        this.minimapSize - 20,
       );
       drawingContext.stroke();
       drawingContext.fill();
@@ -350,37 +359,12 @@ class KillHUD {
       width: this.hudBoxWidth,
       height: this.hudBoxHeight,
     };
-
-    // this.images = [];
-    // this.images["knife"] = [];
-    // this.images["knife"].image = new Image();
-    // this.images["knife"].image.src = "images/weapons/knife.png";
-    // this.images["knife"].isLoaded = false;
-    // this.images["knife"].image.onload = function () {
-    //   self.images["knife"].isLoaded = true;
-    // };
-
-    // this.images["handgun"] = [];
-    // this.images["handgun"].image = new Image();
-    // this.images["handgun"].image.src = "images/weapons/handgun.png";
-    // this.images["handgun"].isLoaded = false;
-    // this.images["handgun"].image.onload = function () {
-    //   self.images["handgun"].isLoaded = true;
-    // };
-
-    // this.images["rifle"] = [];
-    // this.images["rifle"].image = new Image();
-    // this.images["rifle"].image.src = "images/weapons/rifle.png";
-    // this.images["rifle"].isLoaded = false;
-    // this.images["rifle"].image.onload = function () {
-    //   self.images["rifle"].isLoaded = true;
-    // };
   }
 
   drawHUD(drawingContext) {
     const nowTicks = Date.now();
     this.messages = this.messages.filter(
-      (message) => message.expire > nowTicks
+      (message) => message.expire > nowTicks,
     );
     drawingContext.textBaseline = "top";
     drawingContext.textAlign = "right";
@@ -391,29 +375,21 @@ class KillHUD {
       if (this.messages[i].expire > nowTicks) {
         const player = this.messages[i].player;
         const providerPlayer = this.messages[i].providerPlayer;
-        const reason = this.messages[i].reason;
 
         drawingContext.font = "bold 15px Arial";
         drawingContext.fillStyle = "red";
         drawingContext.fillText(
-          "KILL",
+          localeClass.get("killhud_kill"),
           this.hudBox.right,
-          this.hudBox.top + y * 25
+          this.hudBox.top + y * 25,
         );
         drawingContext.font = "15px Arial";
         drawingContext.fillStyle = "white";
         drawingContext.fillText(
           `[${providerPlayer.getPlayerDescription()}] -> [${player.getPlayerDescription()}]`,
           this.hudBox.right - 40,
-          this.hudBox.top + y * 25
+          this.hudBox.top + y * 25,
         );
-
-        // const image = this.images[reason.weapon];
-        // drawingContext.drawImage(
-        //   image.image,
-        //   this.hudBox.right - 50,
-        //   this.hudBox.top + y * 15
-        // );
 
         y++;
       }
@@ -421,14 +397,6 @@ class KillHUD {
   }
 
   addKillLog(player, providerPlayer, reason) {
-    let providerName = "";
-    switch (reason.provider) {
-      case "user":
-      case "ai":
-        providerName = providerPlayer.getPlayerDescription();
-        break;
-    }
-
     this.messages.push({
       player: player,
       providerPlayer: providerPlayer,

@@ -3,7 +3,7 @@ CanvasRenderingContext2D.prototype.roundedRect = function (
   y,
   width,
   height,
-  radius
+  radius,
 ) {
   this.save();
   this.translate(x, y);
@@ -20,7 +20,7 @@ CanvasRenderingContext2D.prototype.drawText = function drawText(
   font,
   text,
   x,
-  y
+  y,
 ) {
   if (text) {
     if (font) {

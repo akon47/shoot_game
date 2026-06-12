@@ -64,136 +64,8 @@ class SpriteClass {
           x,
           y,
           width ? width : this.tileWidth,
-          height ? height : this.tileHeight
+          height ? height : this.tileHeight,
         );
-      }
-    }
-  }
-}
-
-class CharacterSpriteClass {
-  constructor(src, tileWidth, tileHeight, fps) {
-    this.spriteClass = new SpriteClass(src, tileWidth, tileHeight);
-    this.fps = fps === undefined ? 1 : fps;
-    this.frameInfos = [];
-    this.frameValue = 0;
-    this.lastDrawTime = performance.now();
-  }
-
-  addCharacterFrameInfo(stand, work) {
-    this.frameInfos.push({ stand: stand, work: work });
-  }
-
-  drawCharacter(drawingContext, playerClass, cameraClass) {
-    const now = performance.now();
-    this.frameValue += (now - this.lastDrawTime) / (1000 / this.fps);
-    this.lastDrawTime = now;
-
-    const frameCount = Math.floor(this.frameValue);
-    if (playerClass) {
-      const frameInfo =
-        this.frameInfos[playerClass.getCharacter() % this.frameInfos.length];
-      var frameIndex = 0;
-      if (frameInfo) {
-        switch (playerClass.getDirection()) {
-          case "left":
-            if (playerClass.getSpeedX() < 0) {
-              frameIndex =
-                frameInfo.work.left[frameCount % frameInfo.work.left.length];
-            } else {
-              frameIndex =
-                frameInfo.stand.left[frameCount % frameInfo.stand.left.length];
-            }
-            break;
-          case "up":
-            if (playerClass.getSpeedY() < 0) {
-              frameIndex =
-                frameInfo.work.up[frameCount % frameInfo.work.up.length];
-            } else {
-              frameIndex =
-                frameInfo.stand.up[frameCount % frameInfo.stand.up.length];
-            }
-            break;
-          case "right":
-            if (playerClass.getSpeedX() > 0) {
-              frameIndex =
-                frameInfo.work.right[frameCount % frameInfo.work.right.length];
-            } else {
-              frameIndex =
-                frameInfo.stand.right[
-                  frameCount % frameInfo.stand.right.length
-                ];
-            }
-
-            break;
-          case "down":
-            if (playerClass.getSpeedY() > 0) {
-              frameIndex =
-                frameInfo.work.down[frameCount % frameInfo.work.down.length];
-            } else {
-              frameIndex =
-                frameInfo.stand.down[frameCount % frameInfo.stand.down.length];
-            }
-            break;
-        }
-        const cameraZoom = cameraClass.getCameraZoom();
-        const viewboxLeft = cameraClass.getViewboxLeft();
-        const viewboxTop = cameraClass.getViewboxTop();
-        const viewboxRight = cameraClass.getViewboxRight();
-        const viewboxBottom = cameraClass.getViewboxBottom();
-
-        const scaledUserX = playerClass.getPositionX() * cameraZoom;
-        const scaledUserY = playerClass.getPositionY() * cameraZoom;
-        const scaledUserWidth = playerClass.getWidth() * cameraZoom;
-        const scaledUserHeight = playerClass.getHeight() * cameraZoom;
-
-        if (
-          viewboxLeft < scaledUserX + scaledUserWidth &&
-          viewboxRight > scaledUserX &&
-          viewboxTop < scaledUserY + scaledUserHeight &&
-          viewboxBottom > scaledUserY
-        ) {
-          this.spriteClass.drawSprite(
-            drawingContext,
-            playerClass.getPositionX() +
-              (playerClass.getWidth() - this.spriteClass.getTileWidth()) / 2 -
-              viewboxLeft,
-            playerClass.getCenterY() -
-              this.spriteClass.getTileHeight() -
-              viewboxTop,
-            frameIndex,
-            this.spriteClass.getTileWidth(),
-            this.spriteClass.getTileHeight()
-          );
-
-          drawingContext.beginPath();
-          drawingContext.lineWidth = 2;
-          drawingContext.strokeStyle = "black";
-          drawingContext.arc(
-            playerClass.getCenterX() - viewboxLeft,
-            playerClass.getCenterY() - viewboxTop,
-            100,
-            Math.PI * 0.0,
-            Math.PI * 2,
-            false
-          );
-          drawingContext.stroke();
-
-          const angle = 0.0;
-
-          drawingContext.beginPath();
-          drawingContext.lineWidth = 5;
-          drawingContext.strokeStyle = "orange";
-          drawingContext.arc(
-            playerClass.getCenterX() - viewboxLeft,
-            playerClass.getCenterY() - viewboxTop,
-            100,
-            Math.PI * (angle - 0.05),
-            Math.PI * (angle + 0.05),
-            false
-          );
-          drawingContext.stroke();
-        }
       }
     }
   }
@@ -495,9 +367,17 @@ class SurvivorCharacterClass {
           const x = playerClass.getCenterX() - viewboxLeft;
           const y = playerClass.getCenterY() - viewboxTop;
 
+          const isProtected =
+            playerClass.isSpawnProtected && playerClass.isSpawnProtected();
+
           drawingContext.save();
           drawingContext.translate(x, y);
           drawingContext.rotate((playerClass.getDirection() * Math.PI) / 180);
+
+          if (isProtected) {
+            // 스폰 무적 동안에는 반투명 깜빡임으로 표시
+            drawingContext.globalAlpha = 0.45 + 0.25 * Math.sin(now / 70);
+          }
 
           const scaleFactor = 0.2;
           const dx = -(frameInfo.centerX * scaleFactor);
@@ -507,6 +387,15 @@ class SurvivorCharacterClass {
           drawingContext.drawImage(img, dx, dy, dwidth, dheight);
 
           drawingContext.restore();
+
+          if (isProtected) {
+            drawingContext.beginPath();
+            drawingContext.lineWidth = 2;
+            drawingContext.strokeStyle = "rgba(255, 255, 255, 0.6)";
+            drawingContext.arc(x, y, 22, 0, Math.PI * 2, false);
+            drawingContext.stroke();
+            drawingContext.lineWidth = 1;
+          }
 
           if (playerClass.getHp() < 100) {
             drawingContext.fillStyle = "#454545";
@@ -521,7 +410,7 @@ class SurvivorCharacterClass {
               x - 15,
               y - userHeight / 2 - 5 - 3 - 3,
               30 * (playerClass.getHp() / 100),
-              5
+              5,
             );
             drawingContext.fill();
           }
@@ -531,6 +420,8 @@ class SurvivorCharacterClass {
   }
 }
 
+// 아직 게임에서 사용되지 않는 예비 클래스.
+// PvE(해골 몬스터 침공) 기능 추가 시 images/Monster/skeleton 에셋과 함께 사용할 예정이다.
 class NpcCharacterClass {
   constructor() {
     this.frameValue = 0;
@@ -667,7 +558,7 @@ class NpcCharacterClass {
               x - 15,
               y - userHeight / 2 - 5 - 3 - 3,
               30 * (npcClass.getHp() / 100),
-              5
+              5,
             );
             drawingContext.fill();
           }

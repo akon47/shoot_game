@@ -13,7 +13,9 @@ You can play multi-play games with multiple people using a web socket.
 - Use ASDW key to move characters
 - You can run by pressing the shift key
 - Load using R key
-- Change knife, pistol, rifle using keys 1, 2 and 3
+- Change knife, pistol, rifle, shotgun using keys 1, 2, 3 and 4
+- Melee attack with right click
+- Change language using F7 key (English/Korean, default English)
 - Change nickname using F8 key
 - Using the &#96; key to check the complete connection of users
 

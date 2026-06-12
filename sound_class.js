@@ -1,98 +1,8 @@
-class SoundEffect {
-  constructor(src, bufferCount) {
-    this.sounds = [];
-    this.loop = false;
-    this.volume = 0.5;
-    this.loadedAudios = 0;
-
-    var self = this;
-    for (let i = 0; i < (bufferCount ? bufferCount : 20); i++) {
-      var audio = new Audio();
-      this.sounds.push(audio);
-
-      audio.addEventListener(
-        "canplaythrough",
-        function () {
-          self.loadedAudios++;
-        },
-        false
-      );
-      audio.src = src;
-      audio.loop = this.loop;
-      audio.volume = this.volume;
-      audio.load();
-    }
-  }
-
-  isLoaded() {
-    return this.loadedAudios >= this.sounds.length;
-  }
-
-  play() {
-    for (let i = 0; i < this.sounds.length; i++) {
-      if (this.sounds[i].paused || this.sounds[i].ended) {
-        this.sounds[i].play();
-        console.log(this.sounds[i].src + " -> play");
-        break;
-      }
-    }
-  }
-
-  setVolume(volume) {
-    this.volume = volume;
-    for (let i = 0; i < this.sounds.length; i++) {
-      this.sounds[i].volume = volume;
-    }
-  }
-
-  setLoop(loop) {
-    this.loop = loop;
-    for (let i = 0; i < this.sounds.length; i++) {
-      this.sounds[i].loop = loop;
-    }
-  }
-
-  setMuted(muted) {
-    this.muted = muted;
-    for (let i = 0; i < this.sounds.length; i++) {
-      this.sounds[i].muted = muted;
-    }
-  }
-}
-
+// SoundJS(createjs) 래퍼. BGM/효과음 등록과 위치 기반 볼륨/팬 계산을 담당한다.
 class SoundClass {
   constructor() {
     var self = this;
 
-    /*
-        this.stepSounds = [];
-        this.playedStepIndex = 0;
-        this.lastStepPlayedTime = 0;
-        this.stepSounds.push(new SoundEffect('sound/step_1.mp3', 3));
-        this.stepSounds.push(new SoundEffect('sound/step_2.mp3', 3));
-
-        this.weaponSounds = ['handgun', 'rifle', 'shotgun'];
-        this.weaponSounds['handgun'] = [];
-        this.weaponSounds['handgun'].shoot = new SoundEffect('sound/handgun_shoot.mp3');
-        this.weaponSounds['handgun'].reload = new SoundEffect('sound/handgun_reload.mp3', 1);
-
-        this.weaponSounds['rifle'] = [];
-        this.weaponSounds['rifle'].shoot = new SoundEffect('sound/rifle_shoot.mp3');
-        this.weaponSounds['rifle'].reload = new SoundEffect('sound/rifle_reload.mp3', 1);
-
-        this.weaponSounds['shotgun'] = [];
-        this.weaponSounds['shotgun'].shoot = new SoundEffect('sound/shotgun_shoot.mp3');
-        this.weaponSounds['shotgun'].reload = new SoundEffect('sound/shotgun_reload.mp3', 1);
-
-        this.bgm = new Audio();
-        this.bgm.src = 'sound/Heresy.mp3';
-        this.bgm.loop = true;
-        this.bgm.volume = 0.3;
-        this.bgm.addEventListener("canplaythrough", function () {
-            self.bgm.play();
-        }, false); 
-        this.bgm.load();
-        */
     this.muted = false;
 
     this.stepSounds = [];
@@ -114,9 +24,6 @@ class SoundClass {
     this.weaponSounds["shotgun"].shoot = "sound/shotgun_shoot.mp3";
     this.weaponSounds["shotgun"].reload = "sound/shotgun_reload.mp3";
 
-    //this.bgm = 'sound/Reborn - Main Menu.mp3';
-    //this.bgm = 'sound/Denise - Burning Like a Flame.mp3';
-    //this.bgm = 'sound/haruka.mp3';
     this.bgm = "sound/200 Upbeat, Futuristic Area (Loop, 160kbps).mp3";
 
     this.impactSounds = [];
@@ -134,7 +41,7 @@ class SoundClass {
             interrupt: createjs.Sound.INTERRUPT_ANY,
             loop: -1,
             volume: 0.05,
-          })
+          }),
         );
       }
       self.loadedSounds++;
@@ -144,35 +51,30 @@ class SoundClass {
       self.loadedSounds++;
     });
 
-    createjs.Sound.registerSound(this.bgm, this.bgm);
-    for (let i = 0; i < this.stepSounds.length; i++) {
-      createjs.Sound.registerSound(this.stepSounds[i], this.stepSounds[i]);
-    }
+    // 등록할 사운드를 한곳에 모아 등록하고, 로드 완료 판정은 그 개수를 기준으로 한다
+    const soundsToRegister = [this.bgm]
+      .concat(this.stepSounds)
+      .concat(this.impactSounds);
     for (let i = 0; i < this.weaponSounds.length; i++) {
       const weaponSoundInfo = this.weaponSounds[this.weaponSounds[i]];
       if (weaponSoundInfo) {
         if (weaponSoundInfo.shoot) {
-          createjs.Sound.registerSound(
-            weaponSoundInfo.shoot,
-            weaponSoundInfo.shoot
-          );
+          soundsToRegister.push(weaponSoundInfo.shoot);
         }
         if (weaponSoundInfo.reload) {
-          createjs.Sound.registerSound(
-            weaponSoundInfo.reload,
-            weaponSoundInfo.reload
-          );
+          soundsToRegister.push(weaponSoundInfo.reload);
         }
       }
     }
-    for (let i = 0; i < this.impactSounds.length; i++) {
-      createjs.Sound.registerSound(this.impactSounds[i], this.impactSounds[i]);
+
+    this.totalSounds = soundsToRegister.length;
+    for (let i = 0; i < soundsToRegister.length; i++) {
+      createjs.Sound.registerSound(soundsToRegister[i], soundsToRegister[i]);
     }
   }
 
   setMuted(muted) {
     this.muted = muted;
-    //this.bgm.muted = muted;
   }
 
   isMuted() {
@@ -185,7 +87,7 @@ class SoundClass {
   }
 
   isLoaded() {
-    return this.loadedSounds === 12;
+    return this.loadedSounds >= this.totalSounds;
   }
 
   getSoundVolumePanByPosition(ear, sound) {
@@ -235,7 +137,7 @@ class SoundClass {
 
     createjs.Sound.play(
       this.impactSounds[Math.floor(Math.random() * this.impactSounds.length)],
-      new createjs.PlayPropsConfig().set({ volume: volume, pan: pan })
+      new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }),
     );
   }
 
@@ -252,7 +154,7 @@ class SoundClass {
         if (playerClass.getCurrentStatusFrame() == 0) {
           createjs.Sound.play(
             this.weaponSounds[playerClass.getWeapon()].shoot,
-            new createjs.PlayPropsConfig().set({ volume: volume, pan: pan })
+            new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }),
           );
         }
         break;
@@ -260,7 +162,7 @@ class SoundClass {
         if (playerClass.getCurrentStatusFrame() == 0) {
           createjs.Sound.play(
             this.weaponSounds[playerClass.getWeapon()].reload,
-            new createjs.PlayPropsConfig().set({ volume: volume, pan: pan })
+            new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }),
           );
         }
         break;
@@ -283,7 +185,7 @@ class SoundClass {
                 if (!this.muted) {
                   createjs.Sound.play(
                     this.stepSounds[this.playedStepIndex++ % 2],
-                    new createjs.PlayPropsConfig().set({ volume: 0.1 })
+                    new createjs.PlayPropsConfig().set({ volume: 0.1 }),
                   );
                 }
               }

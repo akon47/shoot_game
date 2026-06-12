@@ -1,4 +1,8 @@
-const wsUri = "wss://www.kimhwan.kr:8081";
+// 로컬 개발 시에는 로컬 서버로, 그 외에는 운영 서버로 자동 접속한다
+const wsUri =
+  location.hostname === "localhost" || location.hostname === "127.0.0.1"
+    ? "ws://localhost:8080"
+    : "wss://www.kimhwan.kr:8081";
 class NetworkClass {
   constructor() {
     this.isConnected = false;
@@ -31,7 +35,7 @@ class NetworkClass {
   checkLatency(self) {
     if (self.isConnected) {
       self.webSocket.send(
-        JSON.stringify({ type: "echo", data: { tick: performance.now() } })
+        JSON.stringify({ type: "echo", data: { tick: performance.now() } }),
       );
     }
   }
@@ -99,7 +103,8 @@ class NetworkClass {
             msg.data.weapon,
             msg.data.hp,
             msg.data.kill,
-            msg.data.death
+            msg.data.death,
+            msg.data.protectedMs,
           );
         }
         break;
@@ -159,9 +164,49 @@ class NetworkClass {
             msg.data.id,
             msg.data.weapon,
             msg.data.muzzlePoint,
-            msg.data.targetPoint,
-            msg.data.angle
+            msg.data.targetPoints,
+            msg.data.angle,
           );
+        }
+        break;
+      case "user_melee_attack":
+        if (this.usermeleeattack) {
+          this.usermeleeattack(msg.data.id, msg.data.weapon);
+        }
+        break;
+      case "user_reload":
+        if (this.userreload) {
+          this.userreload(msg.data.id, msg.data.weapon);
+        }
+        break;
+      case "item_list":
+        if (this.itemlist) {
+          this.itemlist(msg.data);
+        }
+        break;
+      case "item_spawn":
+        if (this.itemspawn) {
+          this.itemspawn(msg.data);
+        }
+        break;
+      case "item_picked":
+        if (this.itempicked) {
+          this.itempicked(msg.data.id, msg.data.by, msg.data.type);
+        }
+        break;
+      case "ammo_refill":
+        if (this.ammorefill) {
+          this.ammorefill();
+        }
+        break;
+      case "round_info":
+        if (this.roundinfo) {
+          this.roundinfo(msg.data.remainMs);
+        }
+        break;
+      case "server_notice":
+        if (this.servernotice) {
+          this.servernotice(msg.data.key, msg.data.params);
         }
         break;
       case "user_hp":
@@ -194,13 +239,13 @@ class NetworkClass {
 
   sendChat(chat) {
     this.webSocket.send(
-      JSON.stringify({ type: "user_chat", data: { chat: chat } })
+      JSON.stringify({ type: "user_chat", data: { chat: chat } }),
     );
   }
 
   sendNameChanged(name) {
     this.webSocket.send(
-      JSON.stringify({ type: "user_name", data: { name: name } })
+      JSON.stringify({ type: "user_name", data: { name: name } }),
     );
   }
 
@@ -209,45 +254,51 @@ class NetworkClass {
       JSON.stringify({
         type: "user_speed",
         data: { speedX: speedX, speedY: speedY },
-      })
+      }),
     );
   }
 
   sendPositionChanged(x, y) {
     this.webSocket.send(
-      JSON.stringify({ type: "user_position", data: { x: x, y: y } })
+      JSON.stringify({ type: "user_position", data: { x: x, y: y } }),
     );
   }
 
   sendCharacterChanged(character) {
     this.webSocket.send(
-      JSON.stringify({ type: "user_character", data: { character: character } })
+      JSON.stringify({
+        type: "user_character",
+        data: { character: character },
+      }),
     );
   }
 
   sendDirectionChanged(direction) {
     this.webSocket.send(
-      JSON.stringify({ type: "user_direction", data: { direction: direction } })
+      JSON.stringify({
+        type: "user_direction",
+        data: { direction: direction },
+      }),
     );
   }
 
   sendWeaponChanged(weapon) {
     this.webSocket.send(
-      JSON.stringify({ type: "user_weapon", data: { weapon: weapon } })
+      JSON.stringify({ type: "user_weapon", data: { weapon: weapon } }),
     );
   }
 
-  sendShoot(weapon, muzzlePoint, targetPoint, angle) {
+  sendShoot(weapon, muzzlePoint, targetPoints, angle) {
     this.webSocket.send(
       JSON.stringify({
         type: "user_shoot",
         data: {
           weapon: weapon,
           muzzlePoint: muzzlePoint,
-          targetPoint: targetPoint,
+          targetPoints: targetPoints,
           angle: angle,
         },
-      })
+      }),
     );
   }
 
@@ -258,13 +309,13 @@ class NetworkClass {
         data: {
           weapon: weapon,
         },
-      })
+      }),
     );
   }
 
   sendReload(weapon) {
     this.webSocket.send(
-      JSON.stringify({ type: "user_reload", data: { weapon: weapon } })
+      JSON.stringify({ type: "user_reload", data: { weapon: weapon } }),
     );
   }
 
@@ -284,7 +335,7 @@ class NetworkClass {
             weapon: playerClass.getWeapon(),
             hp: playerClass.getHp(),
           },
-        })
+        }),
       );
     }
   }

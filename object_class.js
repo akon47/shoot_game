@@ -19,7 +19,7 @@ class ObjectClass {
             obj.x + drawOffsetX,
             obj.y + drawOffsetY,
             obj.width,
-            obj.height
+            obj.height,
           );
           drawingContext.fill();
         }

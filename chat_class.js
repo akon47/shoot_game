@@ -73,7 +73,7 @@ class ChatClass {
             break;
         }
       },
-      false
+      false,
     );
 
     window.onresize = function () {

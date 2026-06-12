@@ -14,7 +14,7 @@ class GraphicsClass {
     this.objectClass = objectClass;
     this.cameraClass.setLimit(
       this.mapClass.getPixelWidth(),
-      this.mapClass.getPixelHeight()
+      this.mapClass.getPixelHeight(),
     );
 
     this.particleClass = new ParticleClass();
@@ -40,7 +40,7 @@ class GraphicsClass {
     if (systemClass.pointerLockMode && systemClass.getCurrentPlayerClass()) {
       this.cameraClass.setRotate(
         -(systemClass.getCurrentPlayerClass().getDirection() + 90) *
-          (Math.PI / 180)
+          (Math.PI / 180),
       );
     } else {
       this.cameraClass.setRotate(0.0);
@@ -60,11 +60,8 @@ class GraphicsClass {
       this.drawingContext.fillText(
         "LOADING",
         this.screenWidth / 2,
-        this.screenHeight / 2
+        this.screenHeight / 2,
       );
-
-      // this.drawingContext.font = "bold 20px Arial";
-      // this.drawingContext.fillText(this.mapClass.isLoaded() + "," + this.survivorCharacterClass.isLoaded() + ',' + this.uiClass.isLoaded() + ',' + systemClass.soundClass.isLoaded(), this.screenWidth / 2, this.screenHeight / 2 + 100);
       return;
     } else {
       systemClass.chatClass.setVisible(true);
@@ -74,12 +71,12 @@ class GraphicsClass {
     if (this.cameraClass.getRotate() !== 0) {
       this.drawingContext.translate(
         this.screenWidth / 2,
-        this.screenHeight / 2
+        this.screenHeight / 2,
       );
       this.drawingContext.rotate(this.cameraClass.getRotate());
       this.drawingContext.translate(
         -this.screenWidth / 2,
-        -this.screenHeight / 2
+        -this.screenHeight / 2,
       );
     }
 
@@ -87,7 +84,7 @@ class GraphicsClass {
       this.remainShakeFrames--;
       this.drawingContext.translate(
         this.shakeThreshold - Math.random() * (this.shakeThreshold * 2),
-        this.shakeThreshold - Math.random() * (this.shakeThreshold * 2)
+        this.shakeThreshold - Math.random() * (this.shakeThreshold * 2),
       );
     }
 
@@ -96,7 +93,7 @@ class GraphicsClass {
         this.drawingContext,
         this.cameraClass,
         this.screenWidth,
-        this.screenHeight
+        this.screenHeight,
       );
     }
 
@@ -105,7 +102,14 @@ class GraphicsClass {
         this.drawingContext,
         this.cameraClass,
         this.screenWidth,
-        this.screenHeight
+        this.screenHeight,
+      );
+    }
+
+    if (systemClass && systemClass.itemManagerClass) {
+      systemClass.itemManagerClass.drawItems(
+        this.drawingContext,
+        this.cameraClass,
       );
     }
 
@@ -114,7 +118,7 @@ class GraphicsClass {
         players,
         this.cameraClass,
         this.objectClass,
-        this.mapClass
+        this.mapClass,
       );
 
       if (players) {
@@ -126,7 +130,7 @@ class GraphicsClass {
               player,
               this.cameraClass,
               this.screenWidth,
-              this.screenHeight
+              this.screenHeight,
             );
             break;
           }
@@ -153,15 +157,14 @@ class GraphicsClass {
             player,
             this.cameraClass,
             this.screenWidth,
-            this.screenHeight
+            this.screenHeight,
           );
         }
       }
     }
 
-    if (this.weatherClass) {
-      //this.weatherClass.drawWeather(this.drawingContext);
-    }
+    // 날씨 효과(weatherClass)는 현재 비활성 상태
+    // (재활성화 시 this.weatherClass.drawWeather(this.drawingContext) 호출)
 
     if (this.sightEffectClass) {
       this.drawingContext.restore();
@@ -169,16 +172,7 @@ class GraphicsClass {
     }
 
     this.drawBullet(players);
-
-    //
-    //this.drawingContext.save();
-    if (this.sightEffectClass) {
-      //this.drawingContext.globalCompositeOperation = 'source-in';
-      //this.sightEffectClass.clipSight(this.drawingContext);
-    }
     this.drawStep(players);
-    //this.drawingContext.restore();
-    //
 
     if (this.particleClass) {
       this.particleClass.drawParticles(this.drawingContext, this.cameraClass);
@@ -205,7 +199,7 @@ class GraphicsClass {
             player.getCenterY() - this.cameraClass.getViewboxTop();
           const speed = Math.sqrt(
             player.getSpeedX() * player.getSpeedX() +
-              player.getSpeedY() * player.getSpeedY()
+              player.getSpeedY() * player.getSpeedY(),
           );
           if (!player.lastStepInfo) {
             player.lastStepInfo = {
@@ -223,7 +217,7 @@ class GraphicsClass {
               player.lastStepInfo.size * (interval / 200),
               0,
               2 * Math.PI,
-              false
+              false,
             );
             this.drawingContext.strokeStyle = `rgba(200, 200, 200, ${(200 - interval) / 200})`;
             this.drawingContext.stroke();
@@ -251,26 +245,26 @@ class GraphicsClass {
         ) {
           const shootInfo = player.getShootInfo();
           if (shootInfo) {
-            this.drawingContext.beginPath();
-            this.drawingContext.moveTo(
-              shootInfo.muzzle.x - this.cameraClass.getViewboxLeft(),
-              shootInfo.muzzle.y - this.cameraClass.getViewboxTop()
-            );
-            if (shootInfo.hitObjectIntersection) {
-              this.drawingContext.lineTo(
-                shootInfo.hitObjectIntersection.x -
-                  this.cameraClass.getViewboxLeft(),
-                shootInfo.hitObjectIntersection.y -
-                  this.cameraClass.getViewboxTop()
-              );
-            } else {
-              this.drawingContext.lineTo(
-                shootInfo.target.x - this.cameraClass.getViewboxLeft(),
-                shootInfo.target.y - this.cameraClass.getViewboxTop()
-              );
-            }
+            const targets = shootInfo.targets
+              ? shootInfo.targets
+              : [shootInfo.target];
             this.drawingContext.strokeStyle = "yellow";
-            this.drawingContext.stroke();
+            for (let t = 0; t < targets.length; t++) {
+              const hit = shootInfo.hitObjectIntersections
+                ? shootInfo.hitObjectIntersections[t]
+                : undefined;
+              const endPoint = hit ? hit : targets[t];
+              this.drawingContext.beginPath();
+              this.drawingContext.moveTo(
+                shootInfo.muzzle.x - this.cameraClass.getViewboxLeft(),
+                shootInfo.muzzle.y - this.cameraClass.getViewboxTop(),
+              );
+              this.drawingContext.lineTo(
+                endPoint.x - this.cameraClass.getViewboxLeft(),
+                endPoint.y - this.cameraClass.getViewboxTop(),
+              );
+              this.drawingContext.stroke();
+            }
           }
         }
       }
@@ -299,7 +293,7 @@ class GraphicsClass {
         centerY - boxPadding,
         textWidth + boxPadding * 2,
         fontHeightPixel + boxPadding * 2,
-        5
+        5,
       );
       this.drawingContext.fillStyle = "#000000A0";
       this.drawingContext.fill();

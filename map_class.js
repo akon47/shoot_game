@@ -14,7 +14,7 @@ class MapClass {
     this.spriteClass = new SpriteClass(
       this.tileMapSrc,
       this.tileWidth,
-      this.tileHeight
+      this.tileHeight,
     );
     this.objects = [];
     this.hitBoxes = this.findHitBoxes(); // 성능에 크리티컬한 부분 아님. 오래 걸려도 됨.
@@ -81,7 +81,7 @@ class MapClass {
               a: { x: hitBox.left, y: hitBox.top },
               b: { x: hitBox.left, y: hitBox.bottom },
               valid: true,
-            }
+            },
           );
         }
       }
@@ -106,19 +106,19 @@ class MapClass {
                 if (interceptYSrc === interceptYDest) {
                   const leftDest = Math.min(
                     tempSegments[j].a.x,
-                    tempSegments[j].b.x
+                    tempSegments[j].b.x,
                   );
                   const topDest = Math.min(
                     tempSegments[j].a.y,
-                    tempSegments[j].b.y
+                    tempSegments[j].b.y,
                   );
                   const rightDest = Math.max(
                     tempSegments[j].a.x,
-                    tempSegments[j].b.x
+                    tempSegments[j].b.x,
                   );
                   const bottomDest = Math.max(
                     tempSegments[j].a.y,
-                    tempSegments[j].b.y
+                    tempSegments[j].b.y,
                   );
 
                   if (
@@ -248,21 +248,6 @@ class MapClass {
     return result;
   }
 
-  // constructor(width, height, tileMapSrc, tileWidth, tileHeight, data, name) {
-  //     this.width = width;
-  //     this.height = height;
-  //     this.tileWidth = tileWidth;
-  //     this.tileHeight = tileHeight;
-  //     this.tileMapSrc = tileMapSrc;
-  //     this.pixelWidth = (width * tileWidth);
-  //     this.pixelHeight = (height * tileHeight);
-  //     this.data = data;
-  //     this.name = name;
-
-  //     this.spriteClass = new SpriteClass(tileMapSrc, tileWidth, tileHeight);
-  //     this.objects = [];
-  // }
-
   isLoaded() {
     return this.spriteClass.isSpriteLoaded;
   }
@@ -299,19 +284,6 @@ class MapClass {
     return this.height * this.tileHeight;
   }
 
-  drawTile(drawingContext, x, y, frameIndex, width, height) {
-    if (drawingContext) {
-      this.spriteClass.drawSprite(
-        drawingContext,
-        x,
-        y,
-        frameIndex,
-        width,
-        height
-      );
-    }
-  }
-
   drawTile(drawingContext, tileX, tileY, x, y, width, height) {
     if (drawingContext && this.data) {
       var frameIndex = 0;
@@ -329,67 +301,15 @@ class MapClass {
             y,
             frameIndex,
             width,
-            height
+            height,
           );
         }
       }
     }
   }
 
-  drawDebugTile(drawingContext, x, y, width, height, text) {
-    if (drawingContext) {
-      const margin = 1;
-
-      drawingContext.beginPath();
-      drawingContext.rect(x, y, width, height);
-      drawingContext.fillStyle = "black";
-      drawingContext.fill();
-
-      drawingContext.beginPath();
-      drawingContext.rect(
-        x + margin,
-        y + margin,
-        width - margin * 2,
-        height - margin * 2
-      );
-      drawingContext.fillStyle = "white";
-      drawingContext.fill();
-
-      drawingContext.font = "normal 8pt Arial";
-      drawingContext.fillStyle = "black";
-      drawingContext.textBaseline = "middle";
-      drawingContext.textAlign = "center";
-      drawingContext.fillText(text, x + width / 2, y + height / 2);
-    }
-  }
-
-  drawLowQualityTile(drawingContext, tileX, tileY, x, y, width, height) {
-    var self = this;
-    function isWall(x, y) {
-      for (let i = 0; i < self.wall_tiles.length; i++) {
-        if (self.wall_tiles[i] === self.data[y * self.width + x]) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    if (drawingContext && this.data) {
-      drawingContext.beginPath();
-      drawingContext.rect(x, y, width, height);
-      drawingContext.fillStyle = isWall(tileX, tileY) ? "black" : "white";
-      drawingContext.fill();
-    }
-  }
-
   drawMap(drawingContext, cameraClass, screenWidth, screenHeight) {
     if (drawingContext && cameraClass) {
-      // drawingContext.beginPath();
-      // drawingContext.arc(screenWidth / 2, screenHeight / 2, cameraClass.circumscriptionRadius, 0, Math.PI * 2, false);
-      // drawingContext.fillStyle = 'white';
-      // drawingContext.fill();
-      // return;
-
       const drawOffsetX =
         cameraClass.getViewboxWidth() / 2 - cameraClass.getViewboxCenterX();
       const drawOffsetY =
@@ -403,7 +323,7 @@ class MapClass {
           cameraClass.circumscriptionRadius,
           0,
           Math.PI * 2,
-          false
+          false,
         );
         drawingContext.fillStyle = "white";
         drawingContext.fill();
@@ -417,7 +337,7 @@ class MapClass {
                 hitBox.left,
                 hitBox.top,
                 hitBox.right - hitBox.left,
-                hitBox.bottom - hitBox.top
+                hitBox.bottom - hitBox.top,
               )
             ) {
               drawingContext.beginPath();
@@ -425,7 +345,7 @@ class MapClass {
                 hitBox.left - cameraClass.getViewboxLeft(),
                 hitBox.top - cameraClass.getViewboxTop(),
                 hitBox.right - hitBox.left,
-                hitBox.bottom - hitBox.top
+                hitBox.bottom - hitBox.top,
               );
               drawingContext.fill();
             }
@@ -442,32 +362,18 @@ class MapClass {
                 tileX,
                 tileY,
                 this.tileWidth,
-                this.tileHeight
+                this.tileHeight,
               )
             ) {
-              //this.drawDebugTile(drawingContext, scaledTileX + drawOffsetX, scaledTileY + drawOffsetY, scaledTileWidth, scaledTileHeight, x + ',' + y);
-
-              if (debugClass.debugLowQualityMap) {
-                this.drawLowQualityTile(
-                  drawingContext,
-                  x,
-                  y,
-                  tileX + drawOffsetX,
-                  tileY + drawOffsetY,
-                  this.tileWidth,
-                  this.tileHeight
-                );
-              } else {
-                this.drawTile(
-                  drawingContext,
-                  x,
-                  y,
-                  tileX + drawOffsetX,
-                  tileY + drawOffsetY,
-                  this.tileWidth,
-                  this.tileHeight
-                );
-              }
+              this.drawTile(
+                drawingContext,
+                x,
+                y,
+                tileX + drawOffsetX,
+                tileY + drawOffsetY,
+                this.tileWidth,
+                this.tileHeight,
+              );
             }
           }
         }
@@ -488,14 +394,14 @@ class MapClass {
             this.hitBoxes[i].left - cameraClass.getViewboxLeft(),
             this.hitBoxes[i].top - cameraClass.getViewboxTop(),
             this.hitBoxes[i].right - this.hitBoxes[i].left,
-            this.hitBoxes[i].bottom - this.hitBoxes[i].top
+            this.hitBoxes[i].bottom - this.hitBoxes[i].top,
           );
           drawingContext.stroke();
 
           drawingContext.fillText(
             "" + i,
             this.hitBoxes[i].left - cameraClass.getViewboxLeft() + 3,
-            this.hitBoxes[i].top - cameraClass.getViewboxTop() + 3
+            this.hitBoxes[i].top - cameraClass.getViewboxTop() + 3,
           );
         }
 

@@ -61,7 +61,7 @@ class CameraClass {
     this.circumscriptionRadius =
       Math.sqrt(
         this.viewboxWidth * this.viewboxWidth +
-          this.viewboxHeight * this.viewboxHeight
+          this.viewboxHeight * this.viewboxHeight,
       ) / 2;
     this.circumscriptionRect = {
       left: this.viewboxCenterX - this.circumscriptionRadius,
