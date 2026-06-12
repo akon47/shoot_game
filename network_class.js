@@ -1,8 +1,9 @@
-// 로컬 개발 시에는 로컬 서버로, 그 외에는 운영 서버로 자동 접속한다
+// 로컬 개발 시에는 로컬 서버로, 그 외에는 운영 서버로 자동 접속한다.
+// 운영은 nginx가 443에서 TLS를 종료하고 Node 서버(평문 8080)로 프록시한다.
 const wsUri =
   location.hostname === "localhost" || location.hostname === "127.0.0.1"
     ? "ws://localhost:8080"
-    : "wss://www.kimhwan.kr:8081";
+    : "wss://ws.shootgame.kimhwan.kr";
 class NetworkClass {
   constructor() {
     this.isConnected = false;

@@ -28,7 +28,7 @@ npx serve .
 서버 실행 (별도 저장소): `cd ..\shoot_game_server; npm install; node server.js`
 클라이언트의 접속 주소는 `network_class.js` 상단의 `wsUri`가 자동 선택한다:
 `localhost`/`127.0.0.1`에서 서빙하면 `ws://localhost:8080`(로컬 서버), 그 외에는
-`wss://www.kimhwan.kr:8081`(운영 서버)로 접속한다.
+`wss://ws.shootgame.kimhwan.kr`(운영 — nginx가 443 TLS 종료 후 Node 8080으로 프록시)로 접속한다.
 
 ## 부팅/스크립트 로딩 구조
 
