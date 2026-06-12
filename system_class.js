@@ -305,6 +305,9 @@ class SystemClass {
             placeableRandomPosition.x,
             placeableRandomPosition.y,
           );
+          // 서버는 user_init 수신 시 hp를 100으로 되돌리지만, 본인 user_connected 는
+          // 클라이언트가 무시하므로 로컬 hp도 여기서 직접 되돌려야 한다
+          player.setHp(100);
           player.resetAmmo();
           self.networkClass.sendUserInit(player);
           player.setSpawnProtection(SPAWN_PROTECTION_DURATION);
