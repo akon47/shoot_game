@@ -23,6 +23,7 @@ class SystemClass {
     this.chatClass = new ChatClass(window, rootDiv, canvas);
     this.objectClass = new ObjectClass();
     this.itemManagerClass = new ItemManagerClass();
+    this.monsterManagerClass = new MonsterManagerClass();
     this.graphicsClass = new GraphicsClass(canvas, uiCanvas, this.objectClass);
     this.inputClass = new InputClass(window, canvas);
     this.soundClass = new SoundClass();
@@ -170,6 +171,7 @@ class SystemClass {
       self.players = [];
       self.connectedUserCount = 0;
       self.itemManagerClass.setItems([]);
+      self.monsterManagerClass.clear();
     };
     this.networkClass.tryreconnect = function (tryCount) {
       self.chatClass.writeToMessage(
@@ -308,6 +310,13 @@ class SystemClass {
             providerPlayer,
             reason,
           );
+        } else if (reason && reason.provider === "monster") {
+          // 몬스터 처치는 킬피드(플레이어 대 플레이어)가 아니라 채팅 알림으로 남긴다
+          self.chatClass.writeToMessage(
+            localeClass.getHtml("killed_by_monster", {
+              name: player.getPlayerDescription(),
+            }) + "<br/>",
+          );
         }
       }
     };
@@ -383,6 +392,31 @@ class SystemClass {
         player.resetAmmo();
       }
     };
+    this.networkClass.monsterlist = function (list) {
+      self.monsterManagerClass.setMonsters(list);
+    };
+    this.networkClass.monsterspawn = function (data) {
+      self.monsterManagerClass.addMonster(data);
+    };
+    this.networkClass.monsterpositions = function (list) {
+      self.monsterManagerClass.updatePositions(list);
+    };
+    this.networkClass.monsterhp = function (id, hp) {
+      self.monsterManagerClass.setHp(id, hp);
+    };
+    this.networkClass.monsterattack = function (id) {
+      const monster = self.monsterManagerClass.triggerAttack(id);
+      if (monster) {
+        self.playMonsterSoundAt("attack", monster);
+      }
+    };
+    this.networkClass.monsterdie = function (id) {
+      const monster = self.monsterManagerClass.getMonster(id);
+      if (monster) {
+        self.playMonsterSoundAt("hurt", monster);
+      }
+      self.monsterManagerClass.removeMonster(id);
+    };
     this.networkClass.roundinfo = function (remainMs, map) {
       self.roundRemainMs = remainMs;
       self.roundInfoReceivedAt = performance.now();
@@ -435,6 +469,21 @@ class SystemClass {
 
   getCurrentPlayerClass() {
     return this.players[this.currentId];
+  }
+
+  // 카메라(귀) 기준 위치 볼륨/팬으로 몬스터 효과음을 재생한다
+  playMonsterSoundAt(kind, monster) {
+    const soundInfo = this.soundClass.getSoundVolumePanByPosition(
+      {
+        x: this.graphicsClass.cameraClass.getViewboxCenterX(),
+        y: this.graphicsClass.cameraClass.getViewboxCenterY(),
+      },
+      { x: monster.getCenterX(), y: monster.getCenterY() },
+    );
+    if (soundInfo && soundInfo.volume > 0) {
+      const volume = (kind === "attack" ? 0.6 : 0.8) * soundInfo.volume;
+      this.soundClass.playMonsterSound(kind, volume, soundInfo.pan);
+    }
   }
 
   // 본인 플레이어를 현재 맵의 임의 위치에 리스폰시키고 서버에 user_init 으로 알린다.
@@ -829,6 +878,10 @@ class SystemClass {
       if (hitBoxs) {
         hitBoxes = hitBoxes.concat(this.objectClass.getHitBoxes());
       }
+    }
+
+    if (this.monsterManagerClass) {
+      this.monsterManagerClass.frame();
     }
 
     if (this.players) {

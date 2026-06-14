@@ -200,6 +200,36 @@ class NetworkClass {
           this.ammorefill();
         }
         break;
+      case "monster_list":
+        if (this.monsterlist) {
+          this.monsterlist(msg.data);
+        }
+        break;
+      case "monster_spawn":
+        if (this.monsterspawn) {
+          this.monsterspawn(msg.data);
+        }
+        break;
+      case "monster_positions":
+        if (this.monsterpositions) {
+          this.monsterpositions(msg.data);
+        }
+        break;
+      case "monster_hp":
+        if (this.monsterhp) {
+          this.monsterhp(msg.data.id, msg.data.hp);
+        }
+        break;
+      case "monster_attack":
+        if (this.monsterattack) {
+          this.monsterattack(msg.data.id);
+        }
+        break;
+      case "monster_die":
+        if (this.monsterdie) {
+          this.monsterdie(msg.data.id);
+        }
+        break;
       case "round_info":
         if (this.roundinfo) {
           this.roundinfo(msg.data.remainMs, msg.data.map);

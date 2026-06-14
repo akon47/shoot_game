@@ -54,6 +54,7 @@ SystemClass
  ├─ SoundClass      SoundJS 래퍼, 위치 기반 볼륨/팬 계산
  ├─ ObjectClass     맵 위 오브젝트(벽 등)
  ├─ ItemManagerClass  서버 권위 아이템(메드킷/탄약) 보관·렌더링 (item_class.js)
+ ├─ MonsterManagerClass  서버 권위 PvE 몬스터(스켈레톤) 보관·보간·렌더링 (monster_class.js)
  ├─ GraphicsClass   렌더링 총괄
  │   ├─ CameraClass            뷰박스/회전/카메라 제한
  │   ├─ MapClass(map_office_data)  타일맵 렌더링 + 히트박스/세그먼트 생성
@@ -63,8 +64,10 @@ SystemClass
  └─ players[]       id를 키로 쓰는 PlayerClass 맵 (배열을 맵처럼 사용)
 ```
 
-`sprite_class.js`의 `NpcCharacterClass`는 미사용 예비 클래스다 (PvE 몬스터 기능용,
-`images/Monster/skeleton`·`sound/monster` 에셋과 세트).
+`sprite_class.js`의 `NpcCharacterClass`는 PvE 몬스터(스켈레톤) 스프라이트 렌더러다
+(`images/Monster/skeleton` idle/move/meleeattack 애니메이션). `monster_class.js`의
+`MonsterManagerClass`가 이 렌더러를 1개 공유하며, 엔티티 `NpcClass`(서버 30fps 위치를 보간)를
+넘겨 그린다. 좀비 효과음은 `sound/monster`(SoundClass `playMonsterSound`).
 
 전역 인스턴스: `systemClass`(framework.js), `debugClass`(debug_class.js) — 여러 파일에서 직접 참조한다.
 
@@ -94,7 +97,8 @@ SystemClass
 - 주요 타입: `id`(접속 시 ID 할당), `user_init`, `user_connected/disconnected/count`,
   `user_position/speed/direction/weapon/character/name`, `user_shoot/melee_attack/reload`,
   `user_hp/die/kill/death`, `user_chat/chat_history`, `echo`(레이턴시 측정, 1초 주기),
-  `item_list/item_spawn/item_picked/ammo_refill`(아이템), `round_info`(라운드 남은 시간).
+  `item_list/item_spawn/item_picked/ammo_refill`(아이템), `round_info`(라운드 남은 시간),
+  `monster_list/monster_spawn/monster_positions/monster_hp/monster_attack/monster_die`(PvE 몬스터).
 - `user_shoot`의 `data.targetPoints`는 **배열**이다. 샷건은 펠릿 7개(`SHOTGUN_PELLET_COUNT`,
   클라·서버 동일 값 유지), 그 외 무기는 1개. 원격 사격 재현 시 `PlayerClass.shoot()`의
   3번째 인자(`presetTargets`)로 그대로 전달한다.
@@ -103,6 +107,13 @@ SystemClass
   본인 무적은 `sendUserInit` 직후 `SPAWN_PROTECTION_DURATION`(system_class.js 상단, 서버와 동일 값)으로 설정.
 - 아이템(메드킷/탄약 상자)은 전부 서버 권위: 클라이언트(`item_class.js`의 `ItemManagerClass`)는
   보관·렌더링만 하고 획득 판정은 서버가 한다. 탄약 보급은 `ammo_refill` 수신 시 `resetAmmo()`.
+- PvE 몬스터(스켈레톤)도 전부 서버 권위: `monster_class.js`의 `MonsterManagerClass`가 보관·렌더링만 한다.
+  서버는 위치를 30fps `monster_positions`(묶음)로 보내고, 엔티티 `NpcClass`가 렌더 프레임마다 보간한다
+  (큰 점프는 스냅). `monster_attack` 수신 시 공격 애니메이션 재생 + 좀비 효과음, `monster_die` 시 제거.
+  몬스터는 다른 플레이어와 동일하게 **시야 클립 영역 안에서만** 그려진다(graphics_class.js).
+  몬스터에게 죽으면 `user_die.reason.provider === "monster"` 이며, 킬피드 대신
+  `killed_by_monster` 채팅 알림을 띄운다. 매니저 `frame()`은 `playersFrame()`에서, 그리기는
+  graphicsClass 프레임에서 호출. 연결 끊김/맵 교체 시 정리된다.
 - `server_notice`(킬스트릭/라운드 공지)는 문자열이 아니라 `{key, params}`로 온다.
   `localeClass.getServerNoticeHtml()`이 현재 언어로 렌더링한다 (아래 다국어 항목 참고).
 

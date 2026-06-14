@@ -37,6 +37,9 @@ const LOCALE_STRINGS = {
     round_start:
       "A new round has started! The winner will be announced in {minutes} minutes.",
     map_changed: "Map changed: {name}",
+    invasion_incoming: "⚠️ A horde of skeletons is approaching! Survive!",
+    invasion_cleared: "🦴 The horde has been wiped out! Area secure.",
+    killed_by_monster: "[{name}] was torn apart by a skeleton. 💀",
   },
   ko: {
     // 시스템/채팅 메시지
@@ -69,6 +72,9 @@ const LOCALE_STRINGS = {
     round_end: "라운드 종료!",
     round_start: "새 라운드 시작! {minutes}분 후 우승자가 발표됩니다.",
     map_changed: "맵이 변경되었습니다: {name}",
+    invasion_incoming: "⚠️ 스켈레톤 무리가 몰려옵니다! 살아남으세요!",
+    invasion_cleared: "🦴 무리를 전멸시켰습니다! 지역을 확보했습니다.",
+    killed_by_monster: "[{name}] 님이 스켈레톤에게 갈가리 찢겼습니다. 💀",
   },
 };
 

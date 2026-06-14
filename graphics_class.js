@@ -190,6 +190,14 @@ class GraphicsClass {
       }
     }
 
+    // PvE 몬스터(스켈레톤)도 시야 클립 영역 안에서만 보이게 다른 플레이어와 함께 그린다
+    if (systemClass && systemClass.monsterManagerClass) {
+      systemClass.monsterManagerClass.drawMonsters(
+        this.drawingContext,
+        this.cameraClass,
+      );
+    }
+
     // 날씨 효과(weatherClass)는 현재 비활성 상태
     // (재활성화 시 this.weatherClass.drawWeather(this.drawingContext) 호출)
 

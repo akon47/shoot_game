@@ -31,6 +31,18 @@ class SoundClass {
     this.impactSounds.push("./sound/impact/Impact_Flesh_002.mp3");
     this.impactSounds.push("./sound/impact/Impact_Flesh_003.mp3");
 
+    // PvE 몬스터(스켈레톤) 효과음
+    this.monsterAttackSounds = [
+      "sound/monster/Zombie001_Attack_A_001.mp3",
+      "sound/monster/Zombie001_Attack_A_002.mp3",
+      "sound/monster/Zombie001_Attack_A_003.mp3",
+    ];
+    this.monsterHurtSounds = [
+      "sound/monster/Zombie001_Hurt_A_001.mp3",
+      "sound/monster/Zombie001_Hurt_A_002.mp3",
+      "sound/monster/Zombie001_Hurt_A_003.mp3",
+    ];
+
     this.loadedSounds = 0;
     createjs.Sound.addEventListener("fileload", function (e) {
       console.log("fileload -> " + e.src);
@@ -54,7 +66,9 @@ class SoundClass {
     // 등록할 사운드를 한곳에 모아 등록하고, 로드 완료 판정은 그 개수를 기준으로 한다
     const soundsToRegister = [this.bgm]
       .concat(this.stepSounds)
-      .concat(this.impactSounds);
+      .concat(this.impactSounds)
+      .concat(this.monsterAttackSounds)
+      .concat(this.monsterHurtSounds);
     for (let i = 0; i < this.weaponSounds.length; i++) {
       const weaponSoundInfo = this.weaponSounds[this.weaponSounds[i]];
       if (weaponSoundInfo) {
@@ -138,6 +152,22 @@ class SoundClass {
     createjs.Sound.play(
       this.impactSounds[Math.floor(Math.random() * this.impactSounds.length)],
       new createjs.PlayPropsConfig().set({ volume: volume, pan: pan }),
+    );
+  }
+
+  // 몬스터 효과음. kind: "attack"(접촉 공격) | "hurt"(처치/피격)
+  playMonsterSound(kind, volume, pan) {
+    if (this.muted) {
+      return;
+    }
+    const pool =
+      kind === "attack" ? this.monsterAttackSounds : this.monsterHurtSounds;
+    createjs.Sound.play(
+      pool[Math.floor(Math.random() * pool.length)],
+      new createjs.PlayPropsConfig().set({
+        volume: volume ? volume : 1.0,
+        pan: pan ? pan : 0,
+      }),
     );
   }
 

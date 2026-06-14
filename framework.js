@@ -17,6 +17,7 @@ if (heads && heads.length > 0) {
     "object_class.js",
     "item_class.js",
     "sprite_class.js",
+    "monster_class.js",
     "camera_class.js",
     "sound_class.js",
     "player_class.js",
