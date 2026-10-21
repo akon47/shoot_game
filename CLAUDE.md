@@ -22,8 +22,16 @@ python -m http.server 8000
 npx serve .
 ```
 
-참고: index.html의 `framework.js?<?PHP echo time(); ?>`는 PHP 호스팅용 캐시버스팅 코드라
-정적 서버에서는 쿼리스트링이 리터럴로 전달될 뿐 동작에는 지장 없다.
+캐시 버스팅: index.html 의 `__BUILD__` 자리(`window.SHOOT_GAME_VERSION`, `framework.js?v=`, `style.css?v=`)는
+배포 시 Dockerfile 이 빌드 번호로 치환하고, `framework.js` 는 동적으로 넣는 모든 스크립트에 `?v=<빌드>` 를 붙인다.
+로컬에서는 `__BUILD__` 리터럴 그대로라 동작에 지장 없다. **새 정적 자원을 index.html 에 직접 추가할 때도 `?v=__BUILD__` 를 붙인다.**
+
+## 배포
+
+`master` 에 push 하면(이 저장소든 `shoot_game_server` 든) Jenkins 잡 `shoot-game`(build.kimhwan.kr)이 두 저장소를 나란히 받아
+`shoot_game_server/Dockerfile`(서버, 스모크 테스트 포함)과 이 저장소의 `Dockerfile`(nginx 정적 서빙, `docker/nginx.conf`)로
+이미지를 만들어 Docker Hub(`akon47/shoot-game-web`, `akon47/shoot-game-server`)에 올리고 shoot-game VM(10.10.10.221)에
+docker compose 로 배포한다. 파이프라인 정의는 `shoot_game_server/Jenkinsfile`. 수동 이미지 빌드: `docker build -t shoot-game-web .`
 
 서버 실행 (별도 저장소): `cd ..\shoot_game_server; npm install; node server.js`
 클라이언트의 접속 주소는 `network_class.js` 상단의 `wsUri`가 자동 선택한다:

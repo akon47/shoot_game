@@ -27,10 +27,13 @@ if (heads && heads.length > 0) {
     "debug_class.js",
   ];
 
+  // 배포 빌드 번호(index.html 의 window.SHOOT_GAME_VERSION)를 쿼리에 붙여 배포마다 브라우저 캐시를 갱신한다.
+  const version = encodeURIComponent(window.SHOOT_GAME_VERSION || "dev");
+
   for (let i = 0; i < requireScripts.length; i++) {
     var script = document.createElement("script");
     script.setAttribute("type", "text/javascript");
-    script.setAttribute("src", requireScripts[i]);
+    script.setAttribute("src", requireScripts[i] + "?v=" + version);
     // 동적 삽입 스크립트는 기본이 async 라 실행 순서가 보장되지 않는다.
     // map_registry.js 처럼 앞 스크립트의 전역을 참조하는 파일이 있으므로 순서를 고정한다.
     script.async = false;

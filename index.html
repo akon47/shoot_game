@@ -19,15 +19,13 @@
     <title>Shoot Game</title>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
     <script src="https://code.createjs.com/soundjs-0.6.2.min.js"></script>
-    <script
-      type="text/javascript"
-      src="framework.js?<?PHP echo time(); ?>"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="style.css?<?PHP echo time(); ?>"
-      type="text/css"
-    />
+    <!-- __BUILD__ is replaced with the build id at deploy time (Dockerfile); it busts browser caches
+         for framework.js, style.css and every script framework.js loads. Locally it stays "dev". -->
+    <script>
+      window.SHOOT_GAME_VERSION = "__BUILD__";
+    </script>
+    <script type="text/javascript" src="framework.js?v=__BUILD__"></script>
+    <link rel="stylesheet" href="style.css?v=__BUILD__" type="text/css" />
 
     <link
       rel="apple-touch-icon"
