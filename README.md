@@ -2,7 +2,7 @@
 
 # shoot_game
 
-[![Hits](https://counter.kimhwan.kr/?key=github-akon47-shoot-game)](https://github.com/akon47/shoot_game)
+[![Hits](https://counter.kimhwan.com/?key=github-akon47-shoot-game)](https://github.com/akon47/shoot_game)
 
 Can I make a game using Canvas in HTML5? A web game project I created out of curiosity.   
 You can play multi-play games with multiple people using a web socket.
@@ -28,4 +28,4 @@ You can play multi-play games with multiple people using a web socket.
 
 ## 🚀 Demo
 
-https://shootgame.kimhwan.kr/
+https://shootgame.kimhwan.com/

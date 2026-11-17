@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 HTML5 Canvas 기반 멀티플레이 슈팅 웹 게임의 **클라이언트** 프로젝트.
 서버는 별도 저장소인 `C:\Users\hwank\source\repos\shoot_game_server` (Node.js, `ws` 기반)에 있다.
-데모: https://shootgame.kimhwan.kr/
+데모: https://shootgame.kimhwan.com/
 
 - 빌드 시스템/패키지 매니저/테스트/린트 **없음**. 순수 정적 파일(Vanilla JS ES6 클래스)이다.
 - 외부 의존성은 CDN으로 로드: jQuery 1.12.4, SoundJS 0.6.2 (index.html 참고).
@@ -28,7 +28,7 @@ npx serve .
 
 ## 배포
 
-`master` 에 push 하면(이 저장소든 `shoot_game_server` 든) Jenkins 잡 `shoot-game`(build.kimhwan.kr)이 두 저장소를 나란히 받아
+`master` 에 push 하면(이 저장소든 `shoot_game_server` 든) Jenkins 잡 `shoot-game`(build.kimhwan.com)이 두 저장소를 나란히 받아
 `shoot_game_server/Dockerfile`(서버, 스모크 테스트 포함)과 이 저장소의 `Dockerfile`(nginx 정적 서빙, `docker/nginx.conf`)로
 이미지를 만들어 Docker Hub(`akon47/shoot-game-web`, `akon47/shoot-game-server`)에 올리고 shoot-game VM(10.10.10.221)에
 docker compose 로 배포한다. 파이프라인 정의는 `shoot_game_server/Jenkinsfile`. 수동 이미지 빌드: `docker build -t shoot-game-web .`
@@ -36,7 +36,7 @@ docker compose 로 배포한다. 파이프라인 정의는 `shoot_game_server/Je
 서버 실행 (별도 저장소): `cd ..\shoot_game_server; npm install; node server.js`
 클라이언트의 접속 주소는 `network_class.js` 상단의 `wsUri`가 자동 선택한다:
 `localhost`/`127.0.0.1`에서 서빙하면 `ws://localhost:8080`(로컬 서버), 그 외에는
-`wss://ws.shootgame.kimhwan.kr`(운영 — nginx가 443 TLS 종료 후 Node 8080으로 프록시)로 접속한다.
+`wss://ws.shootgame.kimhwan.com`(운영 — nginx가 443 TLS 종료 후 Node 8080으로 프록시)로 접속한다.
 
 ## 부팅/스크립트 로딩 구조
 

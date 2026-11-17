@@ -2,7 +2,7 @@
 
 # shoot_game
 
-[![Hits](https://counter.kimhwan.kr/?key=github-akon47-shoot-game)](https://github.com/akon47/shoot_game)
+[![Hits](https://counter.kimhwan.com/?key=github-akon47-shoot-game)](https://github.com/akon47/shoot_game)
 
 HTML5의 Canvas 를 이용하여 게임도 만들 수 있을까? 하는 호기심에 만들어본 웹 게임 프로젝트.   
 웹소켓을 이용하여 여러 사람과 멀티 플레이 게임을 즐길 수 있습니다.   
@@ -27,4 +27,4 @@ HTML5의 Canvas 를 이용하여 게임도 만들 수 있을까? 하는 호기�
 
 
 ## 🚀 Demo
-https://shootgame.kimhwan.kr/
+https://shootgame.kimhwan.com/

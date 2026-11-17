@@ -3,7 +3,7 @@
 const wsUri =
   location.hostname === "localhost" || location.hostname === "127.0.0.1"
     ? "ws://localhost:8080"
-    : "wss://ws.shootgame.kimhwan.kr";
+    : "wss://ws.shootgame.kimhwan.com";
 class NetworkClass {
   constructor() {
     this.isConnected = false;
